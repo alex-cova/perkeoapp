@@ -1,0 +1,563 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		FAD030C12D287FDD00F83E2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FAD030A82D287FDC00F83E2B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FAD030AF2D287FDC00F83E2B;
+			remoteInfo = balatroseeds;
+		};
+		FAD030CB2D287FDE00F83E2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FAD030A82D287FDC00F83E2B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FAD030AF2D287FDC00F83E2B;
+			remoteInfo = balatroseeds;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		FAD030B02D287FDC00F83E2B /* balatroseeds.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = balatroseeds.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FAD030C02D287FDD00F83E2B /* balatroseedsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = balatroseedsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FAD030CA2D287FDE00F83E2B /* balatroseedsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = balatroseedsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		FAD030B22D287FDC00F83E2B /* balatroseeds */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = balatroseeds;
+			sourceTree = "<group>";
+		};
+		FAD030C32D287FDD00F83E2B /* balatroseedsTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = balatroseedsTests;
+			sourceTree = "<group>";
+		};
+		FAD030CD2D287FDE00F83E2B /* balatroseedsUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = balatroseedsUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FAD030AD2D287FDC00F83E2B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FAD030BD2D287FDD00F83E2B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FAD030C72D287FDE00F83E2B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		FAD030A72D287FDC00F83E2B = {
+			isa = PBXGroup;
+			children = (
+				FAD030B22D287FDC00F83E2B /* balatroseeds */,
+				FAD030C32D287FDD00F83E2B /* balatroseedsTests */,
+				FAD030CD2D287FDE00F83E2B /* balatroseedsUITests */,
+				FAD030B12D287FDC00F83E2B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		FAD030B12D287FDC00F83E2B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FAD030B02D287FDC00F83E2B /* balatroseeds.app */,
+				FAD030C02D287FDD00F83E2B /* balatroseedsTests.xctest */,
+				FAD030CA2D287FDE00F83E2B /* balatroseedsUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		FAD030AF2D287FDC00F83E2B /* balatroseeds */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FAD030D42D287FDE00F83E2B /* Build configuration list for PBXNativeTarget "balatroseeds" */;
+			buildPhases = (
+				FAD030AC2D287FDC00F83E2B /* Sources */,
+				FAD030AD2D287FDC00F83E2B /* Frameworks */,
+				FAD030AE2D287FDC00F83E2B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				FAD030B22D287FDC00F83E2B /* balatroseeds */,
+			);
+			name = balatroseeds;
+			packageProductDependencies = (
+			);
+			productName = balatroseeds;
+			productReference = FAD030B02D287FDC00F83E2B /* balatroseeds.app */;
+			productType = "com.apple.product-type.application";
+		};
+		FAD030BF2D287FDD00F83E2B /* balatroseedsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FAD030D72D287FDE00F83E2B /* Build configuration list for PBXNativeTarget "balatroseedsTests" */;
+			buildPhases = (
+				FAD030BC2D287FDD00F83E2B /* Sources */,
+				FAD030BD2D287FDD00F83E2B /* Frameworks */,
+				FAD030BE2D287FDD00F83E2B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FAD030C22D287FDD00F83E2B /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				FAD030C32D287FDD00F83E2B /* balatroseedsTests */,
+			);
+			name = balatroseedsTests;
+			packageProductDependencies = (
+			);
+			productName = balatroseedsTests;
+			productReference = FAD030C02D287FDD00F83E2B /* balatroseedsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		FAD030C92D287FDE00F83E2B /* balatroseedsUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FAD030DA2D287FDE00F83E2B /* Build configuration list for PBXNativeTarget "balatroseedsUITests" */;
+			buildPhases = (
+				FAD030C62D287FDE00F83E2B /* Sources */,
+				FAD030C72D287FDE00F83E2B /* Frameworks */,
+				FAD030C82D287FDE00F83E2B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FAD030CC2D287FDE00F83E2B /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				FAD030CD2D287FDE00F83E2B /* balatroseedsUITests */,
+			);
+			name = balatroseedsUITests;
+			packageProductDependencies = (
+			);
+			productName = balatroseedsUITests;
+			productReference = FAD030CA2D287FDE00F83E2B /* balatroseedsUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FAD030A82D287FDC00F83E2B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1620;
+				LastUpgradeCheck = 1620;
+				TargetAttributes = {
+					FAD030AF2D287FDC00F83E2B = {
+						CreatedOnToolsVersion = 16.2;
+					};
+					FAD030BF2D287FDD00F83E2B = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = FAD030AF2D287FDC00F83E2B;
+					};
+					FAD030C92D287FDE00F83E2B = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = FAD030AF2D287FDC00F83E2B;
+					};
+				};
+			};
+			buildConfigurationList = FAD030AB2D287FDC00F83E2B /* Build configuration list for PBXProject "balatroseeds" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = FAD030A72D287FDC00F83E2B;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = FAD030B12D287FDC00F83E2B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FAD030AF2D287FDC00F83E2B /* balatroseeds */,
+				FAD030BF2D287FDD00F83E2B /* balatroseedsTests */,
+				FAD030C92D287FDE00F83E2B /* balatroseedsUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FAD030AE2D287FDC00F83E2B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FAD030BE2D287FDD00F83E2B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FAD030C82D287FDE00F83E2B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FAD030AC2D287FDC00F83E2B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FAD030BC2D287FDD00F83E2B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FAD030C62D287FDE00F83E2B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		FAD030C22D287FDD00F83E2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FAD030AF2D287FDC00F83E2B /* balatroseeds */;
+			targetProxy = FAD030C12D287FDD00F83E2B /* PBXContainerItemProxy */;
+		};
+		FAD030CC2D287FDE00F83E2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FAD030AF2D287FDC00F83E2B /* balatroseeds */;
+			targetProxy = FAD030CB2D287FDE00F83E2B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		FAD030D22D287FDE00F83E2B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		FAD030D32D287FDE00F83E2B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		FAD030D52D287FDE00F83E2B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"balatroseeds/Preview Content\"";
+				DEVELOPMENT_TEAM = N23JZNZY3P;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.alex-cova.balatroseeds";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		FAD030D62D287FDE00F83E2B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"balatroseeds/Preview Content\"";
+				DEVELOPMENT_TEAM = N23JZNZY3P;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.alex-cova.balatroseeds";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		FAD030D82D287FDE00F83E2B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = N23JZNZY3P;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.alex-cova.balatroseedsTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/balatroseeds.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/balatroseeds";
+			};
+			name = Debug;
+		};
+		FAD030D92D287FDE00F83E2B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = N23JZNZY3P;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.alex-cova.balatroseedsTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/balatroseeds.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/balatroseeds";
+			};
+			name = Release;
+		};
+		FAD030DB2D287FDE00F83E2B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = N23JZNZY3P;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.alex-cova.balatroseedsUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = balatroseeds;
+			};
+			name = Debug;
+		};
+		FAD030DC2D287FDE00F83E2B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = N23JZNZY3P;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.alex-cova.balatroseedsUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = balatroseeds;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		FAD030AB2D287FDC00F83E2B /* Build configuration list for PBXProject "balatroseeds" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FAD030D22D287FDE00F83E2B /* Debug */,
+				FAD030D32D287FDE00F83E2B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FAD030D42D287FDE00F83E2B /* Build configuration list for PBXNativeTarget "balatroseeds" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FAD030D52D287FDE00F83E2B /* Debug */,
+				FAD030D62D287FDE00F83E2B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FAD030D72D287FDE00F83E2B /* Build configuration list for PBXNativeTarget "balatroseedsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FAD030D82D287FDE00F83E2B /* Debug */,
+				FAD030D92D287FDE00F83E2B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FAD030DA2D287FDE00F83E2B /* Build configuration list for PBXNativeTarget "balatroseedsUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FAD030DB2D287FDE00F83E2B /* Debug */,
+				FAD030DC2D287FDE00F83E2B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = FAD030A82D287FDC00F83E2B /* Project object */;
+}
