@@ -1,0 +1,212 @@
+[
+    {
+        "name": "Small Blind",
+        "pos": {
+            "x": 0,
+            "y": 0
+        }
+    },
+    {
+        "name": "Big Blind",
+        "pos": {
+            "x": 0,
+            "y": 1
+        }
+    },
+    {
+        "name": "The Ox",
+        "pos": {
+            "x": 0,
+            "y": 2
+        }
+    },
+    {
+        "name": "The Hook",
+        "pos": {
+            "x": 0,
+            "y": 7
+        }
+    },
+    {
+        "name": "The Mouth",
+        "pos": {
+            "x": 0,
+            "y": 18
+        }
+    },
+    {
+        "name": "The Fish",
+        "pos": {
+            "x": 0,
+            "y": 5
+        }
+    },
+    {
+        "name": "The Club",
+        "pos": {
+            "x": 0,
+            "y": 4
+        }
+    },
+    {
+        "name": "The Manacle",
+        "pos": {
+            "x": 0,
+            "y": 8
+        }
+    },
+    {
+        "name": "The Tooth",
+        "pos": {
+            "x": 0,
+            "y": 22
+        }
+    },
+    {
+        "name": "The Wall",
+        "pos": {
+            "x": 0,
+            "y": 9
+        }
+    },
+    {
+        "name": "The House",
+        "pos": {
+            "x": 0,
+            "y": 3
+        }
+    },
+    {
+        "name": "The Mark",
+        "pos": {
+            "x": 0,
+            "y": 23
+        }
+    },
+    {
+        "name": "Cerulean Bell",
+        "pos": {
+            "x": 0,
+            "y": 26
+        }
+    },
+    {
+        "name": "The Wheel",
+        "pos": {
+            "x": 0,
+            "y": 10
+        }
+    },
+    {
+        "name": "The Arm",
+        "pos": {
+            "x": 0,
+            "y": 11
+        }
+    },
+    {
+        "name": "The Psychic",
+        "pos": {
+            "x": 0,
+            "y": 12
+        }
+    },
+    {
+        "name": "The Goad",
+        "pos": {
+            "x": 0,
+            "y": 13
+        }
+    },
+    {
+        "name": "The Water",
+        "pos": {
+            "x": 0,
+            "y": 14
+        }
+    },
+    {
+        "name": "The Eye",
+        "pos": {
+            "x": 0,
+            "y": 17
+        }
+    },
+    {
+        "name": "The Plant",
+        "pos": {
+            "x": 0,
+            "y": 19
+        }
+    },
+    {
+        "name": "The Needle",
+        "pos": {
+            "x": 0,
+            "y": 20
+        }
+    },
+    {
+        "name": "The Head",
+        "pos": {
+            "x": 0,
+            "y": 21
+        }
+    },
+    {
+        "name": "Verdant Leaf",
+        "pos": {
+            "x": 0,
+            "y": 28
+        }
+    },
+    {
+        "name": "Violet Vessel",
+        "pos": {
+            "x": 0,
+            "y": 29
+        }
+    },
+    {
+        "name": "The Window",
+        "pos": {
+            "x": 0,
+            "y": 6
+        }
+    },
+    {
+        "name": "The Serpent",
+        "pos": {
+            "x": 0,
+            "y": 15
+        }
+    },
+    {
+        "name": "The Pillar",
+        "pos": {
+            "x": 0,
+            "y": 16
+        }
+    },
+    {
+        "name": "The Flint",
+        "pos": {
+            "x": 0,
+            "y": 24
+        }
+    },
+    {
+        "name": "Amber Acorn",
+        "pos": {
+            "x": 0,
+            "y": 27
+        }
+    },
+    {
+        "name": "Crimson Heart",
+        "pos": {
+            "x": 0,
+            "y": 25
+        }
+    }
+]
