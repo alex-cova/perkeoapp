@@ -29,6 +29,31 @@
 		FAD030CA2D287FDE00F83E2B /* balatroseedsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = balatroseedsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		FA287EAE2D459E9500F96796 /* Exceptions for "balatroseedsUITests" folder in "balatroseeds" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				bosses.json,
+				jokers.json,
+				tags.json,
+				tarots.json,
+				vouchers.json,
+			);
+			target = FAD030AF2D287FDC00F83E2B /* balatroseeds */;
+		};
+		FA287EAF2D459E9500F96796 /* Exceptions for "balatroseedsUITests" folder in "balatroseedsUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				bosses.json,
+				jokers.json,
+				tags.json,
+				tarots.json,
+				vouchers.json,
+			);
+			target = FAD030C92D287FDE00F83E2B /* balatroseedsUITests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		FAD030B22D287FDC00F83E2B /* balatroseeds */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -42,6 +67,10 @@
 		};
 		FAD030CD2D287FDE00F83E2B /* balatroseedsUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				FA287EAE2D459E9500F96796 /* Exceptions for "balatroseedsUITests" folder in "balatroseeds" target */,
+				FA287EAF2D459E9500F96796 /* Exceptions for "balatroseedsUITests" folder in "balatroseedsUITests" target */,
+			);
 			path = balatroseedsUITests;
 			sourceTree = "<group>";
 		};
@@ -399,6 +428,8 @@
 				DEVELOPMENT_TEAM = N23JZNZY3P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Blueprint;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -411,6 +442,9 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alex-cova.balatroseeds";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -428,6 +462,8 @@
 				DEVELOPMENT_TEAM = N23JZNZY3P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Blueprint;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -440,6 +476,9 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alex-cova.balatroseeds";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

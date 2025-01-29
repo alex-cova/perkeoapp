@@ -19,8 +19,52 @@ class Sprite : Decodable, Encodable {
 
 class SpriteSheet {
     
-    func readJokers() -> [Sprite] {
-        loadJSONFromAssets(filename: "jokers.json", type: [Sprite].self) ?? []
+    var jokers : [Sprite] = []
+    var tarots : [Sprite] = []
+    var tags : [Sprite] = []
+    var vouchers : [Sprite] = []
+    var bosses : [Sprite] = []
+    
+    public func readBosses() -> [Sprite] {
+        if(!bosses.isEmpty){
+            return bosses
+        }
+        
+        bosses = loadJSONFromAssets(filename: "bosses", type: [Sprite].self) ?? []
+        return bosses
+    }
+    
+    public func readVouchers() -> [Sprite] {
+        if(!vouchers.isEmpty){
+            return vouchers
+        }
+        
+        vouchers = loadJSONFromAssets(filename: "vouchers", type: [Sprite].self) ?? []
+        return vouchers
+    }
+    
+    public func readTarots() -> [Sprite] {
+        if(!tarots.isEmpty) {
+            return tarots
+        }
+        tarots = loadJSONFromAssets(filename: "tarots", type: [Sprite].self) ?? []
+        return tarots
+    }
+    
+    public func readTags() -> [Sprite] {
+        if(!tags.isEmpty) {
+            return tags
+        }
+        tags = loadJSONFromAssets(filename: "tags", type: [Sprite].self) ?? []
+        return tags
+    }
+    
+    public func readJokers() -> [Sprite] {
+        if(!jokers.isEmpty) {
+            return jokers
+        }
+        jokers = loadJSONFromAssets(filename: "jokers", type: [Sprite].self) ?? []
+        return jokers
     }
     
     func loadJSONFromAssets<T: Codable>(filename: String, type: T.Type) -> T? {

@@ -9,7 +9,7 @@ class DoubleLong {
     private var bits : UInt64
     
     init(bits: Double) {
-        self.bits = UInt64(bits)
+        self.bits = bits.bitPattern
     }
     
     init(_ bits: UInt64){
@@ -42,7 +42,7 @@ class LuaRandom {
         var  randint : UInt64  = 0
         var seed = s
         
-        var r : UInt64 = 0x11090601
+        var r : Int = 0x11090601
         
         var m : UInt64 = 1 << (r & 255)
         r >>= 8
@@ -57,12 +57,15 @@ class LuaRandom {
         
         state = u.getLong()
         
-        for i in 0..<11 {
+        for _ in 0..<5 {
+            state = (((state << 31) ^ state) >> 45) ^ ((state & (MAX_UINT64 << 1)) << 18)
             state = (((state << 31) ^ state) >> 45) ^ ((state & (MAX_UINT64 << 1)) << 18)
         }
         
-        randint ^= state
+        state = (((state << 31) ^ state) >> 45) ^ ((state & (MAX_UINT64 << 1)) << 18)
         
+        randint ^= state
+            
         //State[1]
         m = 1 << (r & 255)
         r >>= 8
@@ -77,9 +80,12 @@ class LuaRandom {
         
         state = u.getLong()
         
-        for i in 0..<11 {
+        for _ in 0..<5 {
+            state = (((state << 19) ^ state) >> 30) ^ ((state & (MAX_UINT64 << 6)) << 28)
             state = (((state << 19) ^ state) >> 30) ^ ((state & (MAX_UINT64 << 6)) << 28)
         }
+        
+        state = (((state << 19) ^ state) >> 30) ^ ((state & (MAX_UINT64 << 6)) << 28)
         
         randint ^= state
         
@@ -98,9 +104,12 @@ class LuaRandom {
         state = u.getLong()
         
         
-        for i in 0..<11 {
+        for _ in 0..<5 {
+            state = (((state << 24) ^ state) >> 48) ^ ((state & (MAX_UINT64 << 9)) << 7)
             state = (((state << 24) ^ state) >> 48) ^ ((state & (MAX_UINT64 << 9)) << 7)
         }
+        
+        state = (((state << 24) ^ state) >> 48) ^ ((state & (MAX_UINT64 << 9)) << 7)
         
         randint ^= state
         
@@ -118,9 +127,12 @@ class LuaRandom {
         
         state = u.getLong()
         
-        for i in 0..<11 {
+        for _ in 0..<5 {
+            state = (((state << 21) ^ state) >> 39) ^ ((state & (MAX_UINT64 << 17)) << 8)
             state = (((state << 21) ^ state) >> 39) ^ ((state & (MAX_UINT64 << 17)) << 8)
         }
+        
+        state = (((state << 21) ^ state) >> 39) ^ ((state & (MAX_UINT64 << 17)) << 8)
         
         randint ^= state
         
