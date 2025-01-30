@@ -26,13 +26,9 @@ extension Color {
 
 extension Item {
     
-    func sprite() -> SpriteImageView {
+    func sprite(edition: Edition? = nil) -> SpriteImageView {
         if let card = self as? Card {
             return SpriteImageView(self, Images.cards, card.rank.index(), card.suit.index(), 71, 95, true)
-        }
-        
-        if(self.rawValue == Specials.THE_SHOUL.rawValue){
-            return SpriteImageView(self, Images.tarots, 2, 2, 71, 95)
         }
         
         if(self.rawValue == Specials.BLACKHOLE.rawValue){
@@ -43,7 +39,7 @@ extension Item {
         
         for joker in jokers {
             if(joker.name == self.rawValue){
-                return SpriteImageView(self, Images.jokers, joker.pos.x, joker.pos.y, 71, 95)
+                return SpriteImageView(self, Images.jokers, joker.pos.x, joker.pos.y, 71, 95, edition: edition)
             }
         }
         
@@ -78,6 +74,12 @@ extension Item {
                 return SpriteImageView(self, Images.bosses, boss.pos.x, boss.pos.y, 34, 34)
             }
         }
+        
+        if(self.rawValue == Specials.THE_SHOUL.rawValue){
+            return SpriteImageView(self, Images.tarots, 2, 2, 71, 95)
+        }
+
+        print("Missing: \(self.rawValue)")
         
         return SpriteImageView(self,Images.vouchers, 7, 3, 34, 45)
     }

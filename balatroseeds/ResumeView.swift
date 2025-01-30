@@ -20,6 +20,13 @@ struct ResumeView: View {
                 .foregroundStyle(.white)
             ScrollView(.horizontal){
                 HStack {
+                    ForEach(run.vouchers(), id: \.rawValue){ voucher in
+                        voucher.sprite()
+                    }
+                }
+            }
+            ScrollView(.horizontal){
+                HStack {
                     ForEach(run.tags(), id: \.rawValue) { tag in
                         tag.sprite()
                     }
@@ -29,6 +36,9 @@ struct ResumeView: View {
                 LazyVGrid(columns: columns) {
                     ForEach(run.jokers()) { joker in
                         itemView(joker.joker, count: joker.count)
+                    }
+                    ForEach(run.spectrals(), id: \.rawValue) { spectral in
+                        itemView(spectral, count: 0)
                     }
                 }
             }
@@ -43,8 +53,9 @@ struct ResumeView: View {
                     .font(.caption)
                     .foregroundStyle(.white)
                     .padding(.bottom)
-            }else{
-                Text("\(item.rawValue) x \(count)")
+            } else {
+                Text("\(item.rawValue)\(count > 1 ? " x\(count)" : "")")
+                    .multilineTextAlignment(.center)
                     .font(.caption)
                     .foregroundStyle(.white)
                     .padding(.bottom)
@@ -54,5 +65,5 @@ struct ResumeView: View {
 }
 
 #Preview {
-    ResumeView(run: Balatro().performAnalysis(seed: "2K9H9HN", maxDepth: 2, version: .v_100n))
+    ResumeView(run: Balatro().performAnalysis(seed: "2K9H9HN", maxDepth: 12, version: .v_100n))
 }

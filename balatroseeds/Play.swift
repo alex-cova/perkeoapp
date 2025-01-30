@@ -77,6 +77,34 @@ class Run : Encodable{
         
         return Array(tags)
     }
+    
+    func vouchers() -> [Voucher] {
+        var vouchers : Set<Voucher> = []
+        
+        for ante in antes {
+            vouchers.insert(ante.voucher)
+        }
+        
+        return Array(vouchers)
+    }
+    
+    func spectrals() -> [Spectral] {
+        var spectrals : Set<Spectral> = []
+        
+        for ante in antes {
+            for pack in ante.packs {
+                if pack.kind == .Spectral {
+                    for option in pack.options {
+                        if let spec = option.item as? Spectral {
+                            spectrals.insert(spec)
+                        }
+                    }
+                }
+            }
+        }
+        
+        return Array(spectrals)
+    }
 }
 
 struct JokerCount : Identifiable {

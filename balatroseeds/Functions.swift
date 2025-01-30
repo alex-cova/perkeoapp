@@ -86,12 +86,12 @@ class Functions : Lock {
     
     func randchoice<T : RawRepresentable>(_ ID : String, _ items : [T]) -> T where T.RawValue == String  {
         var item = items[randint(ID, 0, items.count - 1)]
-        if (!params.showman && isLocked(item.rawValue) || "RETRY" == item.rawValue) {
+        if (!params.showman && isLocked(item.rawValue) || ("RETRY" == item.rawValue || "RETRY2" == item.rawValue)) {
             var resample = 2;
             while (true) {
                 item = items[randint("\(ID)_resample\(resample)", 0, items.count - 1)]
                 resample += 1
-                if ((!isLocked(item.rawValue) && "RETRY" != item.rawValue) || resample > 1000){
+                if ((!isLocked(item.rawValue) && ("RETRY" != item.rawValue || "RETRY2" != item.rawValue)) || resample > 1000){
                     return item
                 }
             }
@@ -117,6 +117,7 @@ class Functions : Lock {
     func nextSpectral(_ source : String,_ ante : Int,_ soulable : Bool) -> Item {
         if (soulable) {
             var forcedKey : Item = Specials.RETRY;
+            
             if ((params.showman || !isLocked("The Soul")) && random("soul_Spectral\(ante)") > 0.997){
                 forcedKey = Specials.THE_SHOUL
             }
@@ -124,7 +125,8 @@ class Functions : Lock {
             if ((params.showman || !isLocked("Black Hole")) && random("soul_Spectral\(ante)") > 0.997){
                 forcedKey = Specials.BLACKHOLE
             }
-            if (forcedKey.rawValue != "RETRY"){ return forcedKey}
+            
+            if (forcedKey.rawValue != "RETRY" && forcedKey.rawValue != "RETRY2"){ return forcedKey}
         }
         
         return randchoice("Spectral\(source)\(ante)", Functions.SPECTRALS);

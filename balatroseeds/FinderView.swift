@@ -127,6 +127,7 @@ struct FinderView : View {
                 var currentMillis = Int(Date().timeIntervalSince1970 * 1000)
                 
                 let play = Balatro()
+                    .configureForSpeed(selections: selections)
                     .performAnalysis(seed: seed, maxDepth: maxDepth, version: version)
                 
                 currentMillis = Int(Date().timeIntervalSince1970 * 1000) - currentMillis

@@ -115,17 +115,36 @@ struct SpriteImageView: View {
     
     var body: some View {
         if item.rawValue == "Hologram" {
-            getHologram()
+            if edition == .Negative {
+                getHologram()
+                    .colorInvert()
+            }else {
+                getHologram()
+            }
         } else if item is LegendaryJoker {
-            legendaryView()
+            if edition == .Negative {
+                legendaryView()
+                    .colorInvert()
+            }else {
+                legendaryView()
+            }
         } else {
             if let cgImage = spriteSheet.cgImage?.cropping(to: frame) {
                 ZStack {
-                    Image(decorative: cgImage, scale: spriteSheet.scale, orientation: .up)
-                        .resizable()
-                        .frame(width: frame.width, height: frame.height)
-                        .background(card ? .white : .clear)
-                        .cornerRadius(card ? 8 : 0)
+                    if edition == .Negative {
+                        Image(decorative: cgImage, scale: spriteSheet.scale, orientation: .up)
+                            .resizable()
+                            .frame(width: frame.width, height: frame.height)
+                            .background(card ? .white : .clear)
+                            .cornerRadius(card ? 8 : 0)
+                            .colorInvert()
+                    }else {
+                        Image(decorative: cgImage, scale: spriteSheet.scale, orientation: .up)
+                            .resizable()
+                            .frame(width: frame.width, height: frame.height)
+                            .background(card ? .white : .clear)
+                            .cornerRadius(card ? 8 : 0)
+                    }
                     
                     if edition != nil {
                         editionView()
@@ -140,5 +159,28 @@ struct SpriteImageView: View {
     
     func edition(_ edition: Edition) -> some View {
         self.modifier(EditionView(edition: edition))
+    }
+}
+
+#Preview {
+    VStack {
+        HStack {
+            LegendaryJoker.Perke.sprite(edition: .Negative)
+            LegendaryJoker.Triboulet.sprite()
+            Specials.THE_SHOUL.sprite()
+            RareJoker.Blueprint.sprite()
+            Tarot.Death.sprite()
+        }
+        HStack {
+            Spectral.Cryptid.sprite()
+            UnCommonJoker.Arrowhead.sprite()
+            CommonJoker.Ball.sprite()
+            Planet.Earth.sprite()
+            Specials.BLACKHOLE.sprite()
+        }
+        HStack {
+            RareJoker.Hit_the_Road.sprite()
+            UnCommonJoker.Hologram.sprite()
+        }
     }
 }

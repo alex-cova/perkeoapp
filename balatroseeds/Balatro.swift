@@ -114,7 +114,7 @@ public class Balatro {
         }
         return -1;
     }
-    
+        
     func performAnalysis(seed : String) -> Run {
         return performAnalysis(8, [15, 50, 50, 50, 50, 50, 50, 50], Deck.RED_DECK, Stake.White_Stake, Version.v_101f, seed);
     }
@@ -123,6 +123,34 @@ public class Balatro {
         var cards : [Int] = Array(repeating: 50, count: maxDepth)
         cards[0] = 15
         return performAnalysis(maxDepth, cards, Deck.RED_DECK, Stake.White_Stake, version, seed);
+    }
+    
+    var analyzeCards = true
+    var analyzeShop = true
+    var analyzeCelestial = true
+    var analyzeSpectralss = true
+    var analyzeTags = true
+    var analyzeBoss = true
+    var analyzeStandard = true
+    var analyzeArcana = true
+    var analyzeVoucher = true
+    
+    func configureForSpeed(selections : [Item]) -> Balatro {
+        analyzeBoss = false
+        analyzeStandard = false
+        analyzeTags = false
+        analyzeSpectralss = false
+        analyzeArcana = false
+        
+        for selection in selections {
+            if selection is LegendaryJoker {
+                analyzeArcana = true
+                analyzeSpectralss = true
+                break
+            }
+        }
+        
+        return self
     }
     
     func performAnalysis(_ maxDepth : Int,_ cardsPerAnte : [Int],_  deck : Deck,_  stake : Stake,_  version : Version,_  seed: String) -> Run {
@@ -160,25 +188,33 @@ public class Balatro {
             let play = Ante(ante: a, functions: inst)
             antes.append(play)
             inst.initUnlocks(a, false);
-            play.boss = inst.nextBoss(a);
             
-            let voucher = inst.nextVoucher(a);
-            play.voucher = voucher
+            if analyzeBoss {
+                play.boss = inst.nextBoss(a);
+            }
             
-            inst.lock(voucher);
-            // Unlock next level voucher
-            for i in stride(from: 0, to: Functions.VOUCHERS.count, by: 2){
-                if (Functions.VOUCHERS[i] == voucher) {
-                    // Only unlock it if it's unlockable
-                    if (selectedOptions[indexOf(Functions.VOUCHERS[i + 1].rawValue)]) {
-                        inst.unlock(Functions.VOUCHERS[i + 1].rawValue);
+            if analyzeVoucher {
+                let voucher = inst.nextVoucher(a);
+                play.voucher = voucher
+                
+                inst.lock(voucher);
+                
+                // Unlock next level voucher
+                for i in stride(from: 0, to: Functions.VOUCHERS.count, by: 2){
+                    if (Functions.VOUCHERS[i] == voucher) {
+                        // Only unlock it if it's unlockable
+                        if (selectedOptions[indexOf(Functions.VOUCHERS[i + 1].rawValue)]) {
+                            inst.unlock(Functions.VOUCHERS[i + 1].rawValue);
+                        }
                     }
                 }
             }
             
-            play.tags.insert(inst.nextTag(a))
-            play.tags.insert(inst.nextTag(a))
-            
+                
+            if analyzeTags {
+                play.tags.insert(inst.nextTag(a))
+                play.tags.insert(inst.nextTag(a))
+            }
             
             for _ in stride(from: 1, to: cardsPerAnte[a - 1], by: 1){
                 var sticker : Edition?
@@ -213,11 +249,19 @@ public class Balatro {
                 
                 switch(pack.kind){
                 case .Celestial:
+                    if !analyzeCelestial {
+                        continue
+                    }
+                    
                     let cards = inst.nextCelestialPack(packInfo.size, a);
                     for c in 0..<packInfo.size {
                         options.append(Option(cards[c]))
                     }
                 case .Arcana:
+                    if !analyzeArcana {
+                        continue
+                    }
+                    
                     let cards = inst.nextArcanaPack(packInfo.size, a);
                     for c in 0..<packInfo.size {
                         options.append(Option(cards[c]))
@@ -234,11 +278,19 @@ public class Balatro {
                         
                     }
                 case .Spectral:
+                    if !analyzeSpectralss {
+                        continue
+                    }
+                    
                     let cards = inst.nextSpectralPack(packInfo.size, a);
                     for c in 0..<packInfo.size {
                         options.append(Option(cards[c]))
                     }
                 case .Standard:
+                    if !analyzeStandard {
+                        continue
+                    }
+                    
                     let cards = inst.nextStandardPack(packInfo.size, a);
                     for c in 0..<packInfo.size {
                         let card = cards[c]

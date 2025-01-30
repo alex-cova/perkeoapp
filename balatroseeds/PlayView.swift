@@ -12,10 +12,6 @@ struct PlayView : View {
     
     var body: some View {
         VStack{
-            NavigationLink(destination: ResumeView(run: run)){
-                Label("Resume", systemImage: "arrow.right")
-                    .foregroundStyle(.white)
-            }
             ScrollView {
                 render()
             }
@@ -32,7 +28,7 @@ struct PlayView : View {
     
     @ViewBuilder
     func anteView(ante: Ante) -> some View {
-        VStack {
+        VStack(alignment: .leading) {
             if(ante.ante > 1){
                 Capsule()
                     .frame(height: 2)
@@ -40,16 +36,19 @@ struct PlayView : View {
                     .padding()
             }
             Text("Ante \(ante.ante)")
+                .underline()
                 .font(.title)
                 .foregroundStyle(.white)
             options(ante: ante)
             Text("Shop queue")
+                .underline()
                 .foregroundStyle(.white)
+                .padding(.top)
             ScrollView(.horizontal) {
                 shopView(ante: ante)
             }
             packsView(ante: ante)
-        }
+        }.padding(.horizontal)
     }
     
     @ViewBuilder
@@ -61,21 +60,38 @@ struct PlayView : View {
                     .font(.caption)
                     .foregroundStyle(.white)
             }
-            VStack {
-                ante.boss.sprite()
-                Text(ante.boss.rawValue)
-                    .font(.caption)
-                    .foregroundStyle(.white)
-            }
-            ForEach(astList(set: ante.tags), id: \.self.rawValue) { tag in
-                VStack {
-                    tag.sprite()
-                    Text(tag.rawValue)
-                        .font(.caption)
-                        .foregroundStyle(.white)
+            .padding(.horizontal)
+            VStack(alignment: .leading) {
+                HStack {
+                    VStack {
+                        ante.boss.sprite()
+                        Text(ante.boss.rawValue)
+                            .font(.caption)
+                            .foregroundStyle(.white)
+                    }
+                }
+                HStack {
+                    ForEach(astList(set: ante.tags), id: \.self.rawValue) { tag in
+                        VStack {
+                            tag.sprite()
+                            Text(String(tag.rawValue.dropLast(4)))
+                                .font(.caption)
+                                .foregroundStyle(.white)
+                        }
+                    }
                 }
             }
-            Spacer()
+            if ante.ante == 1 {
+                Spacer()
+                NavigationLink(destination: ResumeView(run: run)){
+                    VStack {
+                        Image(systemName: "arrow.right")
+                            .foregroundStyle(.white)
+                        Text("Resume")
+                            .font(.caption)
+                    }
+                }.buttonStyle(.borderedProminent)
+            }
         }.padding(.horizontal)
     }
     
@@ -91,7 +107,8 @@ struct PlayView : View {
             VStack {
                 Text("\(pack.type.rawValue)")
                     .foregroundStyle(.white)
-                Text("\(pack.choices) choices")
+                    .underline()
+                Text(choiceText(pack.choices))
                     .font(.caption)
                     .foregroundStyle(.gray)
                 ScrollView(.horizontal) {
@@ -105,20 +122,27 @@ struct PlayView : View {
         }
     }
     
+    private func choiceText(_ options : Int) -> String {
+        if options == 1 {
+            return "Choose 1"
+        }
+        
+        return "\(options) choices"
+    }
+    
     @ViewBuilder
-    func optionView(option: Option, ante : Ante) -> some View {
+    private func optionView(option: Option, ante : Ante) -> some View {
         VStack {
             if let legendary = option.legendary {
-                option.item.sprite()
-                    .edition(option.edition())
-                
+                legendary.sprite(edition: option.edition())                
                 Text(legendary.rawValue)
                     .font(.caption)
                     .foregroundStyle(.white)
             } else {
-                option.item.sprite()
-                    .edition(option.edition())
+                option.item.sprite(edition: option.edition())
+                
                 Text(option.item.rawValue)
+                    .lineLimit(2)
                     .multilineTextAlignment(.center)
                     .font(.caption)
                     .foregroundStyle(.white)
@@ -147,5 +171,51 @@ struct PlayView : View {
                 }
             }
         }
+    }
+}
+
+struct EditionView: ViewModifier {
+    var edition: Edition
+    
+    @ViewBuilder
+    private func getImage(_ index: Int) -> some View {
+        let frame = CGRect(x: index * 71, y: 0, width: 71, height: 95)
+        if let cgImage = Images.editions.cgImage?.cropping(to: frame) {
+            Image(decorative: cgImage, scale: Images.editions.scale, orientation: .up)
+                .resizable()
+                .frame(width: frame.width, height: frame.height)
+        }else{
+            Text("fuck")
+        }
+    }
+    
+    func body(content: Content) -> some View {
+        if(edition == .Foil) {
+            ZStack {
+                content
+                getImage(1)
+            }
+        }else if(edition == .Holographic){
+            ZStack {
+                content
+                getImage(2)
+            }
+        }else if(edition == .Polychrome){
+            ZStack {
+                content
+                getImage(3)
+            }
+        }else if(edition == .Negative){
+            content.colorInvert()
+        }else {
+            content
+        }
+    }
+}
+
+#Preview {
+    NavigationStack {
+        PlayView(run: Balatro()
+            .performAnalysis(seed: "TSJQOW5", maxDepth: 2, version: .v_101f))
     }
 }

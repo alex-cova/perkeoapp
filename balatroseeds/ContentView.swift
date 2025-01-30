@@ -21,47 +21,6 @@ class Images {
     static let sprite = SpriteSheet()
 }
 
-
-
-struct EditionView: ViewModifier {
-    var edition: Edition
-    
-    @ViewBuilder
-    private func getImage(_ index: Int) -> some View {
-        let frame = CGRect(x: index * 71, y: 0, width: 71, height: 95)
-        if let cgImage = Images.editions.cgImage?.cropping(to: frame) {
-            Image(decorative: cgImage, scale: Images.editions.scale, orientation: .up)
-                .resizable()
-                .frame(width: frame.width, height: frame.height)
-        }else{
-            Text("fuck")
-        }
-    }
-    
-    func body(content: Content) -> some View {
-        if(edition == .Foil) {
-            ZStack {
-                content
-                getImage(1)
-            }
-        }else if(edition == .Holographic){
-            ZStack {
-                content
-                getImage(2)
-            }
-        }else if(edition == .Polychrome){
-            ZStack {
-                content
-                getImage(3)
-            }
-        }else {
-            content
-        }
-    }
-}
-
-
-
 struct ContentView: View {
     
     @Query private var seeds: [SeedModel]
@@ -84,7 +43,7 @@ struct ContentView: View {
 
 struct AnalyzerView : View {
     
-    @State var seed = ""
+    @State var seed = "2K9H9HN"
     @State var run : Run?
     @State var maxAnte = 8
     @Environment(\.modelContext) private var modelContext
@@ -101,6 +60,9 @@ struct AnalyzerView : View {
                     .padding(5)
                     .background(.gray)
                     .cornerRadius(8)
+                    .onSubmit {
+                        analyze()
+                    }
                 
                 Button(action: analyze) {
                     Image(systemName: "sparkle.magnifyingglass")
@@ -130,14 +92,13 @@ struct AnalyzerView : View {
             
             Stepper {
                 Text("Max Ante: **\(maxAnte)**")
+                    .foregroundStyle(.white)
             } onIncrement: {
                 maxAnte += 1
             } onDecrement: {
                 maxAnte -= 1
                 if maxAnte < 1 { maxAnte = 1 }
             }.padding()
-                .background(.gray)
-                .cornerRadius(8.0)
             
             if(run != nil){
                 PlayView(run: run!)
