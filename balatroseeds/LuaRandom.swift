@@ -115,7 +115,7 @@ class LuaRandom {
         
         //state 3
         m = 1 << (r & 255)
-        r >>= 8
+        //r >>= 8
         seed = seed * 3.14159265358979323846
         seed = seed + 2.7182818284590452354
         

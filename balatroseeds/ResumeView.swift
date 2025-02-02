@@ -65,5 +65,5 @@ struct ResumeView: View {
 }
 
 #Preview {
-    ResumeView(run: Balatro().performAnalysis(seed: "2K9H9HN", maxDepth: 12, version: .v_100n))
+    ResumeView(run: Balatro().performAnalysis(seed: "2K9H9HN", maxDepth: 12, version: .v_101f))
 }

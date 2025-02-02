@@ -83,14 +83,20 @@ struct PlayView : View {
             }
             if ante.ante == 1 {
                 Spacer()
-                NavigationLink(destination: ResumeView(run: run)){
-                    VStack {
-                        Image(systemName: "arrow.right")
-                            .foregroundStyle(.white)
-                        Text("Resume")
-                            .font(.caption)
-                    }
-                }.buttonStyle(.borderedProminent)
+                VStack {
+                    NavigationLink(destination: ResumeView(run: run)){
+                        VStack {
+                            Image(systemName: "arrow.right")
+                                .foregroundStyle(.white)
+                            Text("Resume")
+                                .font(.caption)
+                        }
+                    }.buttonStyle(.borderedProminent)
+                    Button("Copy") {
+                        UIPasteboard.general.string = run.seed
+                    }.buttonStyle(.borderedProminent)
+                        .tint(.green)
+                }
             }
         }.padding(.horizontal)
     }
@@ -216,6 +222,6 @@ struct EditionView: ViewModifier {
 #Preview {
     NavigationStack {
         PlayView(run: Balatro()
-            .performAnalysis(seed: "TSJQOW5", maxDepth: 2, version: .v_101f))
+            .performAnalysis(seed: "2K9H9HN", maxDepth: 2, version: .v_101f))
     }
 }

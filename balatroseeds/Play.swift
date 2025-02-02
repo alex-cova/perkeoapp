@@ -125,7 +125,7 @@ class Ante : Encodable, Identifiable {
     var boss : Boss = .Amber_Acorn
     var packs : [Pack] = []
     var voucher : Voucher = .Nacho_Tong
-    var legendaries : [String]?
+    var legendaries : [LegendaryJoker]?
     
     init(ante : Int, functions : Functions){
         self.ante = ante
@@ -188,7 +188,7 @@ class Ante : Encodable, Identifiable {
     func hasLegendary(_ joker : LegendaryJoker) -> Bool {
         if let legendaries = legendaries {
             return legendaries.contains {
-                $0 == joker.rawValue
+                $0 == joker
             }
         }else {
             legendaries = []
@@ -196,17 +196,28 @@ class Ante : Encodable, Identifiable {
             let souls = countInPack(Specials.THE_SHOUL)
             
             for _ in (0..<souls) {
-                legendaries!.append(functions.nextJoker("sou", ante, false).joker.rawValue)
+                legendaries!.append(functions.nextJoker("sou", ante, false).joker as! LegendaryJoker)
             }
             
             return legendaries!.contains {
-                $0 == joker.rawValue
+                $0 == joker
             }
         }
     }
     
+    
     func nextLegendary() -> LegendaryJoker? {
-        functions.nextJoker("sou", ante, false).joker as? LegendaryJoker
+        guard let j = functions.nextJoker("sou", ante, false).joker as? LegendaryJoker else {
+            return nil
+        }
+        
+        if legendaries == nil {
+            legendaries = []
+        }
+        
+        legendaries?.append(j)
+        
+        return j
     }
     
     func contains(_ item : Item) -> Bool {
