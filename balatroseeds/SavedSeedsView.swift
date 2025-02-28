@@ -31,18 +31,9 @@ struct SavedSeedsView : View {
                     seedRow(item)
                     }
             }.onDelete(perform: deleteItems)
-        }.toolbar {
-            Button(action: {
-                if let clipboardText = UIPasteboard.general.string {
-                    if(!clipboardText.isEmpty){
-                        modelContext.insert(SeedModel(timestamp: Date(), seed: clipboardText))
-                    }
-                }
-            }, label: {
-                Image(systemName: "plus")
-            })
         }
-        .navigationTitle("Seeds")
+        .navigationTitle("Saved Seeds")
+        .navigationBarTitleDisplayMode(.inline)
     }
     
     @ViewBuilder

@@ -11,19 +11,12 @@ struct PlayView : View {
     let run : Run
     
     var body: some View {
-        VStack{
-            ScrollView {
-                render()
+        ScrollView {
+            ForEach(run.antes) { a in
+                anteView(ante: a)
+                    .padding(.bottom)
             }
         }.background(Color(hex: "#1e1e1e"))
-    }
-    
-    @ViewBuilder
-    func render() -> some View {
-        ForEach(run.antes) { a in
-            anteView(ante: a)
-                .padding(.bottom)
-        }
     }
     
     @ViewBuilder
@@ -37,6 +30,7 @@ struct PlayView : View {
             }
             Text("Ante \(ante.ante)")
                 .underline()
+                .bold()
                 .font(.title)
                 .foregroundStyle(.white)
             options(ante: ante)
@@ -54,50 +48,44 @@ struct PlayView : View {
     @ViewBuilder
     func options(ante: Ante) -> some View {
         HStack {
-            VStack {
-                ante.voucher.sprite()
-                Text(ante.voucher.rawValue)
-                    .font(.caption)
-                    .foregroundStyle(.white)
-            }
-            .padding(.horizontal)
+            ante.voucher.sprite()
+                .padding(.horizontal)
             VStack(alignment: .leading) {
-                HStack {
-                    VStack {
-                        ante.boss.sprite()
-                        Text(ante.boss.rawValue)
-                            .font(.caption)
-                            .foregroundStyle(.white)
+                if ante.ante == 1 {
+                    HStack {
+                        Spacer()
+                        NavigationLink(destination: ResumeView(run: run)){
+                            HStack {
+                                Image(systemName: "checklist")
+                                    .foregroundStyle(.white)
+                                Text("Resume")
+                                    .font(.caption)
+                            }
+                        }.buttonStyle(.borderedProminent)
+                        Button(action: {
+                            UIPasteboard.general.string = run.seed
+                        }, label: {
+                            HStack {
+                                Image(systemName: "document.on.document")
+                                    .foregroundStyle(.white)
+                                Text("Copy")
+                                    .font(.caption)
+                            }
+                        }).buttonStyle(.borderedProminent)
+                            .tint(.green)
+                        Spacer()
                     }
                 }
                 HStack {
+                    ante.boss.sprite()
                     ForEach(astList(set: ante.tags), id: \.self.rawValue) { tag in
                         VStack {
                             tag.sprite()
-                            Text(String(tag.rawValue.dropLast(4)))
-                                .font(.caption)
-                                .foregroundStyle(.white)
                         }
                     }
                 }
             }
-            if ante.ante == 1 {
-                Spacer()
-                VStack {
-                    NavigationLink(destination: ResumeView(run: run)){
-                        VStack {
-                            Image(systemName: "arrow.right")
-                                .foregroundStyle(.white)
-                            Text("Resume")
-                                .font(.caption)
-                        }
-                    }.buttonStyle(.borderedProminent)
-                    Button("Copy") {
-                        UIPasteboard.general.string = run.seed
-                    }.buttonStyle(.borderedProminent)
-                        .tint(.green)
-                }
-            }
+            
         }.padding(.horizontal)
     }
     
@@ -137,23 +125,8 @@ struct PlayView : View {
     }
     
     @ViewBuilder
-    private func optionView(option: Option, ante : Ante) -> some View {
-        VStack {
-            if let legendary = option.legendary {
-                legendary.sprite(edition: option.edition())                
-                Text(legendary.rawValue)
-                    .font(.caption)
-                    .foregroundStyle(.white)
-            } else {
-                option.item.sprite(edition: option.edition())
-                
-                Text(option.item.rawValue)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.center)
-                    .font(.caption)
-                    .foregroundStyle(.white)
-            }
-        }
+    private func optionView(option: EditionItem, ante : Ante) -> some View {
+        option.item.sprite(edition: option.edition)
     }
     
     @ViewBuilder
@@ -161,19 +134,7 @@ struct PlayView : View {
         HStack {
             ForEach(ante.shopQueue) { item in
                 VStack {
-                    item.item.sprite()
-                        .edition(item.edition as? Edition ?? Edition.NoEdition)
-                    Text(item.item.rawValue)
-                        .foregroundStyle(.white)
-                        .font(.caption)
-                    if let edition = item.edition {
-                        Text(edition.rawValue)
-                            .foregroundStyle(.white)
-                            .font(.caption)
-                    } else {
-                        Spacer()
-                            .frame(height: 15)
-                    }
+                    item.item.sprite(edition: item.edition ?? .NoEdition)
                 }
             }
         }
@@ -222,6 +183,6 @@ struct EditionView: ViewModifier {
 #Preview {
     NavigationStack {
         PlayView(run: Balatro()
-            .performAnalysis(seed: "2K9H9HN", maxDepth: 2, version: .v_101f))
+            .performAnalysis(seed: "IGSPUNF"))
     }
 }

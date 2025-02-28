@@ -27,27 +27,39 @@ class JokerData {
     init(){
         
     }
+    
+    func sprite() -> SpriteImageView {
+        joker.sprite(edition: edition)
+    }
 }
 
-class Card : Item {
-    var base : Cards
-    var enhancement : Enhancement?
-    var edition : Edition = .NoEdition
-    var seal : Seal = .NoSeal
-    
+class Card: Item {
+    var base: Cards
+    var enhancement: Enhancement?
+    var edition: Edition = .NoEdition
+    var seal: Seal = .NoSeal
+
     var rawValue: String {
         return "\(rank.rawValue) \(suit.rawValue)"
     }
-    
-    init(_ base: Cards,_ enhancement: Enhancement?,_ edition: Edition,_ seal: Seal) {
+
+    var ordinal: Int {
+        return base.ordinal
+    }
+
+    var y: Int {
+        return base.y
+    }
+
+    init(_ base: Cards, _ enhancement: Enhancement?, _ edition: Edition, _ seal: Seal) {
         self.base = base
         self.enhancement = enhancement
         self.edition = edition
         self.seal = seal
     }
-    
-    var suit : Suit {
-        switch(base.rawValue.charAt(0)){
+
+    var suit: Suit {
+        switch base.rawValue.charAt(0) {
         case "C":
             return .Clubs
         case "H":
@@ -58,9 +70,9 @@ class Card : Item {
             return .Spades
         }
     }
-    
-    var rank : Rank {
-        switch(base.rawValue.charAt(2)){
+
+    var rank: Rank {
+        switch base.rawValue.charAt(2) {
         case "T":
             return .r_10
         case "J":
@@ -91,40 +103,52 @@ class Card : Item {
     }
 }
 
-class Option : Encodable, Identifiable {
-    let sticker : Item?
-    let item : Item
-    var legendary : LegendaryJoker?
-    
-    init(sticker: Item?, _  item: Item) {
-        self.sticker = sticker
-        self.item = item
-    }
-    
-    init(_ item: Item) {
-        self.sticker = nil
-        self.item = item
-    }
-    
-    func edition() -> Edition {
-        if let edition = sticker as? Edition    {
-            return edition
+class EditionItem: Encodable, Identifiable, Item {
+    let edition: Edition
+    let item: Item
+
+    init(edition: Edition, _ item: Item) {
+        
+        if item is EditionItem {
+            fatalError("Cannot create EditionItem from EditionItem")
         }
         
-        return .NoEdition
+        self.edition = edition
+        self.item = item
     }
-    
+
+    init(_ item: Item) {
+        if item is EditionItem {
+            fatalError("Cannot create EditionItem from EditionItem")
+        }
+        
+        self.edition = .NoEdition
+        self.item = item
+    }
+
     enum CodingKeys: CodingKey {
         case sticker
         case item
     }
-    
+
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        if let sticker = sticker {
-            try container.encode(sticker, forKey: .sticker)
+        if  edition != .NoEdition {
+            try container.encode(edition, forKey: .sticker)
         }
         try container.encode(item.rawValue, forKey: .item)
+    }
+
+    var rawValue: String {
+        return item.rawValue
+    }
+
+    var ordinal: Int {
+        return item.ordinal
+    }
+
+    var y: Int {
+        return item.y
     }
 }
 
@@ -132,9 +156,9 @@ class Pack : Encodable, Identifiable {
     var type : PackType = .RETRY
     var size : Int = 0
     var choices = 0
-    var options : [Option]
+    var options : [EditionItem]
     
-    init(_ type: PackType,_ size: Int,_ choices: Int, options: [Option]) {
+    init(_ type: PackType,_ size: Int,_ choices: Int, options: [EditionItem]) {
         self.type = type
         self.size = size
         self.choices = choices

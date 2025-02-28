@@ -35,35 +35,20 @@ struct ResumeView: View {
             ScrollView {
                 LazyVGrid(columns: columns) {
                     ForEach(run.jokers()) { joker in
-                        itemView(joker.joker, count: joker.count)
+                        joker.joker.sprite()
                     }
+
                     ForEach(run.spectrals(), id: \.rawValue) { spectral in
-                        itemView(spectral, count: 0)
+                        spectral.sprite()
+                            .foregroundStyle(.white)
                     }
                 }
             }
         }.background(Color(hex: "#1e1e1e"))
     }
-    
-    private func itemView(_ item : Item, count : Int) -> some View {
-        VStack {
-            item.sprite()
-            if item is LegendaryJoker {
-                Text(item.rawValue)
-                    .font(.caption)
-                    .foregroundStyle(.white)
-                    .padding(.bottom)
-            } else {
-                Text("\(item.rawValue)\(count > 1 ? " x\(count)" : "")")
-                    .multilineTextAlignment(.center)
-                    .font(.caption)
-                    .foregroundStyle(.white)
-                    .padding(.bottom)
-            }
-        }
-    }
+
 }
 
 #Preview {
-    ResumeView(run: Balatro().performAnalysis(seed: "2K9H9HN", maxDepth: 12, version: .v_101f))
+    ResumeView(run: Balatro().performAnalysis(seed: "2K9H9HN"))
 }

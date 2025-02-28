@@ -8,7 +8,7 @@ import SwiftUI
 
 struct FinderView : View {
     
-    @State private var value = 10000
+    @State private var value = 100000
     @State private var maxDepth : Int = 1
     @State private var version : Version = .v_101f
     @State private var found : [String] = []
@@ -65,26 +65,31 @@ struct FinderView : View {
                 Text("\(Version.v_101f)").tag(Version.v_101f)
             }
             
-            Button("Clear") {
-                selections.removeAll()
-                found.removeAll()
-            }.tint(.red)
+            if !found.isEmpty {
+                Button("Clear \(found.count)") {
+                    selections.removeAll()
+                    found.removeAll()
+                }.tint(.red)
+            }
             
             Section {
-                Button("Selections \(selections.count)") {
+                Button(selections.isEmpty ? "Select Jokers" : "Selections \(selections.count)") {
                     showSheet.toggle()
                 }
-                Button("Search") {
-                    if(!selections.isEmpty){
-                        searching.toggle()
-                    }
-                }.tint(.green)
+                
+                if !selections.isEmpty {
+                    Button("Search") {
+                        if(!selections.isEmpty){
+                            searching.toggle()
+                        }
+                    }.tint(.green)
+                }
             }
             
             ForEach(found, id: \.self) { seed in
                 NavigationLink(destination: PlayView(run: Balatro()
                     .performAnalysis(seed: seed))) {
-                    Text(seed)
+                        Text(seed)
                     }.swipeActions {
                         Button("Save") {
                             modelContext.insert(SeedModel(timestamp: Date(), seed: seed))
@@ -92,7 +97,7 @@ struct FinderView : View {
                     }
             }
             
-        }.navigationTitle("Searcher")
+        }.navigationTitle("Seed Finder")
             .sheet(isPresented: $showSheet){
                 selectorView()
             }.sheet(isPresented: $searching){
@@ -100,12 +105,14 @@ struct FinderView : View {
                     .presentationDetents([.medium])
                     .onAppear {
                         doSearch()
+                    }.onDisappear {
+                        FinderView.running = false
                     }
             }
     }
     
     static var running = false
-        
+    
     private func doSearch(){
         if FinderView.running {
             return
@@ -113,9 +120,11 @@ struct FinderView : View {
         
         progress = 0.0
         processed = 0
+        seedsPerSecond = 0
         
-        DispatchQueue.global(qos: .background).async {
+        DispatchQueue.global(qos: .utility).async {
             FinderView.running = true
+            let startTime = Date()
             
             for i in 0..<value{
                 let seed = Balatro.generateRandomString()
@@ -126,26 +135,34 @@ struct FinderView : View {
                 
                 var currentMillis = Int(Date().timeIntervalSince1970 * 1000)
                 
-                let play = Balatro()
+                var balatro = Balatro()
+                balatro.maxDepth = maxDepth
+                
+                let play = balatro
                     .configureForSpeed(selections: selections)
-                    .performAnalysis(seed: seed, maxDepth: maxDepth, version: version)
+                    .performAnalysis(seed: seed)
                 
                 currentMillis = Int(Date().timeIntervalSince1970 * 1000) - currentMillis
-                                
+                
                 if selections.allSatisfy({ play.contains($0) }) {
                     found.append(seed)
                 }
                 
-                if i % 100 == 0 {
+                if i % 1000 == 0 {
                     DispatchQueue.main.async {
-                        progress = Double(i) / Double(value)
+                        progress = Double(i) / max(Double(value), 1)
                         processed = i
                         speed = currentMillis
+                        seedsPerSecond = Int(Double(i) / max(Double(Date().timeIntervalSince(startTime)), 1.0))
                     }
                 }
             }
             
             FinderView.running = false
+            
+            DispatchQueue.main.async {
+                searching = false
+            }
             
         }
     }
@@ -153,17 +170,26 @@ struct FinderView : View {
     @State private var progress  = 0.0
     @State private var processed = 0
     @State private var speed = 0
+    @State private var seedsPerSecond = 0
     
     @ViewBuilder
     private func searchView() -> some View{
         VStack {
-            Text("\(found.count) seed found")
-                .font(.title2)
+            Image("triboulete")
+            
+            if found.isEmpty {
+                Text("Searching...")
+                    .font(.title2)
+            } else {
+                Text("\(found.count) seed found")
+                    .font(.title2)
+            }
+            
             ProgressView(value: progress)
                 .padding(.horizontal)
             Text("\(processed) / \(value)")
                 .foregroundStyle(.gray)
-            Text("\(speed) ms")
+            Text("\(speed) ms, | \(seedsPerSecond) Op/s")
                 .font(.caption)
                 .foregroundStyle(.gray)
             Spacer()
@@ -216,10 +242,11 @@ struct FinderView : View {
     @ViewBuilder
     private func selectorView() -> some View {
         VStack {
-            Text("Selected: \(selections.count)")
+            Text(selections.isEmpty ? "Select" : "Selected: \(selections.count)")
                 .font(.title2)
                 .padding()
-            Divider().padding(.horizontal)
+            Divider()
+                .padding(.horizontal)
             ScrollView {
                 LazyVGrid(columns: columns) {
                     ForEach(LegendaryJoker.allCases, id: \.rawValue) { joker in

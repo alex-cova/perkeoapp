@@ -5,183 +5,187 @@
 //  Created by Alex on 03/01/25.
 //
 class Lock {
-    private var locked : Set<String> = []
-    
-    func lock(_ key : String) {
-        locked.insert(key)
+
+    private var lock: [Int] = Array(repeating: 0, count: 13)
+
+    func unlock(_ item: Item) {
+        lock[item.y] = lock[item.y] & ~(1 << item.ordinal)
     }
-    
-    func lock(_ key : Item) {
-        locked.insert(key.rawValue)
+
+    func lock(_ item: Item) {
+        lock[item.y] = lock[item.y] | (1 << item.ordinal)
     }
-    
-    func unlock(_ key : String) {
-        locked.remove(key)
+
+    func isLocked(_ item: Item) -> Bool {
+        return (lock[item.y] & (1 << item.ordinal)) != 0
     }
-    
-    func unlock(_ key: Item){
-        locked.remove(key.rawValue)
-    }
-    
-    func isLocked(_ key : String) -> Bool {
-        locked.contains(key)
-    }
-    
-    func initLocks(_ ante : Int,_  freshProfile : Bool,_ freshRun: Bool) {
-        if (ante < 2) {
-            lock("The Mouth")
-            lock("The Fish")
-            lock("The Wall")
-            lock("The House")
-            lock("The Mark")
-            lock("The Wheel")
-            lock("The Arm")
-            lock("The Water")
-            lock("The Needle")
-            lock("The Flint")
-            lock("Negative Tag")
-            lock("Standard Tag")
-            lock("Meteor Tag")
-            lock("Buffoon Tag")
-            lock("Handy Tag")
-            lock("Garbage Tag")
-            lock("Ethereal Tag")
-            lock("Top-up Tag")
-            lock("Orbital Tag")
+
+    func initUnlocks(_ ante: Int, _ freshProfile: Bool) {
+        if ante <= 1 || ante > 6 { return }
+
+        if ante == 2 {
+            unlock(Boss.The_Mouth)
+            unlock(Boss.The_Fish)
+            unlock(Boss.The_Wall)
+            unlock(Boss.The_House)
+            unlock(Boss.The_Mark)
+            unlock(Boss.The_Wheel)
+            unlock(Boss.The_Arm)
+            unlock(Boss.The_Water)
+            unlock(Boss.The_Needle)
+            unlock(Boss.The_Flint)
+
+            unlock(Tag.Standard_Tag)
+            unlock(Tag.Meteor_Tag)
+            unlock(Tag.Buffoon_Tag)
+            unlock(Tag.Handy_Tag)
+            unlock(Tag.Garbage_Tag)
+            unlock(Tag.Ethereal_Tag)
+            unlock(Tag.Top_up_Tag)
+            unlock(Tag.Orbital_Tag)
+
+            if !freshProfile { unlock(Tag.Negative_Tag) }
         }
-        
-        if (ante < 3) {
-            lock("The Tooth")
-            lock("The Eye")
+        if ante == 3 {
+            unlock(Boss.The_Tooth)
+            unlock(Boss.The_Eye)
         }
-        
-        if (ante < 4){ lock("The Plant")}
-        if (ante < 5){ lock("The Serpent")}
-        if (ante < 6){ lock("The Ox")}
-        
-        if (freshProfile) {
-            lock("Negative Tag")
-            lock("Foil Tag")
-            lock("Holographic Tag")
-            lock("Polychrome Tag")
-            lock("Rare Tag")
-            lock("Golden Ticket")
-            lock("Mr. Bones")
-            lock("Acrobat")
-            lock("Sock and Buskin")
-            lock("Swashbuckler")
-            lock("Troubadour")
-            lock("Certificate")
-            lock("Smeared Joker")
-            lock("Throwback")
-            lock("Hanging Chad")
-            lock("Rough Gem")
-            lock("Bloodstone")
-            lock("Arrowhead")
-            lock("Onyx Agate")
-            lock("Glass Joker")
-            lock("Showman")
-            lock("Flower Pot")
-            lock("Blueprint")
-            lock("Wee Joker")
-            lock("Merry Andy")
-            lock("Oops! All 6s")
-            lock("The Idol")
-            lock("Seeing Double")
-            lock("Matador")
-            lock("Hit the Road")
-            lock("The Duo")
-            lock("The Trio")
-            lock("The Family")
-            lock("The Order")
-            lock("The Tribe")
-            lock("Stuntman")
-            lock("Invisible Joker")
-            lock("Brainstorm")
-            lock("Satellite")
-            lock("Shoot the Moon")
-            lock("Driver's License")
-            lock("Cartomancer")
-            lock("Astronomer")
-            lock("Burnt Joker")
-            lock("Bootstraps")
-            lock("Overstock Plus")
-            lock("Liquidation")
-            lock("Glow Up")
-            lock("Reroll Glut")
-            lock("Omen Globe")
-            lock("Observatory")
-            lock("Nacho Tong")
-            lock("Recyclomancy")
-            lock("Tarot Tycoon")
-            lock("Planet Tycoon")
-            lock("Money Tree")
-            lock("Antimatter")
-            lock("Illusion")
-            lock("Petroglyph")
-            lock("Retcon")
-            lock("Palette")
+        if ante == 4 { unlock(Boss.The_Plant) }
+        if ante == 5 { unlock(Boss.The_Serpent) }
+        if ante == 6 { unlock(Boss.The_Ox) }
+    }
+
+    func initLocks(_ ante: Int, _ freshProfile: Bool, _ freshRun: Bool) {
+        if ante < 3 {
+            lock(Boss.The_Tooth)
+            lock(Boss.The_Eye)
         }
-        if (freshRun) {
-            lock("Planet X")
-            lock("Ceres")
-            lock("Eris")
-            lock("Five of a Kind")
-            lock("Flush House")
-            lock("Flush Five")
-            lock("Stone Joker")
-            lock("Steel Joker")
-            lock("Glass Joker")
-            lock("Golden Ticket")
-            lock("Lucky Cat")
-            lock("Cavendish")
-            lock("Overstock Plus")
-            lock("Liquidation")
-            lock("Glow Up")
-            lock("Reroll Glut")
-            lock("Omen Globe")
-            lock("Observatory")
-            lock("Nacho Tong")
-            lock("Recyclomancy")
-            lock("Tarot Tycoon")
-            lock("Planet Tycoon")
-            lock("Money Tree")
-            lock("Antimatter")
-            lock("Illusion")
-            lock("Petroglyph")
-            lock("Retcon")
-            lock("Palette")
+
+        if ante < 4 { lock(Boss.The_Plant) }
+        if ante < 5 { lock(Boss.The_Serpent) }
+        if ante < 6 { lock(Boss.The_Ox) }
+
+        if freshProfile {
+            lock(CommonJoker.Golden_Ticket)
+            lock(CommonJoker.Hanging_Chad)
+            lock(CommonJoker.Shoot_the_Moo)
+            lock(CommonJoker.Swashbuckler)
+
+            lock(RareJoker.Blueprint)
+            lock(RareJoker.Brainstorm)
+            lock(RareJoker.Drivers_License)
+            lock(RareJoker.Hit_the_Road)
+            lock(RareJoker.Invisible_Joker)
+            lock(RareJoker.The_Duo)
+            lock(RareJoker.The_Family)
+            lock(RareJoker.The_Order)
+            lock(RareJoker.The_Tribe)
+            lock(RareJoker.The_Trio)
+            lock(RareJoker.Wee_Joker)
+
+            lock(Tag.Foil_Tag)
+            lock(Tag.Holographic_Tag)
+            lock(Tag.Polychrome_Tag)
+            lock(Tag.Rare_Tag)
+
+            lock(UnCommonJoker.Acrobat)
+            lock(UnCommonJoker.Arrowhead)
+            lock(UnCommonJoker.Bloodstone)
+            lock(UnCommonJoker.Certificate)
+            lock(UnCommonJoker.Glass_Joker)
+            lock(UnCommonJoker.Mr_Bones)
+            lock(UnCommonJoker.Onyx_Agate)
+            lock(UnCommonJoker.Rough_Gem)
+            lock(UnCommonJoker.Showman)
+            lock(UnCommonJoker.Smeared_Joker)
+            lock(UnCommonJoker.Sock_and_Buskin)
+            lock(UnCommonJoker.Throwback)
+            lock(UnCommonJoker.Troubadour)
+            lock(UnCommonJoker100.Astronomer)
+            lock(UnCommonJoker100.Bootstraps)
+            lock(UnCommonJoker100.Burnt_Joker)
+            lock(UnCommonJoker100.Cartomancer)
+            lock(UnCommonJoker100.Flower_Pot)
+            lock(UnCommonJoker100.Matador)
+            lock(UnCommonJoker100.Merry_Andy)
+            lock(UnCommonJoker100.Satellite)
+            lock(UnCommonJoker100.Seeing_Double)
+            lock(UnCommonJoker100.Stuntman)
+            lock(UnCommonJoker100.The_Idol)
+            lock(UnCommonJoker101C.Oops_All_6s)
+
+            lock(Voucher.Antimatter)
+            lock(Voucher.Glow_Up)
+            lock(Voucher.Illusion)
+            lock(Voucher.Liquidation)
+            lock(Voucher.Money_Tree)
+            lock(Voucher.Nacho_Tong)
+            lock(Voucher.Observatory)
+            lock(Voucher.Omen_Globe)
+            lock(Voucher.Overstock_Plus)
+            lock(Voucher.Palett)
+            lock(Voucher.Petroglyph)
+            lock(Voucher.Planet_Tycoon)
+            lock(Voucher.Recyclomancy)
+            lock(Voucher.Reroll_Glut)
+            lock(Voucher.Retcon)
+            lock(Voucher.Tarot_Tycoon)
+
+            lock(Tag.Negative_Tag)
+        }
+
+        if freshRun {
+            lock(Planet.Planet_X)
+            lock(Planet.Ceres)
+            lock(Planet.Eri)
+            // RareJoker.Five_of_a_Kind;
+            // Voucher.Flush_House;
+            // Voucher.Flush_Five;
+            lock(UnCommonJoker.Stone_Joker)
+            lock(UnCommonJoker.Steel_Joker)
+            lock(UnCommonJoker.Glass_Joker)
+            lock(UnCommonJoker100.Lucky_Cat)
+
+            lock(CommonJoker.Golden_Ticket)
+            lock(CommonJoker.Cavendish)
+
+            lock(Voucher.Overstock_Plus)
+            lock(Voucher.Liquidation)
+            lock(Voucher.Glow_Up)
+            lock(Voucher.Reroll_Glut)
+            lock(Voucher.Omen_Globe)
+            lock(Voucher.Observatory)
+            lock(Voucher.Nacho_Tong)
+            lock(Voucher.Recyclomancy)
+            lock(Voucher.Tarot_Tycoon)
+            lock(Voucher.Planet_Tycoon)
+            lock(Voucher.Money_Tree)
+            lock(Voucher.Antimatter)
+            lock(Voucher.Illusion)
+            lock(Voucher.Petroglyph)
+            lock(Voucher.Retcon)
+            lock(Voucher.Palett)
         }
     }
-    
-    func initUnlocks(_ ante : Int,_ freshProfile : Bool) {
-        if (ante == 2) {
-            unlock("The Mouth")
-            unlock("The Fish")
-            unlock("The Wall")
-            unlock("The House")
-            unlock("The Mark")
-            unlock("The Wheel")
-            unlock("The Arm")
-            unlock("The Water")
-            unlock("The Needle")
-            unlock("The Flint")
-            if (!freshProfile){ unlock("Negative Tag")}
-            unlock("Standard Tag")
-            unlock("Meteor Tag")
-            unlock("Buffoon Tag")
-            unlock("Handy Tag")
-            unlock("Garbage Tag")
-            unlock("Ethereal Tag")
-            unlock("Top-up Tag")
-            unlock("Orbital Tag")
-        }
-        if (ante == 3) {
-            unlock("The Tooth")
-            unlock("The Eye")
-        }
-        if (ante == 4){ unlock("The Plant") }
-        if (ante == 5){ unlock("The Serpent") }
-        if (ante == 6){ unlock("The Ox") }
+
+    func firstLock() {
+        lock(Voucher.Overstock_Plus)
+        lock(Voucher.Liquidation)
+        lock(Voucher.Glow_Up)
+        lock(Voucher.Reroll_Glut)
+        lock(Voucher.Omen_Globe)
+        lock(Voucher.Observatory)
+        lock(Voucher.Nacho_Tong)
+        lock(Voucher.Recyclomancy)
+        lock(Voucher.Tarot_Tycoon)
+        lock(Voucher.Planet_Tycoon)
+        lock(Voucher.Money_Tree)
+        lock(Voucher.Antimatter)
+        lock(Voucher.Illusion)
+        lock(Voucher.Petroglyph)
+        lock(Voucher.Retcon)
+        lock(Voucher.Palett)
     }
+
 }
+

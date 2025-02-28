@@ -34,13 +34,23 @@ struct balatroseedsTests {
         
         let start = DispatchTime.now().uptimeNanoseconds / 1_000_000
         let result = Balatro()
-            .performAnalysis(seed: "8Q47WV6K")
+            .performAnalysis(seed: "IGSPUNF")
         
         let end = DispatchTime.now().uptimeNanoseconds / 1_000_000
         
         print("\(end - start) ms")
             
         print(result.toJson())
+    }
+    
+    @Test func finder() async throws {
+        for i in 0..<4000 {
+            let _ = Balatro()
+                .configureForSpeed(selections: [LegendaryJoker.Perkeo])
+                .performAnalysis(seed: "ALEX\(i)", maxDepth: 8, version: .v_101f)
+        }
+        
+        
     }
     
     @Test func analyze2() async throws {

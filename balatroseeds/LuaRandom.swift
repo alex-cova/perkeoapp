@@ -5,34 +5,6 @@
 //  Created by Alex on 03/01/25.
 //
 
-class DoubleLong {
-    private var bits : UInt64
-    
-    init(bits: Double) {
-        self.bits = bits.bitPattern
-    }
-    
-    init(_ bits: UInt64){
-        self.bits = bits
-    }
-    
-    func asDouble() -> Double {
-        return Double(bitPattern: bits)
-    }
-    
-    func setLong(_ l: UInt64) {
-        bits = l
-    }
-    
-    func setDouble(_ d : Double) {
-        bits = d.bitPattern
-    }
-    
-    func getLong() -> UInt64 {
-        return bits
-    }
-}
-
 class LuaRandom {
     
     static let MAX_UINT64 = UInt64.max
@@ -49,13 +21,13 @@ class LuaRandom {
         seed = seed * 3.14159265358979323846
         seed = seed + 2.7182818284590452354
         
-        var u = DoubleLong(bits: seed)
+        var bits : UInt64 = seed.bitPattern
         
-        if (u.getLong() < m) {
-            u.setLong(u.getLong() + m)
+        if (bits < m) {
+            bits += m
         }
         
-        state = u.getLong()
+        state = bits
         
         for _ in 0..<5 {
             state = (((state << 31) ^ state) >> 45) ^ ((state & (MAX_UINT64 << 1)) << 18)
@@ -72,13 +44,13 @@ class LuaRandom {
         seed = seed * 3.14159265358979323846
         seed = seed + 2.7182818284590452354
         
-        u = DoubleLong(bits: seed)
+        bits = seed.bitPattern
         
-        if (u.getLong() < m) {
-            u.setLong(u.getLong() + m)
+        if (bits < m) {
+            bits += m
         }
         
-        state = u.getLong()
+        state = bits
         
         for _ in 0..<5 {
             state = (((state << 19) ^ state) >> 30) ^ ((state & (MAX_UINT64 << 6)) << 28)
@@ -95,13 +67,13 @@ class LuaRandom {
         seed = seed * 3.14159265358979323846
         seed = seed + 2.7182818284590452354
         
-        u =  DoubleLong(bits: seed)
+        bits = seed.bitPattern
         
-        if (u.getLong() < m) {
-            u.setLong(u.getLong() + m)
+        if (bits < m) {
+            bits += m
         }
         
-        state = u.getLong()
+        state = bits
         
         
         for _ in 0..<5 {
@@ -119,13 +91,13 @@ class LuaRandom {
         seed = seed * 3.14159265358979323846
         seed = seed + 2.7182818284590452354
         
-        u =  DoubleLong(bits: seed)
+        bits = seed.bitPattern
         
-        if (u.getLong() < m) {
-            u.setLong(u.getLong() + m)
+        if (bits < m) {
+            bits += m
         }
         
-        state = u.getLong()
+        state = bits
         
         for _ in 0..<5 {
             state = (((state << 21) ^ state) >> 39) ^ ((state & (MAX_UINT64 << 17)) << 8)
@@ -144,8 +116,7 @@ class LuaRandom {
     }
     
     static func random(seed: Double) -> Double {
-        let u = DoubleLong(randdblmem(seed))
-        return u.asDouble() - 1.0
+        Double(bitPattern: randdblmem(seed)) - 1.0
     }
     
     static func randint(seed: Double, _ min : Int,_ max : Int) -> Int {

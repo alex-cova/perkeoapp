@@ -27,6 +27,7 @@ extension Color {
 extension Item {
     
     func sprite(edition: Edition? = nil) -> SpriteImageView {
+        
         if let card = self as? Card {
             return SpriteImageView(self, Images.cards, card.rank.index(), card.suit.index(), 71, 95, true)
         }
@@ -75,8 +76,8 @@ extension Item {
             }
         }
         
-        if(self.rawValue == Specials.THE_SHOUL.rawValue){
-            return SpriteImageView(self, Images.tarots, 2, 2, 71, 95)
+        if(self.rawValue == Specials.THE_SOUL.rawValue){
+            return SpriteImageView(self, Images.tarots, 2, 2, 71, 95, edition: edition)
         }
 
         print("Missing: \(self.rawValue)")

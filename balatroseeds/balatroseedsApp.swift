@@ -31,4 +31,5 @@ struct balatroseedsApp: App {
             }
         }.modelContainer(sharedModelContainer)
     }
+
 }

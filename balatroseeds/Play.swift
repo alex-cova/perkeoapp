@@ -105,6 +105,7 @@ class Run : Encodable{
         
         return Array(spectrals)
     }
+
 }
 
 struct JokerCount : Identifiable {
@@ -125,7 +126,7 @@ class Ante : Encodable, Identifiable {
     var boss : Boss = .Amber_Acorn
     var packs : [Pack] = []
     var voucher : Voucher = .Nacho_Tong
-    var legendaries : [LegendaryJoker]?
+    var legendaries : [JokerData]?
     
     init(ante : Int, functions : Functions){
         self.ante = ante
@@ -180,7 +181,7 @@ class Ante : Encodable, Identifiable {
         shopQueue.append(SearchableItem(item: value.item, sticker))
     }
     
-    func addPack(pack : Pack, options: [Option]){
+    func addPack(pack : Pack, options: [EditionItem]){
         pack.options = options
         packs.append(pack)
     }
@@ -188,37 +189,46 @@ class Ante : Encodable, Identifiable {
     func hasLegendary(_ joker : LegendaryJoker) -> Bool {
         if let legendaries = legendaries {
             return legendaries.contains {
-                $0 == joker
+                $0.joker.rawValue == joker.rawValue
             }
         }else {
             legendaries = []
             
-            let souls = countInPack(Specials.THE_SHOUL)
-            
-            for _ in (0..<souls) {
-                legendaries!.append(functions.nextJoker("sou", ante, false).joker as! LegendaryJoker)
+            for pack in packs {
+                if pack.kind == .Buffoon || pack.kind == .Standard || pack.kind == .Celestial {
+                    continue
+                }
+                
+                for option in pack.options {
+                    if option.item is LegendaryJoker {
+                        legendaries!.append(JokerData(option.item, "Legendary", option.edition, JokerStickers()))
+                    }
+                }
             }
             
             return legendaries!.contains {
-                $0 == joker
+                $0.joker.rawValue == joker.rawValue
             }
         }
     }
     
     
-    func nextLegendary() -> LegendaryJoker? {
-        guard let j = functions.nextJoker("sou", ante, false).joker as? LegendaryJoker else {
-            return nil
-        }
-        
-        if legendaries == nil {
-            legendaries = []
-        }
-        
-        legendaries?.append(j)
-        
-        return j
-    }
+//    func nextLegendary() -> JokerData? {
+//        let jokerData = functions.nextJoker("sou",joker1Arr:  Functions.joker1SouArr,
+//                                    joker2Arr: Functions.joker2SouArr,
+//                                    joker3Arr: Functions.joker3SouArr,
+//                                    joker4Arr: Functions.joker4SouArr,
+//                                    rarityArr: Functions.raritySouArr, editionArr: Functions.editionShoArr,  ante, true)
+//        
+//        if legendaries == nil {
+//            legendaries = []
+//        }
+//        
+//        legendaries?.append(jokerData)
+//        functions.lock(jokerData.joker)
+//        
+//        return jokerData
+//    }
     
     func contains(_ item : Item) -> Bool {
         if let legendary = item as? LegendaryJoker {
@@ -278,9 +288,9 @@ class Ante : Encodable, Identifiable {
 
 class SearchableItem : Encodable, Identifiable {
     let item : Item
-    let edition : Item?
+    let edition : Edition?
     
-    init(item: Item, _ edition: Item?) {
+    init(item: Item, _ edition: Edition?) {
         self.item = item
         self.edition = edition
     }
