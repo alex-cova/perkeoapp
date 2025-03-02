@@ -24,16 +24,29 @@ struct SavedSeedsView : View {
     }
     
     var body: some View {
-        List {
-            ForEach(seeds) { item in
-                NavigationLink(destination: PlayView(run: Balatro()
-                    .performAnalysis(seed: item.seed))) {
-                    seedRow(item)
-                    }
-            }.onDelete(perform: deleteItems)
+        if (seeds.isEmpty){
+            VStack {
+                Spacer()
+                LegendaryJoker.Perkeo.sprite()
+                Text("There is no saved seeds yet.")
+                    .foregroundStyle(.gray)
+                Spacer()
+                
+            }.navigationTitle("Saved Seeds")
+                .navigationBarTitleDisplayMode(.inline)
+        }else {
+            List {
+                ForEach(seeds) { item in
+                    NavigationLink(destination: PlayView(run: Balatro()
+                        .performAnalysis(seed: item.seed))
+                        .navigationTitle(item.seed)) {
+                            seedRow(item)
+                        }
+                }.onDelete(perform: deleteItems)
+            }
+            .navigationTitle("Saved Seeds")
+            .navigationBarTitleDisplayMode(.inline)
         }
-        .navigationTitle("Saved Seeds")
-        .navigationBarTitleDisplayMode(.inline)
     }
     
     @ViewBuilder

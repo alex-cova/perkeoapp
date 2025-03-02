@@ -86,17 +86,31 @@ class Functions: Lock {
     }
     
     func randchoice<T: Item>(_ ID: String, _ items: [T]) -> T {
+        let item = _randchoice(ID, items)
+        
+        if item.rawValue.starts(with: "RETRY") {
+            fatalError("Unspected retry item: \(item.rawValue)")
+        }
+        
+        return item
+    }
+    
+    func _randchoice<T: Item>(_ ID: String, _ items: [T]) -> T {
         var item = items[randint(ID, 0, items.count - 1)]
-        if !params.showman && isLocked(item)
-            || ("RETRY" == item.rawValue || "RETRY2" == item.rawValue)
-        {
+
+        if params.showman {
+            return item
+        }
+
+        var retry = ("RETRY" == item.rawValue || "RETRY2" == item.rawValue)
+
+        if isLocked(item) || retry {
             var resample = 2
             while true {
                 item = items[randint("\(ID)_resample\(resample)", 0, items.count - 1)]
                 resample += 1
-                if (!isLocked(item) && ("RETRY" != item.rawValue || "RETRY2" != item.rawValue))
-                    || resample > 1000
-                {
+                retry = ("RETRY" == item.rawValue || "RETRY2" == item.rawValue)
+                if (!isLocked(item) && !retry) || resample > 1000 {
                     return item
                 }
             }

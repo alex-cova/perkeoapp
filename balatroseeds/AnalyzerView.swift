@@ -53,10 +53,10 @@ struct AnalyzerView : View {
                 Spacer()
             }
         }.background(Color(hex: "#1e1e1e"))
-        .sheet(isPresented: $configSheet) {
-            configSheetView()
-                .presentationDetents([.medium, .large])
-        }
+            .sheet(isPresented: $configSheet) {
+                configSheetView()
+                    .presentationDetents([.medium, .large])
+            }
     }
     
     @ViewBuilder
@@ -126,13 +126,22 @@ struct AnalyzerView : View {
             
             Section {
                 HStack {
-                    Image(systemName: "rectangle.portrait.slash.fill")
+                    Image(systemName: "checkmark.rectangle.portrait.fill")
                         .foregroundStyle(.gray)
-                    Text("Select the cards you want to disable")
+                    Text("Select the vouchers you want to enable")
                         .foregroundStyle(.gray)
                 }
                 DisclosureGroup("Vouchers") {
-                    renderItems(Voucher.allCases)
+                    renderVoucher(Voucher.allCases)
+                }
+            }
+            
+            Section {
+                HStack {
+                    Image(systemName: "xmark.rectangle.portrait.fill")
+                        .foregroundStyle(.gray)
+                    Text("Select the jokers you want to disable")
+                        .foregroundStyle(.gray)
                 }
                 
                 DisclosureGroup("Legendary Jokers") {
@@ -152,7 +161,8 @@ struct AnalyzerView : View {
                 }
             }
             
-        }.presentationDetents([.medium])
+        }
+        
     }
     
     let columns = [GridItem(.flexible()), GridItem(.flexible()),
@@ -161,12 +171,12 @@ struct AnalyzerView : View {
     @State var disabledItems : [Item] = []
     @State var deck : Deck = .RED_DECK
     @State var stake : Stake = .White_Stake
-        
+    
     @ViewBuilder
     private func renderItems(_ jokers: [Item]) -> some View{
         LazyVGrid(columns: columns){
             ForEach(jokers, id: \.rawValue) { joker in
-                joker.sprite()
+                joker.sprite(color: .black)
                     .opacity(disabledItems.contains(where: {$0.rawValue == joker.rawValue}) ? 0.3 : 1.0)
                     .onTapGesture {
                         
@@ -175,7 +185,25 @@ struct AnalyzerView : View {
                         } else {
                             disabledItems.append(joker)
                         }
-                }
+                    }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func renderVoucher(_ jokers: [Item]) -> some View{
+        LazyVGrid(columns: columns){
+            ForEach(jokers, id: \.rawValue) { joker in
+                joker.sprite(color: .black)
+                    .opacity(disabledItems.contains(where: {$0.rawValue == joker.rawValue}) ? 1.0 : 0.3)
+                    .onTapGesture {
+                        
+                        if disabledItems.contains(where: {$0.rawValue == joker.rawValue}){
+                            disabledItems.removeAll(where: {$0.rawValue == joker.rawValue})
+                        } else {
+                            disabledItems.append(joker)
+                        }
+                    }
             }
         }
     }
@@ -201,7 +229,7 @@ struct AnalyzerView : View {
         if(seed.isEmpty){ return }
         
         let balatro = Balatro()
-   
+        
         for option in disabledItems {
             balatro.options.append(option)
         }

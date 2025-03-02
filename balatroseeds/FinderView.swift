@@ -88,13 +88,15 @@ struct FinderView : View {
             
             ForEach(found, id: \.self) { seed in
                 NavigationLink(destination: PlayView(run: Balatro()
-                    .performAnalysis(seed: seed))) {
-                        Text(seed)
-                    }.swipeActions {
-                        Button("Save") {
-                            modelContext.insert(SeedModel(timestamp: Date(), seed: seed))
-                        }.tint(.green)
-                    }
+                    .performAnalysis(seed: seed))
+                    .navigationTitle(seed)
+                ) {
+                    Text(seed)
+                }.swipeActions {
+                    Button("Save") {
+                        modelContext.insert(SeedModel(timestamp: Date(), seed: seed))
+                    }.tint(.green)
+                }
             }
             
         }.navigationTitle("Seed Finder")
@@ -135,7 +137,7 @@ struct FinderView : View {
                 
                 var currentMillis = Int(Date().timeIntervalSince1970 * 1000)
                 
-                var balatro = Balatro()
+                let balatro = Balatro()
                 balatro.maxDepth = maxDepth
                 
                 let play = balatro
@@ -171,11 +173,13 @@ struct FinderView : View {
     @State private var processed = 0
     @State private var speed = 0
     @State private var seedsPerSecond = 0
+    var animationDuration: Double = 1.5
     
     @ViewBuilder
     private func searchView() -> some View{
         VStack {
             Image("triboulete")
+                .rotationEffect(searching ? .degrees(-10) : .degrees(10))
             
             if found.isEmpty {
                 Text("Searching...")
@@ -200,7 +204,11 @@ struct FinderView : View {
                 FinderView.running = false
                 searching.toggle()
             }.tint(.red)
-        }
+        }.animation(
+            Animation.easeInOut(duration: animationDuration)
+                .repeatForever(autoreverses: true),
+            value: searching
+        )
     }
     
     let columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
@@ -281,11 +289,8 @@ struct LegendarySelectableJokerView : View {
     
     var body: some View {
         VStack {
-            joker.sprite()
+            joker.sprite(color: selected ? .blue : .gray)
                 .opacity(Double(selected ? 1 : 0.3))
-            Text(joker.rawValue)
-                .font(.caption)
-                .foregroundStyle(selected ? .blue : .gray)
         }.onTapGesture {
             selected.toggle()
             onSelect(selected)
@@ -307,11 +312,8 @@ struct SelectableJokerView : View {
     
     var body: some View {
         VStack {
-            joker.sprite()
+            joker.sprite(color: selected ? .blue : .gray)
                 .opacity(Double(selected ? 1 : 0.3))
-            Text(joker.rawValue)
-                .font(.caption)
-                .foregroundStyle(selected ? .blue : .gray)
         }.onTapGesture {
             selected.toggle()
             onSelect(selected)

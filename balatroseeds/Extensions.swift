@@ -26,21 +26,21 @@ extension Color {
 
 extension Item {
     
-    func sprite(edition: Edition? = nil) -> SpriteImageView {
+    func sprite(edition: Edition? = nil, color: Color = .white) -> SpriteImageView {
         
         if let card = self as? Card {
-            return SpriteImageView(self, Images.cards, card.rank.index(), card.suit.index(), 71, 95, true)
+            return SpriteImageView(self, Images.cards, card.rank.index(), card.suit.index(), 71, 95, true, color)
         }
         
         if(self.rawValue == Specials.BLACKHOLE.rawValue){
-            return SpriteImageView(self, Images.tarots, 9, 3, 71, 95)
+            return SpriteImageView(self, Images.tarots, 9, 3, 71, 95, false, color)
         }
         
         let jokers = Images.sprite.readJokers()
         
         for joker in jokers {
             if(joker.name == self.rawValue){
-                return SpriteImageView(self, Images.jokers, joker.pos.x, joker.pos.y, 71, 95, edition: edition)
+                return SpriteImageView(self, Images.jokers, joker.pos.x, joker.pos.y, 71, 95, edition: edition, color)
             }
         }
         
@@ -48,7 +48,7 @@ extension Item {
         
         for tarot in tarots {
             if(tarot.name == self.rawValue){
-                return SpriteImageView(self, Images.tarots, tarot.pos.x, tarot.pos.y, 71, 95)
+                return SpriteImageView(self, Images.tarots, tarot.pos.x, tarot.pos.y, 71, 95, false,  color)
             }
         }
         
@@ -56,15 +56,15 @@ extension Item {
         
         for voucher in vouchers {
             if(voucher.name == self.rawValue){
-                return SpriteImageView(self, Images.vouchers, voucher.pos.x, voucher.pos.y, 71, 95)
+                return SpriteImageView(self, Images.vouchers, voucher.pos.x, voucher.pos.y, 71, 95, false, color)
             }
         }
         
         let tags = Images.sprite.readTags()
         
         for tag in tags {
-            if(tag.name == self.rawValue){
-                return SpriteImageView(self, Images.tags, tag.pos.x, tag.pos.y, 34, 34)
+            if(tag.name == "\(self.rawValue) Tag"){
+                return SpriteImageView(self, Images.tags, tag.pos.x, tag.pos.y, 34, 34, false, color)
             }
         }
         
@@ -72,12 +72,12 @@ extension Item {
         
         for boss in bosses {
             if(boss.name == self.rawValue){
-                return SpriteImageView(self, Images.bosses, boss.pos.x, boss.pos.y, 34, 34)
+                return SpriteImageView(self, Images.bosses, boss.pos.x, boss.pos.y, 34, 34, false, color)
             }
         }
         
         if(self.rawValue == Specials.THE_SOUL.rawValue){
-            return SpriteImageView(self, Images.tarots, 2, 2, 71, 95, edition: edition)
+            return SpriteImageView(self, Images.tarots, 2, 2, 71, 95, edition: edition, color)
         }
 
         print("Missing: \(self.rawValue)")
