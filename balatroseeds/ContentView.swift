@@ -26,6 +26,17 @@ struct ContentView: View {
     @Query private var seeds: [SeedModel]
     @Environment(\.modelContext) private var modelContext
     
+    init(){
+        UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.white]
+        UINavigationBar.appearance().barTintColor = .black
+        UIStepper.appearance().setDecrementImage(UIImage(systemName: "minus"), for: .normal)
+        UIStepper.appearance().setIncrementImage(UIImage(systemName: "plus"), for: .normal)
+        UITabBar.appearance().unselectedItemTintColor = UIColor.white
+        UITableView.appearance().separatorColor = UIColor.systemRed
+        
+    }
+    
     var body: some View {
         TabView {
             Tab("Analyzer", systemImage: "sparkle.magnifyingglass") {
@@ -37,7 +48,8 @@ struct ContentView: View {
             Tab("Saved", systemImage: "externaldrive") {
                 SavedSeedsView()
             }.badge(seeds.count)
-        }
+        }.tint(.red)
+        
     }
 }
 

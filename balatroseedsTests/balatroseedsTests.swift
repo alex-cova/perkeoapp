@@ -47,7 +47,7 @@ struct balatroseedsTests {
         for i in 0..<4000 {
             let _ = Balatro()
                 .configureForSpeed(selections: [LegendaryJoker.Perkeo])
-                .performAnalysis(seed: "ALEX\(i)", maxDepth: 8, version: .v_101f)
+                .performAnalysis(seed: "IGSPUNF\(i)")
         }
         
         

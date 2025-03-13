@@ -29,10 +29,12 @@ struct SavedSeedsView : View {
                 Spacer()
                 LegendaryJoker.Perkeo.sprite()
                 Text("There is no saved seeds yet.")
-                    .foregroundStyle(.gray)
+                    .foregroundStyle(.white)
                 Spacer()
                 
-            }.navigationTitle("Saved Seeds")
+            }.frame(maxWidth: .infinity)
+            .background(Color(hex: "#1e1e1e"))
+            .navigationTitle("Saved Seeds")
                 .navigationBarTitleDisplayMode(.inline)
         }else {
             List {
@@ -41,9 +43,11 @@ struct SavedSeedsView : View {
                         .performAnalysis(seed: item.seed))
                         .navigationTitle(item.seed)) {
                             seedRow(item)
-                        }
+                        }.listRowBackground(Color(hex: "#4d4d4d"))
+                    
                 }.onDelete(perform: deleteItems)
-            }
+            }.background(Color(hex: "#1e1e1e"))
+                .scrollContentBackground(.hidden)
             .navigationTitle("Saved Seeds")
             .navigationBarTitleDisplayMode(.inline)
         }
@@ -54,9 +58,10 @@ struct SavedSeedsView : View {
         VStack {
             Text(item.seed)
                 .font(.title2)
+                .foregroundStyle(.white)
             Text("\(dateFormatter.string(from: item.timestamp))")
                 .font(.caption)
-                .foregroundStyle(.gray)
+                .foregroundStyle(.white)
         }
     }
     

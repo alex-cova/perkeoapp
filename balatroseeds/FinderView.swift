@@ -32,45 +32,54 @@ struct FinderView : View {
     
     var body: some View {
         Form {
-            Stepper {
-                VStack {
-                    Text("Seeds")
-                        .font(.caption)
-                        .foregroundStyle(.gray)
-                    Text("\(value)")
+            Section {
+                Stepper {
+                    VStack {
+                        Text("Seeds")
+                            .font(.caption)
+                            .foregroundStyle(.white)
+                        Text("\(value)")
+                            .foregroundStyle(.white)
+                            .bold()
+                    }
+                } onIncrement: {
+                    incrementStep()
+                } onDecrement: {
+                    decrementStep()
                 }
-            } onIncrement: {
-                incrementStep()
-            } onDecrement: {
-                decrementStep()
-            }
-            .padding(5)
-            Stepper {
-                VStack {
-                    Text("Max Ante")
-                        .font(.caption)
-                        .foregroundStyle(.gray)
-                    Text("\(maxDepth)")
-                }
-            } onIncrement: {
-                maxDepth = min(maxDepth + 1, 25)
-            } onDecrement: {
-                maxDepth = max(maxDepth - 1, 1)
+                .padding(5)
+                Stepper {
+                    VStack {
+                        Text("Max Ante")
+                            .font(.caption)
+                            .foregroundStyle(.white)
+                        Text("\(maxDepth)")
+                            .foregroundStyle(.white)
+                            .bold()
+                    }
+                } onIncrement: {
+                    maxDepth = min(maxDepth + 1, 25)
+                } onDecrement: {
+                    maxDepth = max(maxDepth - 1, 1)
+                }.foregroundStyle(.white)
+                .padding(5)
                 
-            }
-            .padding(5)
-            Picker("Version", selection: $version) {
-                Text("\(Version.v_100n)").tag(Version.v_100n)
-                Text("\(Version.v_101c)").tag(Version.v_101c)
-                Text("\(Version.v_101f)").tag(Version.v_101f)
-            }
-            
-            if !found.isEmpty {
-                Button("Clear \(found.count)") {
-                    selections.removeAll()
-                    found.removeAll()
-                }.tint(.red)
-            }
+                Picker("Version", selection: $version) {
+                    Text("\(Version.v_100n)").tag(Version.v_100n)
+                    Text("\(Version.v_101c)").tag(Version.v_101c)
+                    Text("\(Version.v_101f)").tag(Version.v_101f)
+                }.foregroundStyle(.white)
+                    .bold()
+                    .tint(.white)
+                
+                
+                if !found.isEmpty || !selections.isEmpty {
+                    Button(found.isEmpty ? "Clear Selections" : "Clear \(found.count)") {
+                        selections.removeAll()
+                        found.removeAll()
+                    }.tint(.red)
+                }
+            }.listRowBackground(Color(hex: "#2d2d2d"))
             
             Section {
                 Button(selections.isEmpty ? "Select Jokers" : "Selections \(selections.count)") {
@@ -84,22 +93,29 @@ struct FinderView : View {
                         }
                     }.tint(.green)
                 }
-            }
+            }.listRowBackground(Color(hex: "#2d2d2d"))
             
-            ForEach(found, id: \.self) { seed in
-                NavigationLink(destination: PlayView(run: Balatro()
-                    .performAnalysis(seed: seed))
-                    .navigationTitle(seed)
-                ) {
-                    Text(seed)
-                }.swipeActions {
-                    Button("Save") {
-                        modelContext.insert(SeedModel(timestamp: Date(), seed: seed))
-                    }.tint(.green)
-                }
-            }
-            
-        }.navigationTitle("Seed Finder")
+            DisclosureGroup("Found Seeds") {
+                ForEach(found, id: \.self) { seed in
+                    NavigationLink(destination: PlayView(run: Balatro()
+                        .performAnalysis(seed: seed))
+                        .navigationTitle(seed)
+                    ) {
+                        Text(seed)
+                            .foregroundStyle(.white)
+                    }.swipeActions {
+                        Button("Save") {
+                            modelContext.insert(SeedModel(timestamp: Date(), seed: seed))
+                        }.tint(.green)
+                    }
+                }.listRowBackground(Color(hex: "#2d2d2d"))
+            }.foregroundStyle(.white)
+            .listRowBackground(Color(hex: "#2d2d2d"))
+
+        }.background(Color(hex: "#1e1e1e"))
+            .scrollContentBackground(.hidden)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Seed Finder")
             .sheet(isPresented: $showSheet){
                 selectorView()
             }.sheet(isPresented: $searching){
@@ -122,12 +138,10 @@ struct FinderView : View {
         
         progress = 0.0
         processed = 0
-        seedsPerSecond = 0
+        lastProcessed = 0
         
         DispatchQueue.global(qos: .utility).async {
             FinderView.running = true
-            let startTime = Date()
-            
             for i in 0..<value{
                 let seed = Balatro.generateRandomString()
                 
@@ -153,9 +167,9 @@ struct FinderView : View {
                 if i % 1000 == 0 {
                     DispatchQueue.main.async {
                         progress = Double(i) / max(Double(value), 1)
+                        lastProcessed = processed
                         processed = i
                         speed = currentMillis
-                        seedsPerSecond = Int(Double(i) / max(Double(Date().timeIntervalSince(startTime)), 1.0))
                     }
                 }
             }
@@ -172,7 +186,7 @@ struct FinderView : View {
     @State private var progress  = 0.0
     @State private var processed = 0
     @State private var speed = 0
-    @State private var seedsPerSecond = 0
+    @State private var lastProcessed = 0
     var animationDuration: Double = 1.5
     
     @ViewBuilder
@@ -193,7 +207,7 @@ struct FinderView : View {
                 .padding(.horizontal)
             Text("\(processed) / \(value)")
                 .foregroundStyle(.gray)
-            Text("\(speed) ms, | \(seedsPerSecond) Op/s")
+            Text("\(speed) ms, | \(processed - lastProcessed) Op/s")
                 .font(.caption)
                 .foregroundStyle(.gray)
             Spacer()
@@ -250,9 +264,13 @@ struct FinderView : View {
     @ViewBuilder
     private func selectorView() -> some View {
         VStack {
-            Text(selections.isEmpty ? "Select" : "Selected: \(selections.count)")
+            Text(selections.isEmpty ? "Joker Selection" : "Jokers Selected: \(selections.count)")
                 .font(.title2)
                 .padding()
+                .foregroundStyle(.white)
+            Text("Be aware that complex combinations may not work")
+                .font(.caption)
+                .foregroundStyle(.white)
             Divider()
                 .padding(.horizontal)
             ScrollView {
@@ -271,7 +289,7 @@ struct FinderView : View {
                     }
                 }.padding()
             }
-        }
+        }.background(Color(hex: "#4d4d4d"))
     }
 }
 
