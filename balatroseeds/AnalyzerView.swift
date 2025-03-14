@@ -11,6 +11,7 @@ struct AnalyzerView : View {
     @State var seed = "IGSPUNF"
     @State var run : Run?
     @State var maxAnte = 8
+    @State var startingAnte = 1
     @Environment(\.modelContext) private var modelContext
     @State var configSheet = false
     @State var showman = false
@@ -59,8 +60,7 @@ struct AnalyzerView : View {
                     .clipped()
             } else {
                 Spacer()
-                getImage(x: 7, y: 8)
-                    .padding()
+                PerkeoView()
                 VStack(alignment: .leading, spacing: 10.0) {
                     Label("Analyze seed", systemImage: "sparkle.magnifyingglass")
                     Label("Generate a random seed", systemImage: "bolt")
@@ -73,27 +73,6 @@ struct AnalyzerView : View {
                 configSheetView()
                     .presentationDetents([.medium, .large])
             }
-    }
-    
-    @ViewBuilder
-    private func getImage(x: Int, y : Int) -> some View {
-        let frame = CGRect(x: x * 71, y: y * 95, width: 71, height: 95)
-        let frame2 = CGRect(x: x * 71, y: (y + 1 ) * 95, width: 71, height: 95)
-        if let cgImage = Images.jokers.cgImage?.cropping(to: frame) {
-            ZStack {
-                Image(decorative: cgImage, scale: Images.jokers.scale, orientation: .up)
-                    .resizable()
-                    .frame(width: frame.width, height: frame.height)
-                
-                if let cgImage2 = Images.jokers.cgImage?.cropping(to: frame2) {
-                    Image(decorative: cgImage2, scale: Images.jokers.scale, orientation: .up)
-                        .resizable()
-                        .frame(width: frame.width, height: frame.height)
-                }
-            }
-        }else{
-            Text("fuck")
-        }
     }
     
     @ViewBuilder
@@ -123,6 +102,24 @@ struct AnalyzerView : View {
                 }){
                     label("Save Seed", systemImage: "square.and.arrow.down")
                 }
+                
+                Stepper {
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                                .foregroundStyle(.red)
+                            Text("starting ante: **\(startingAnte)**")
+                                .foregroundStyle(.white)
+                        }
+                    }
+                } onIncrement: {
+                    startingAnte = min(29, startingAnte + 1)
+                    if startingAnte > maxAnte { maxAnte += 1 }
+                } onDecrement: {
+                    startingAnte -= 1
+                    if startingAnte < 1 { startingAnte = 1 }
+                }
+                
                 Stepper {
                     VStack(alignment: .leading) {
                         HStack {
@@ -140,8 +137,11 @@ struct AnalyzerView : View {
                     if maxAnte > 30 { maxAnte = 30 }
                 } onDecrement: {
                     maxAnte -= 1
+                    if maxAnte < startingAnte {
+                        startingAnte = max(maxAnte, 1)
+                    }
                     if maxAnte < 1 { maxAnte = 1 }
-                }.padding(5)
+                }
                 
                 Toggle(isOn: $showman){
                     Text("Showman")
@@ -283,6 +283,7 @@ struct AnalyzerView : View {
             balatro.stake = stake
             balatro.maxDepth = maxAnte
             balatro.showman = showman
+            balatro.startingAnte = startingAnte
             
             let run = balatro
                 .performAnalysis(seed: seed)

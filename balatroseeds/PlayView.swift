@@ -10,6 +10,10 @@ import SwiftUI
 struct PlayView : View {
     let run : Run
     
+    init(run: Run){
+        self.run = run
+    }
+    
     var body: some View {
         ScrollView {
             ForEach(run.antes) { a in

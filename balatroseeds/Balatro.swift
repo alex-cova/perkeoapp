@@ -64,6 +64,7 @@ public class Balatro {
     var analyzeVoucher = true
     var analyzeBuffon = true
     var maxDepth = 8
+    var startingAnte = 1
     var version : Version = .v_101f
     var deck = Deck.RED_DECK
     var stake = Stake.White_Stake
@@ -93,7 +94,7 @@ public class Balatro {
         inst.setDeck(deck)
         var antes: [Ante] = []
 
-        for a in 1...maxDepth {
+        for a in startingAnte...maxDepth {
             let play = Ante(ante: a, functions: inst)
             antes.append(play)
             inst.initUnlocks(a, false)

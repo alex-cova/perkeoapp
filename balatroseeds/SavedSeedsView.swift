@@ -27,11 +27,14 @@ struct SavedSeedsView : View {
         if (seeds.isEmpty){
             VStack {
                 Spacer()
-                LegendaryJoker.Perkeo.sprite()
-                Text("There is no saved seeds yet.")
+                PerkeoView()
+                Text("There are no saved seeds yet.")
                     .foregroundStyle(.white)
+                    .padding(.bottom)
+                Button("Paste Seed") {
+                    pasteSeed()
+                }.buttonStyle(.borderedProminent)
                 Spacer()
-                
             }.frame(maxWidth: .infinity)
             .background(Color(hex: "#1e1e1e"))
             .navigationTitle("Saved Seeds")
@@ -39,8 +42,7 @@ struct SavedSeedsView : View {
         }else {
             List {
                 ForEach(seeds) { item in
-                    NavigationLink(destination: PlayView(run: Balatro()
-                        .performAnalysis(seed: item.seed))
+                    NavigationLink(destination: seedNavigation(item.seed)
                         .navigationTitle(item.seed)) {
                             seedRow(item)
                         }.listRowBackground(Color(hex: "#4d4d4d"))
@@ -50,6 +52,14 @@ struct SavedSeedsView : View {
                 .scrollContentBackground(.hidden)
             .navigationTitle("Saved Seeds")
             .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+    
+    private func pasteSeed(){
+        if let clipboardText = UIPasteboard.general.string {
+            withAnimation {
+                modelContext.insert(SeedModel(timestamp: Date(), seed: clipboardText))
+            }
         }
     }
     
@@ -77,7 +87,7 @@ struct SavedSeedsView : View {
 
 
 #Preview {
-    NavigationStack {
+    TabView {
         SavedSeedsView()
             .modelContainer(for: SeedModel.self, inMemory: true)
     }

@@ -29,7 +29,8 @@ struct ContentView: View {
     init(){
         UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor.white]
         UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.white]
-        UINavigationBar.appearance().barTintColor = .black
+        UINavigationBar.appearance().backgroundColor = UIColor(red: 30/255.0, green: 30/255.0, blue: 30/255.0, alpha: 1.0)
+        UINavigationBar.appearance().barTintColor = UIColor(red: 30/255.0, green: 30/255.0, blue: 30/255.0, alpha: 1.0)
         UIStepper.appearance().setDecrementImage(UIImage(systemName: "minus"), for: .normal)
         UIStepper.appearance().setIncrementImage(UIImage(systemName: "plus"), for: .normal)
         UITabBar.appearance().unselectedItemTintColor = UIColor.white

@@ -9,7 +9,8 @@ import SwiftUI
 struct FinderView : View {
     
     @State private var value = 100000
-    @State private var maxDepth : Int = 1
+    @State private var maxAnte : Int = 1
+    @State private var startingAnte : Int = 1
     @State private var version : Version = .v_101f
     @State private var found : [String] = []
     @State private var selections : [Item] = []
@@ -32,10 +33,15 @@ struct FinderView : View {
     
     var body: some View {
         Form {
+            
+            Text("Seed Finder")
+                .font(.title.weight(.semibold))
+                .foregroundStyle(.white)
+                .listRowBackground(EmptyView())
             Section {
                 Stepper {
                     VStack {
-                        Text("Seeds")
+                        Text("Seeds to analyze")
                             .font(.caption)
                             .foregroundStyle(.white)
                         Text("\(value)")
@@ -48,74 +54,108 @@ struct FinderView : View {
                     decrementStep()
                 }
                 .padding(5)
+                
                 Stepper {
-                    VStack {
-                        Text("Max Ante")
-                            .font(.caption)
-                            .foregroundStyle(.white)
-                        Text("\(maxDepth)")
-                            .foregroundStyle(.white)
-                            .bold()
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                                .foregroundStyle(.red)
+                            Text("starting ante: **\(startingAnte)**")
+                                .foregroundStyle(.white)
+                        }
                     }
                 } onIncrement: {
-                    maxDepth = min(maxDepth + 1, 25)
+                    startingAnte = min(29, startingAnte + 1)
+                    if startingAnte > maxAnte { maxAnte += 1 }
                 } onDecrement: {
-                    maxDepth = max(maxDepth - 1, 1)
-                }.foregroundStyle(.white)
-                .padding(5)
+                    startingAnte -= 1
+                    if startingAnte < 1 { startingAnte = 1 }
+                }
+                
+                Stepper {
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundStyle(.yellow)
+                            Text("max ante: **\(maxAnte)**")
+                                .foregroundStyle(.white)
+                        }
+                        Text("The deepest, the slow to analyze.")
+                            .foregroundStyle(.white)
+                            .font(.caption)
+                    }
+                } onIncrement: {
+                    maxAnte += 1
+                    if maxAnte > 30 { maxAnte = 30 }
+                } onDecrement: {
+                    maxAnte -= 1
+                    if maxAnte < startingAnte {
+                        startingAnte = max(maxAnte, 1)
+                    }
+                    if maxAnte < 1 { maxAnte = 1 }
+                }
+                
                 
                 Picker("Version", selection: $version) {
-                    Text("\(Version.v_100n)").tag(Version.v_100n)
-                    Text("\(Version.v_101c)").tag(Version.v_101c)
-                    Text("\(Version.v_101f)").tag(Version.v_101f)
+                    Text("100n").tag(Version.v_100n)
+                    Text("101c").tag(Version.v_101c)
+                    Text("101f").tag(Version.v_101f)
                 }.foregroundStyle(.white)
                     .bold()
                     .tint(.white)
-                
-                
-                if !found.isEmpty || !selections.isEmpty {
-                    Button(found.isEmpty ? "Clear Selections" : "Clear \(found.count)") {
-                        selections.removeAll()
-                        found.removeAll()
-                    }.tint(.red)
-                }
             }.listRowBackground(Color(hex: "#2d2d2d"))
             
             Section {
-                Button(selections.isEmpty ? "Select Jokers" : "Selections \(selections.count)") {
+                Button(action: {
                     showSheet.toggle()
+                }, label: {
+                    if selections.isEmpty {
+                    label("Select Jokers",
+                          systemImage: "circle")
+                    }else {
+                        label("Selections: (\(selections.count))",
+                              systemImage: "checkmark.circle")
+                    }
+                })
+                
+                if !found.isEmpty || !selections.isEmpty {
+                    Button(action: {
+                        selections.removeAll()
+                        found.removeAll()
+                    }, label: {
+                        label("Clear selections", systemImage: "xmark")
+                    }).tint(.red)
                 }
                 
                 if !selections.isEmpty {
-                    Button("Search") {
-                        if(!selections.isEmpty){
-                            searching.toggle()
-                        }
-                    }.tint(.green)
+                    Button(action: {
+                        searching.toggle()
+                    }, label: {
+                        label("Search", systemImage: "magnifyingglass")
+                    }).tint(.green)
                 }
             }.listRowBackground(Color(hex: "#2d2d2d"))
             
-            DisclosureGroup("Found Seeds") {
-                ForEach(found, id: \.self) { seed in
-                    NavigationLink(destination: PlayView(run: Balatro()
-                        .performAnalysis(seed: seed))
-                        .navigationTitle(seed)
-                    ) {
-                        Text(seed)
-                            .foregroundStyle(.white)
-                    }.swipeActions {
-                        Button("Save") {
-                            modelContext.insert(SeedModel(timestamp: Date(), seed: seed))
-                        }.tint(.green)
-                    }
-                }.listRowBackground(Color(hex: "#2d2d2d"))
-            }.foregroundStyle(.white)
-            .listRowBackground(Color(hex: "#2d2d2d"))
+            if !found.isEmpty {
+                DisclosureGroup("Found Seeds (\(found.count))") {
+                    ForEach(found, id: \.self) { seed in
+                        NavigationLink(destination: seedNavigation(seed)) {
+                            Text(seed)
+                                .foregroundStyle(.white)
+                        }.swipeActions {
+                            Button("Save") {
+                                modelContext.insert(SeedModel(timestamp: Date(), seed: seed))
+                            }.tint(.green)
+                        }
+                    }.listRowBackground(Color(hex: "#2d2d2d"))
+                }.foregroundStyle(.white)
+                    .listRowBackground(Color(hex: "#2d2d2d"))
+            }
 
-        }.background(Color(hex: "#1e1e1e"))
+        }.clipped()
+        .background(Color(hex: "#1e1e1e"))
             .scrollContentBackground(.hidden)
             .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("Seed Finder")
             .sheet(isPresented: $showSheet){
                 selectorView()
             }.sheet(isPresented: $searching){
@@ -129,47 +169,63 @@ struct FinderView : View {
             }
     }
     
+    @ViewBuilder
+    private func label(_ text : String, systemImage image : String) -> some View {
+        HStack {
+            Image(systemName: image)
+            Text(text)
+                .foregroundStyle(.white)
+        }
+    }
+    
+    
+    
+    
     static var running = false
     
     private func doSearch(){
         if FinderView.running {
             return
         }
-        
-        progress = 0.0
+    
         processed = 0
-        lastProcessed = 0
+        seedsFound = 0
+        found.removeAll()
         
         DispatchQueue.global(qos: .utility).async {
             FinderView.running = true
+            
+            var foundSeeds : Set<String> = []
+            
             for i in 0..<value{
                 let seed = Balatro.generateRandomString()
                 
                 if !FinderView.running {
+                    DispatchQueue.main.async {
+                        found.removeAll()
+                        found.append(contentsOf: foundSeeds)
+                    }
                     break
                 }
-                
-                var currentMillis = Int(Date().timeIntervalSince1970 * 1000)
-                
+                                
                 let balatro = Balatro()
-                balatro.maxDepth = maxDepth
+                balatro.maxDepth = maxAnte
+                balatro.startingAnte = startingAnte
                 
                 let play = balatro
                     .configureForSpeed(selections: selections)
                     .performAnalysis(seed: seed)
                 
-                currentMillis = Int(Date().timeIntervalSince1970 * 1000) - currentMillis
-                
                 if selections.allSatisfy({ play.contains($0) }) {
-                    found.append(seed)
+                    foundSeeds.insert(seed)
                 }
                 
-                if i % 1000 == 0 {
+                let currentMillis = Int(Date().timeIntervalSince1970 * 1000)
+                
+                if currentMillis % 1000 == 0 {
                     DispatchQueue.main.async {
-                        progress = Double(i) / max(Double(value), 1)
-                        lastProcessed = processed
                         processed = i
-                        speed = currentMillis
+                        seedsFound = foundSeeds.count
                     }
                 }
             }
@@ -178,51 +234,42 @@ struct FinderView : View {
             
             DispatchQueue.main.async {
                 searching = false
+                found.append(contentsOf: foundSeeds)
             }
             
         }
     }
     
-    @State private var progress  = 0.0
     @State private var processed = 0
-    @State private var speed = 0
-    @State private var lastProcessed = 0
-    var animationDuration: Double = 1.5
+    @State private var seedsFound = 0
     
     @ViewBuilder
     private func searchView() -> some View{
         VStack {
-            Image("triboulete")
-                .rotationEffect(searching ? .degrees(-10) : .degrees(10))
+            TribouleteView()
             
-            if found.isEmpty {
+            if seedsFound == 0 {
                 Text("Searching...")
                     .font(.title2)
             } else {
-                Text("\(found.count) seed found")
+                Text("\(seedsFound) seed found")
                     .font(.title2)
             }
             
-            ProgressView(value: progress)
+            ProgressView(value: Double(processed) / Double(value))
                 .padding(.horizontal)
             Text("\(processed) / \(value)")
-                .foregroundStyle(.gray)
-            Text("\(speed) ms, | \(processed - lastProcessed) Op/s")
-                .font(.caption)
-                .foregroundStyle(.gray)
             Spacer()
                 .frame(height: 70)
             Divider()
                 .padding()
-            Button("Stop") {
+            Button(action: {
                 FinderView.running = false
                 searching.toggle()
-            }.tint(.red)
-        }.animation(
-            Animation.easeInOut(duration: animationDuration)
-                .repeatForever(autoreverses: true),
-            value: searching
-        )
+            }, label: {
+                Label("Stop", systemImage: "xmark")
+            }).tint(.red)
+        }
     }
     
     let columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
@@ -340,7 +387,7 @@ struct SelectableJokerView : View {
 }
 
 #Preview {
-    NavigationStack {
+    TabView {
         FinderView()
             .modelContainer(for: SeedModel.self, inMemory: true)
     }
