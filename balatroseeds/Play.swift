@@ -59,8 +59,11 @@ class Run : Encodable{
             for joker in ante.jokers() {
                 if jokerList[joker.rawValue] != nil {
                     jokerList[joker.rawValue]!.count += 1
+                    if joker.edition != .NoEdition {
+                        jokerList[joker.rawValue]!.edition = joker.edition
+                    }
                 }else {
-                    jokerList[joker.rawValue] = JokerCount(joker: joker, count: 1)
+                    jokerList[joker.rawValue] = JokerCount(joker: joker, count: 1, edition: joker.edition)
                 }
             }
         }
@@ -112,6 +115,7 @@ struct JokerCount : Identifiable {
     var id: String {joker.rawValue}
     let joker : Item
     var count : Int
+    var edition : Edition = .NoEdition
 }
 
 
@@ -142,19 +146,19 @@ class Ante : Encodable, Identifiable {
         case voucher
     }
     
-    func jokers() -> [Item] {
-        var jokerList : [Item] =  []
+    func jokers() -> [EditionItem] {
+        var jokerList : [EditionItem] =  []
         
-        for l in LegendaryJoker.allCases {
-            if hasLegendary(l) {
-                jokerList.append(l)
-            }
+        _ = hasLegendary(LegendaryJoker.Perkeo)
+        
+        legendaries?.forEach {
+            jokerList.append($0.asEditionItem())
         }
         
         for pack in packs {
             if(pack.kind == .Buffoon){
                 pack.options.forEach {
-                    jokerList.append($0.item)
+                    jokerList.append($0)
                 }
             }
         }
@@ -169,7 +173,7 @@ class Ante : Encodable, Identifiable {
             }
             
             if(i.item is Joker){
-                jokerList.append(i.item)
+                jokerList.append(i.asEditionItem())
             }
         }
         
@@ -298,6 +302,10 @@ class SearchableItem : Encodable, Identifiable {
     enum CodingKeys: String, CodingKey {
         case item
         case edition
+    }
+    
+    func asEditionItem() -> EditionItem {
+        return EditionItem(edition: edition ?? .NoEdition, item)
     }
     
     func encode(to encoder: Encoder) throws {

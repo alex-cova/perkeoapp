@@ -15,8 +15,8 @@ struct ResumeView: View {
     
     var body: some View {
         VStack {
-            Text("Resume of **\(run.seed)**")
-                .font(.title2)
+            Text("Summary of **\(run.seed)**")
+                .font(.customTitle)
                 .foregroundStyle(.white)
             ScrollView(.horizontal){
                 HStack {
@@ -35,7 +35,7 @@ struct ResumeView: View {
             ScrollView {
                 LazyVGrid(columns: columns) {
                     ForEach(run.jokers()) { joker in
-                        joker.joker.sprite()
+                        joker.joker.sprite(edition: joker.edition)
                     }
 
                     ForEach(run.spectrals(), id: \.rawValue) { spectral in
@@ -50,5 +50,6 @@ struct ResumeView: View {
 }
 
 #Preview {
-    ResumeView(run: Balatro().performAnalysis(seed: "2K9H9HN"))
+    ResumeView(run: Balatro()
+        .performAnalysis(seed: "IGSPUNF"))
 }

@@ -28,6 +28,10 @@ class JokerData {
         
     }
     
+    func asEditionItem() -> EditionItem {
+        EditionItem(edition: edition, joker)
+    }
+    
     func sprite() -> SpriteImageView {
         joker.sprite(edition: edition)
     }

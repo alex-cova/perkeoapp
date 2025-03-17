@@ -30,6 +30,7 @@ struct balatroseedsApp: App {
                 ContentView()
             }
         }.modelContainer(sharedModelContainer)
+            .environmentObject(JokerFile())
     }
 
 }

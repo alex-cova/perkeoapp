@@ -150,11 +150,20 @@ enum Edition: String, CaseIterable, Item {
     case Rental = "Rental"
 
     var ordinal: Int {
-        0
+        switch(self){
+        case .Negative : return 0
+        case .Polychrome : return 1
+        case .Holographic : return 2
+        case .Foil : return 3
+        case .NoEdition : return 4
+        case .Eternal : return 5
+        case .Perishable : return 6
+        case .Rental: return 7
+        }
     }
 
     var y: Int {
-        0
+        -1
     }
 }
 
@@ -1112,7 +1121,7 @@ enum LegendaryJoker: String, CaseIterable, Item, Joker {
     }
 
     var y: Int {
-        12
+        10
     }
 
     var type: JokerType {

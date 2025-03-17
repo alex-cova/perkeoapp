@@ -32,10 +32,27 @@ struct AnalyzerView : View {
         VStack{
             HStack {
                 TextField("Seed", text: $seed)
+                    .font(.customTitle)
                     .multilineTextAlignment(.center)
                     .padding(5)
                     .background(.gray)
                     .cornerRadius(8)
+                    .onChange(of: seed) { oldValue, newValue in
+                        // Apply character limit (max 7)
+                        if newValue.count > 7 {
+                            seed = String(newValue.prefix(7))
+                        }
+                        
+                        // Filter to only allow alphanumeric characters
+                        let filtered = newValue.filter { char in
+                            return char.isLetter || char.isNumber
+                        }
+                        
+                        // Only update if the text actually needs to change
+                        if filtered != newValue {
+                            seed = filtered
+                        }
+                    }
                     .onSubmit {
                         analyze()
                     }
@@ -63,8 +80,11 @@ struct AnalyzerView : View {
                 PerkeoView()
                 VStack(alignment: .leading, spacing: 10.0) {
                     Label("Analyze seed", systemImage: "sparkle.magnifyingglass")
+                        .font(.customBody)
                     Label("Generate a random seed", systemImage: "bolt")
+                        .font(.customBody)
                     Label("Copy/Paste and configurations", systemImage: "gear")
+                        .font(.customBody)
                 }.foregroundStyle(.white)
                 Spacer()
             }
@@ -90,18 +110,18 @@ struct AnalyzerView : View {
             Section {
                 Button(action:paste){
                     label("Paste Seed", systemImage: "document.on.clipboard")
-                }
+                }.font(.customBody)
                 
                 Button(action:copy){
                     label("Copy Seed", systemImage: "document.on.document")
-                }
+                }.font(.customBody)
                 
                 Button(action: {
                     modelContext.insert(SeedModel(timestamp: Date(), seed: seed))
                     configSheet.toggle()
                 }){
                     label("Save Seed", systemImage: "square.and.arrow.down")
-                }
+                }.font(.customBody)
                 
                 Stepper {
                     VStack(alignment: .leading) {
@@ -110,6 +130,7 @@ struct AnalyzerView : View {
                                 .foregroundStyle(.red)
                             Text("starting ante: **\(startingAnte)**")
                                 .foregroundStyle(.white)
+                                .font(.customBody)
                         }
                     }
                 } onIncrement: {
@@ -127,10 +148,11 @@ struct AnalyzerView : View {
                                 .foregroundStyle(.yellow)
                             Text("max ante: **\(maxAnte)**")
                                 .foregroundStyle(.white)
+                                .font(.customBody)
                         }
-                        Text("The deepest, the slow to analyze.")
+                        Text("The deepest, the slow to analyze")
                             .foregroundStyle(.white)
-                            .font(.caption)
+                            .font(.customCaption)
                     }
                 } onIncrement: {
                     maxAnte += 1
@@ -145,22 +167,29 @@ struct AnalyzerView : View {
                 
                 Toggle(isOn: $showman){
                     Text("Showman")
+                        .font(.customBody)
                 }.foregroundStyle(.white)
                 
                 List {
                     Picker("Deck", selection: $deck) {
                         ForEach(Deck.allCases, id: \.rawValue){ deck in
                             Text(deck.rawValue).tag(deck)
+                                .font(.customBody)
                         }
                     }.foregroundStyle(.white)
+                        .font(.customBody)
                 }
                 
                 List {
                     Picker("Stake", selection: $stake){
                         ForEach(Stake.allCases, id: \.rawValue){ stake in
-                            Text(stake.rawValue).tag(stake)
+                            Text(stake.rawValue)
+                                .font(.customBody)
+                                .tag(stake)
+                            
                         }
                     }.foregroundStyle(.white)
+                        .font(.customBody)
                 }
             }
             .listRowBackground(Color(hex: "#2d2d2d"))
@@ -171,11 +200,14 @@ struct AnalyzerView : View {
                         .foregroundStyle(.gray)
                     Text("Select the vouchers you have purchased")
                         .foregroundStyle(.gray)
+                        .font(.customBody)
                 }
                 DisclosureGroup("Vouchers") {
                     renderVoucher(Voucher.allCases)
                 }.foregroundStyle(.white)
+                    .font(.customBody)
             }.listRowBackground(Color(hex: "#2d2d2d"))
+            
             
             Section {
                 HStack {
@@ -183,27 +215,32 @@ struct AnalyzerView : View {
                         .foregroundStyle(.gray)
                     Text("Select the jokers you have already purchased")
                         .foregroundStyle(.gray)
+                        .font(.customBody)
                 }
                 
                 DisclosureGroup("Legendary Jokers") {
                     renderItems(LegendaryJoker.allCases)
                 }.foregroundStyle(.white)
+                    .font(.customBody)
                 
                 DisclosureGroup("Rare Jokers") {
                     renderItems(RareJoker.allCases)
                 }.foregroundStyle(.white)
+                    .font(.customBody)
                 
                 DisclosureGroup("Uncommon Jokers") {
                     renderItems(UnCommonJoker.allCases)
                 }.foregroundStyle(.white)
+                    .font(.customBody)
                 
                 DisclosureGroup("Common Jokers") {
                     renderItems(CommonJoker.allCases)
                 }.foregroundStyle(.white)
+                    .font(.customBody)
             }.listRowBackground(Color(hex: "#2d2d2d"))
             
         }.background(Color(hex: "#1e1e1e"))
-        .scrollContentBackground(.hidden)
+            .scrollContentBackground(.hidden)
         
     }
     
@@ -261,10 +298,13 @@ struct AnalyzerView : View {
     
     private func paste(){
         if let clipboardText = UIPasteboard.general.string {
-            seed = clipboardText
-            configSheet.toggle()
-            analyze()
+            if clipboardText.range(of: "^[a-zA-Z0-9]{7}$", options: .regularExpression) != nil {
+                seed = clipboardText
+                configSheet.toggle()
+                analyze()
+            }
         }
+        
     }
     
     private func analyze() {

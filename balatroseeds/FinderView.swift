@@ -13,11 +13,14 @@ struct FinderView : View {
     @State private var startingAnte : Int = 1
     @State private var version : Version = .v_101f
     @State private var found : [String] = []
-    @State private var selections : [Item] = []
+    @State private var selections : [ItemEdition] = []
     @State private var showSheet = false
+    @State private var cached = false
     @State private var searching = false
-    
+    @State private var isLoading = false
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var jokerFile : JokerFile
+    static var running = false
     
     func incrementStep() {
         value += 10000
@@ -32,162 +35,249 @@ struct FinderView : View {
     }
     
     var body: some View {
-        Form {
-            
-            Text("Seed Finder")
-                .font(.title.weight(.semibold))
-                .foregroundStyle(.white)
-                .listRowBackground(EmptyView())
-            Section {
-                Stepper {
-                    VStack {
-                        Text("Seeds to analyze")
-                            .font(.caption)
-                            .foregroundStyle(.white)
-                        Text("\(value)")
-                            .foregroundStyle(.white)
-                            .bold()
-                    }
-                } onIncrement: {
-                    incrementStep()
-                } onDecrement: {
-                    decrementStep()
+        LoadingView(isShowing: $isLoading) {
+            mainView()
+        }
+    }
+    
+    func changeEdition(){
+        var x : [ItemEdition] = []
+        x.append(contentsOf: selections)
+        //selections.clear()
+        selections.removeAll()
+        selections.append(contentsOf: x)
+    }
+    
+    @ViewBuilder
+    private func controlsView() -> some View {
+ 
+            Stepper {
+                VStack {
+                    Text("Seeds to analyze")
+                        .font(.customCaption)
+                        .foregroundStyle(.white)
+                    Text("\(value)")
+                        .foregroundStyle(.white)
+                        .font(.customBody)
+                        .bold()
+                    
                 }
-                .padding(5)
-                
-                Stepper {
-                    VStack(alignment: .leading) {
+            } onIncrement: {
+                incrementStep()
+            } onDecrement: {
+                decrementStep()
+            }
+            .padding(5)
+            
+            Stepper {
+                VStack(alignment: .leading) {
+                    HStack {
+                        Image(systemName: "rectangle.portrait.and.arrow.right")
+                            .foregroundStyle(.red)
+                        Text("starting ante: **\(startingAnte)**")
+                            .font(.customBody)
+                            .foregroundStyle(.white)
+                    }
+                }
+            } onIncrement: {
+                startingAnte = min(29, startingAnte + 1)
+                if startingAnte > maxAnte { maxAnte += 1 }
+            } onDecrement: {
+                startingAnte -= 1
+                if startingAnte < 1 { startingAnte = 1 }
+            }
+            
+            Stepper {
+                VStack(alignment: .leading) {
+                    HStack {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.yellow)
+                        Text("max ante: **\(maxAnte)**")
+                            .foregroundStyle(.white)
+                            .font(.customBody)
+                    }
+                    Text("The deepest, the slow to analyze.")
+                        .foregroundStyle(.white)
+                        .font(.customCaption)
+                }
+            } onIncrement: {
+                maxAnte += 1
+                if maxAnte > 30 { maxAnte = 30 }
+            } onDecrement: {
+                maxAnte -= 1
+                if maxAnte < startingAnte {
+                    startingAnte = max(maxAnte, 1)
+                }
+                if maxAnte < 1 { maxAnte = 1 }
+            }
+            
+            
+            Picker("Version", selection: $version) {
+                Text("100n").tag(Version.v_100n)
+                Text("101c").tag(Version.v_101c)
+                Text("101f").tag(Version.v_101f)
+            }.foregroundStyle(.white)
+                .font(.customBody)
+                .bold()
+                .tint(.white)
+        
+    }
+    
+    @ViewBuilder
+    private func mainView() -> some View {
+        VStack {
+            AnimatedTitle(text: "Seed Finder")
+            Form {
+                Section {
+                    if !cached {
+                        controlsView()
+                    }
+                    
+                    Toggle(isOn: $cached, label: {
                         HStack {
-                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                            Image(systemName: cached ?  "speedometer": "gauge.with.dots.needle.0percent")
                                 .foregroundStyle(.red)
-                            Text("starting ante: **\(startingAnte)**")
+                            Text("Use legendary seeds cached search")
+                                .font(.customBody)
                                 .foregroundStyle(.white)
+                        }
+                    }).onChange(of: cached){ old, new in
+                        if new {
+                            Task {
+                                self.isLoading = true
+                                
+                                DispatchQueue.global(qos: .utility).async {
+                                    _ = self.jokerFile.read()
+                                    
+                                    DispatchQueue.main.async {
+                                        print("Read data: \(self.jokerFile.jokerData.count)")
+                                        self.isLoading = false
+                                        
+                                    }
+                                }
+                                
+                                
+                            }
                         }
                     }
-                } onIncrement: {
-                    startingAnte = min(29, startingAnte + 1)
-                    if startingAnte > maxAnte { maxAnte += 1 }
-                } onDecrement: {
-                    startingAnte -= 1
-                    if startingAnte < 1 { startingAnte = 1 }
-                }
-                
-                Stepper {
-                    VStack(alignment: .leading) {
-                        HStack {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundStyle(.yellow)
-                            Text("max ante: **\(maxAnte)**")
-                                .foregroundStyle(.white)
-                        }
-                        Text("The deepest, the slow to analyze.")
+                    if cached {
+                        Text("Every seed has a legendary joker, but we are limited to 32, 546 posible seeds")
                             .foregroundStyle(.white)
-                            .font(.caption)
+                            .font(.customCaption)
                     }
-                } onIncrement: {
-                    maxAnte += 1
-                    if maxAnte > 30 { maxAnte = 30 }
-                } onDecrement: {
-                    maxAnte -= 1
-                    if maxAnte < startingAnte {
-                        startingAnte = max(maxAnte, 1)
-                    }
-                    if maxAnte < 1 { maxAnte = 1 }
-                }
+                }.listRowBackground(Color(hex: "#2d2d2d"))
                 
-                
-                Picker("Version", selection: $version) {
-                    Text("100n").tag(Version.v_100n)
-                    Text("101c").tag(Version.v_101c)
-                    Text("101f").tag(Version.v_101f)
-                }.foregroundStyle(.white)
-                    .bold()
-                    .tint(.white)
-            }.listRowBackground(Color(hex: "#2d2d2d"))
-            
-            Section {
-                Button(action: {
-                    showSheet.toggle()
-                }, label: {
-                    if selections.isEmpty {
-                    label("Select Jokers",
-                          systemImage: "circle")
-                    }else {
-                        label("Selections: (\(selections.count))",
-                              systemImage: "checkmark.circle")
-                    }
-                })
-                
-                if !found.isEmpty || !selections.isEmpty {
+                Section {
                     Button(action: {
-                        selections.removeAll()
-                        found.removeAll()
+                        showSheet.toggle()
                     }, label: {
-                        label("Clear selections", systemImage: "xmark")
-                    }).tint(.red)
-                }
-                
-                if !selections.isEmpty {
-                    Button(action: {
-                        searching.toggle()
-                    }, label: {
-                        label("Search", systemImage: "magnifyingglass")
-                    }).tint(.green)
-                }
-            }.listRowBackground(Color(hex: "#2d2d2d"))
-            
-            if !found.isEmpty {
-                DisclosureGroup("Found Seeds (\(found.count))") {
-                    ForEach(found, id: \.self) { seed in
-                        NavigationLink(destination: seedNavigation(seed)) {
-                            Text(seed)
-                                .foregroundStyle(.white)
-                        }.swipeActions {
-                            Button("Save") {
-                                modelContext.insert(SeedModel(timestamp: Date(), seed: seed))
-                            }.tint(.green)
+                        if selections.isEmpty {
+                            label("Select Jokers",
+                                  systemImage: "circle")
+                        }else {
+                            label("Selections: (\(selections.count))",
+                                  systemImage: "checkmark.circle")
                         }
-                    }.listRowBackground(Color(hex: "#2d2d2d"))
-                }.foregroundStyle(.white)
-                    .listRowBackground(Color(hex: "#2d2d2d"))
-            }
-
-        }.clipped()
-        .background(Color(hex: "#1e1e1e"))
-            .scrollContentBackground(.hidden)
-            .navigationBarTitleDisplayMode(.inline)
-            .sheet(isPresented: $showSheet){
-                selectorView()
-            }.sheet(isPresented: $searching){
-                searchView()
-                    .presentationDetents([.medium])
-                    .onAppear {
-                        doSearch()
-                    }.onDisappear {
-                        FinderView.running = false
+                    })
+                    
+                    if !selections.isEmpty {
+                        ScrollView(.horizontal) {
+                            HStack {
+                                ForEach(selections, id: \.self.rawValue) { joker in
+                                    joker.sprite()
+                                        .onTapGesture {
+                                            if cached {
+                                                joker.nextEdition()
+                                                changeEdition()
+                                            }
+                                        }
+                                }
+                            }
+                        }
                     }
-            }
+                    
+                    if !found.isEmpty || !selections.isEmpty {
+                        Button(action: {
+                            selections.removeAll()
+                            found.removeAll()
+                        }, label: {
+                            label("Clear selections", systemImage: "xmark")
+                        }).tint(.red)
+                    }
+                    
+                    if !selections.isEmpty {
+                        Button(action: {
+                            searching.toggle()
+                        }, label: {
+                            label("Search", systemImage: "magnifyingglass")
+                        }).tint(.green)
+                    }
+                }.listRowBackground(Color(hex: "#2d2d2d"))
+                
+                if !found.isEmpty {
+                    DisclosureGroup("Found Seeds (\(found.count))") {
+                        ForEach(found, id: \.self) { seed in
+                            NavigationLink(destination: seedNavigation(seed)) {
+                                Text(seed)
+                                    .foregroundStyle(.white)
+                            }.swipeActions {
+                                Button("Save") {
+                                    modelContext.insert(SeedModel(timestamp: Date(), seed: seed))
+                                }.tint(.green)
+                            }
+                        }.listRowBackground(Color(hex: "#2d2d2d"))
+                    }.foregroundStyle(.white)
+                        .listRowBackground(Color(hex: "#2d2d2d"))
+                }
+                
+            }.clipped()
+                .background(Color(hex: "#1e1e1e"))
+                .scrollContentBackground(.hidden)
+                .navigationBarTitleDisplayMode(.inline)
+                .sheet(isPresented: $showSheet){
+                    JokerSelectorView(selections: $selections)
+                }.sheet(isPresented: $searching){
+                    searchView()
+                        .presentationDetents([.medium])
+                        .onAppear {
+                            doSearch()
+                        }.onDisappear {
+                            FinderView.running = false
+                        }
+                }
+        }.background(Color(hex: "#1e1e1e"))
     }
     
     @ViewBuilder
     private func label(_ text : String, systemImage image : String) -> some View {
         HStack {
             Image(systemName: image)
+                .foregroundStyle(.red)
             Text(text)
+                .font(.customBody)
                 .foregroundStyle(.white)
         }
     }
     
     
-    
-    
-    static var running = false
+    private func cacheBasedSearch() {
+        print("Using cached search!")
+        found.removeAll()
+        found.append(contentsOf: jokerFile.search(selections))
+        print("seeds found: \(found.count)")
+        searching = false
+    }
     
     private func doSearch(){
         if FinderView.running {
             return
         }
-    
+        
+        if !jokerFile.isEmpty {
+            cacheBasedSearch()
+            return
+        }
+        
         processed = 0
         seedsFound = 0
         found.removeAll()
@@ -207,7 +297,11 @@ struct FinderView : View {
                     }
                     break
                 }
-                                
+                
+                if foundSeeds.count > 100 {
+                    break
+                }
+                
                 let balatro = Balatro()
                 balatro.maxDepth = maxAnte
                 balatro.startingAnte = startingAnte
@@ -250,19 +344,23 @@ struct FinderView : View {
             
             if seedsFound == 0 {
                 Text("Searching...")
-                    .font(.title2)
+                    .font(.customTitle)
             } else {
                 Text("\(seedsFound) seed found")
-                    .font(.title2)
+                    .font(.customTitle)
             }
             
-            ProgressView(value: Double(processed) / Double(value))
-                .padding(.horizontal)
-            Text("\(processed) / \(value)")
+            if !cached {
+                ProgressView(value: Double(processed) / Double(value))
+                    .padding(.horizontal)
+                Text("\(processed) / \(value)")
+                    .font(.customBody)
+            }
             Spacer()
                 .frame(height: 70)
             Divider()
                 .padding()
+                
             Button(action: {
                 FinderView.running = false
                 searching.toggle()
@@ -271,120 +369,9 @@ struct FinderView : View {
             }).tint(.red)
         }
     }
-    
-    let columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
-    
-    @ViewBuilder
-    private func selectableJoker(_ joker : Item) -> some View {
-        let selected = selections.first(where: { $0.rawValue == joker.rawValue }) != nil
-        
-        SelectableJokerView(selected: selected, joker: joker, onSelect: { j in
-            if(j){
-                if !selections.contains(where: { $0.rawValue == joker.rawValue}){
-                    selections.append(joker)
-                }
-            } else {
-                selections.removeAll(where: {
-                    $0.rawValue == joker.rawValue
-                })
-            }
-        })
-    }
-    
-    @ViewBuilder
-    private func legendarySelectableJoker(_ joker : LegendaryJoker) -> some View {
-        let selected = selections.first(where: { $0.rawValue == joker.rawValue }) != nil
-        
-        LegendarySelectableJokerView(selected: selected, joker: joker, onSelect: { j in
-            if(j){
-                if !selections.contains(where: { $0.rawValue == joker.rawValue}){
-                    selections.append(joker)
-                }
-            } else {
-                selections.removeAll(where: {
-                    $0.rawValue == joker.rawValue
-                })
-            }
-        })
-    }
-    
-    @ViewBuilder
-    private func selectorView() -> some View {
-        VStack {
-            Text(selections.isEmpty ? "Joker Selection" : "Jokers Selected: \(selections.count)")
-                .font(.title2)
-                .padding()
-                .foregroundStyle(.white)
-            Text("Be aware that complex combinations may not work")
-                .font(.caption)
-                .foregroundStyle(.white)
-            Divider()
-                .padding(.horizontal)
-            ScrollView {
-                LazyVGrid(columns: columns) {
-                    ForEach(LegendaryJoker.allCases, id: \.rawValue) { joker in
-                        legendarySelectableJoker(joker)
-                    }
-                    ForEach(RareJoker.allCases, id: \.rawValue) { joker in
-                        selectableJoker(joker)
-                    }
-                    ForEach(UnCommonJoker.allCases, id: \.rawValue) { joker in
-                        selectableJoker(joker)
-                    }
-                    ForEach(CommonJoker.allCases, id: \.rawValue) { joker in
-                        selectableJoker(joker)
-                    }
-                }.padding()
-            }
-        }.background(Color(hex: "#4d4d4d"))
-    }
 }
 
-struct LegendarySelectableJokerView : View {
-    
-    @State var selected = false
-    let joker : LegendaryJoker
-    let onSelect : (Bool) -> Void
-    
-    init(selected: Bool = false, joker: LegendaryJoker, onSelect: @escaping (Bool) -> Void) {
-        self._selected = State(initialValue: selected)
-        self.joker = joker
-        self.onSelect = onSelect
-    }
-    
-    var body: some View {
-        VStack {
-            joker.sprite(color: selected ? .blue : .gray)
-                .opacity(Double(selected ? 1 : 0.3))
-        }.onTapGesture {
-            selected.toggle()
-            onSelect(selected)
-        }
-    }
-}
 
-struct SelectableJokerView : View {
-    
-    @State var selected = false
-    let joker : Item
-    let onSelect : (Bool) -> Void
-    
-    init(selected: Bool = false, joker: Item, onSelect: @escaping (Bool) -> Void) {
-        self._selected = State(initialValue: selected)
-        self.joker = joker
-        self.onSelect = onSelect
-    }
-    
-    var body: some View {
-        VStack {
-            joker.sprite(color: selected ? .blue : .gray)
-                .opacity(Double(selected ? 1 : 0.3))
-        }.onTapGesture {
-            selected.toggle()
-            onSelect(selected)
-        }
-    }
-}
 
 #Preview {
     TabView {

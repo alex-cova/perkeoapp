@@ -185,7 +185,7 @@ struct SpriteImageView: View {
                 }
             }
             Text("**\(item.rawValue)** \(editionText())")
-                .font(.caption)
+                .font(.customCaption)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 71, minHeight: 35)
         }.foregroundStyle(foregroundColor)

@@ -31,7 +31,7 @@ struct LoadingView<Content>: View where Content: View {
                             
                             Text("Processing...")
                                 .foregroundColor(.white)
-                                .font(.headline)
+                                .font(.customHeadline)
                         }
                         .padding(30)
                     }

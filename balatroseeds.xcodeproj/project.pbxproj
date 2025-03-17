@@ -30,6 +30,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		FA0DF2C52D867F2D0074EBA6 /* Exceptions for "balatroseeds" folder in "balatroseeds" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = FAD030AF2D287FDC00F83E2B /* balatroseeds */;
+		};
 		FA287EAE2D459E9500F96796 /* Exceptions for "balatroseedsUITests" folder in "balatroseeds" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -57,6 +64,9 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		FAD030B22D287FDC00F83E2B /* balatroseeds */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				FA0DF2C52D867F2D0074EBA6 /* Exceptions for "balatroseeds" folder in "balatroseeds" target */,
+			);
 			path = balatroseeds;
 			sourceTree = "<group>";
 		};
@@ -429,6 +439,7 @@
 				DEVELOPMENT_TEAM = 3X4AKCRX5F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = balatroseeds/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Perkeo;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -464,6 +475,7 @@
 				DEVELOPMENT_TEAM = 3X4AKCRX5F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = balatroseeds/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Perkeo;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

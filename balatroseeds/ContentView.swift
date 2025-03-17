@@ -27,15 +27,7 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     
     init(){
-        UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.white]
-        UINavigationBar.appearance().backgroundColor = UIColor(red: 30/255.0, green: 30/255.0, blue: 30/255.0, alpha: 1.0)
-        UINavigationBar.appearance().barTintColor = UIColor(red: 30/255.0, green: 30/255.0, blue: 30/255.0, alpha: 1.0)
-        UIStepper.appearance().setDecrementImage(UIImage(systemName: "minus"), for: .normal)
-        UIStepper.appearance().setIncrementImage(UIImage(systemName: "plus"), for: .normal)
-        UITabBar.appearance().unselectedItemTintColor = UIColor.white
-        UITableView.appearance().separatorColor = UIColor.systemRed
-        
+        LookAndFeel.configure()
     }
     
     var body: some View {
@@ -46,11 +38,19 @@ struct ContentView: View {
             Tab("Finder", systemImage: "mail.and.text.magnifyingglass") {
                 FinderView()
             }
+            Tab("Community", systemImage: "person.3.fill"){
+                CommunityView()
+            }
             Tab("Saved", systemImage: "externaldrive") {
                 SavedSeedsView()
             }.badge(seeds.count)
         }.tint(.red)
+            .font(.customBody)
         
     }
 }
 
+#Preview {
+    ContentView()
+        .modelContainer(for: SeedModel.self, inMemory: true)
+}

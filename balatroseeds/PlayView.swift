@@ -26,27 +26,30 @@ struct PlayView : View {
     @ViewBuilder
     func anteView(ante: Ante) -> some View {
         VStack(alignment: .leading) {
-            if(ante.ante > 1){
-                Capsule()
-                    .frame(height: 2)
-                    .foregroundStyle(.white)
-                    .padding()
-            }
             Text("Ante \(ante.ante)")
-                .underline()
                 .bold()
-                .font(.title)
+                .font(.customTitle)
                 .foregroundStyle(.white)
+            separator()
             options(ante: ante)
             Text("Shop queue")
-                .underline()
+                .font(.customBody)
                 .foregroundStyle(.white)
                 .padding(.top)
+            separator()
             ScrollView(.horizontal) {
                 shopView(ante: ante)
             }
             packsView(ante: ante)
         }.padding(.horizontal)
+    }
+    
+    @ViewBuilder
+    func separator() -> some View {
+        Rectangle()
+            .foregroundStyle(Color(hex: "#2d2d2d"))
+            .frame(height: 1)
+            .padding(.bottom)
     }
     
     @ViewBuilder
@@ -62,8 +65,9 @@ struct PlayView : View {
                             HStack {
                                 Image(systemName: "checklist")
                                     .foregroundStyle(.white)
-                                Text("Resume")
-                                    .font(.caption)
+                                Text("Summary")
+                                    .bold()
+                                    .font(.customCaption)
                             }
                         }.buttonStyle(.borderedProminent)
                         Button(action: {
@@ -73,12 +77,13 @@ struct PlayView : View {
                                 Image(systemName: "document.on.document")
                                     .foregroundStyle(.white)
                                 Text("Copy")
-                                    .font(.caption)
+                                    .bold()
+                                    .font(.customCaption)
                             }
                         }).buttonStyle(.borderedProminent)
                             .tint(.green)
                         Spacer()
-                    }
+                    }.padding(.bottom)
                 }
                 HStack {
                     ante.boss.sprite()
@@ -104,11 +109,12 @@ struct PlayView : View {
         ForEach(ante.packs) { pack in
             VStack {
                 Text("\(pack.type.rawValue)")
+                    .font(.customBody)
                     .foregroundStyle(.white)
-                    .underline()
                 Text(choiceText(pack.choices))
-                    .font(.caption)
-                    .foregroundStyle(.gray)
+                    .font(.customCaption)
+                    .foregroundStyle(.white)
+                separator()
                 ScrollView(.horizontal) {
                     HStack {
                         ForEach(pack.options) { option in

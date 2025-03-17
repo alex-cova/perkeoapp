@@ -6,6 +6,19 @@
 //
 import SwiftUI
 
+extension Font {
+    static func customFont(size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        return Font.custom("m6x11plus", size: size, relativeTo: .body)
+            .weight(weight)
+    }
+    
+    // Convenience methods for different font styles
+    static let customHeadline = customFont(size: 20, weight: .bold)
+    static let customTitle = customFont(size: 24, weight: .bold)
+    static let customBody = customFont(size: 18)
+    static let customCaption = customFont(size: 12)
+}
+
 extension Color {
     // Create a custom initializer for Color using a hex value
     init(hex: String) {
@@ -80,7 +93,7 @@ extension Item {
         if(self.rawValue == Specials.THE_SOUL.rawValue){
             return SpriteImageView(self, Images.tarots, 2, 2, 71, 95, edition: edition, color)
         }
-
+        
         print("Missing: \(self.rawValue)")
         
         return SpriteImageView(self,Images.vouchers, 7, 3, 34, 45)

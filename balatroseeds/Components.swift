@@ -85,3 +85,33 @@ struct TribouleteView : View {
             )
     }
 }
+
+struct AnimatedTitle : View {
+    
+    private let text : String
+    @State private var isAnimating = false
+    private var animationDuration: Double = 1.5
+    private var bounceHeight: CGFloat = 20.0
+    
+    public init(text: String){
+        self.text = text
+    }
+    
+    
+    var body: some View {
+        Text(text)
+            .font(.customTitle)
+            .foregroundStyle(.white)
+            .scaleEffect(.random(in:  1.2...1.4 ))
+            .rotationEffect( isAnimating ? .degrees(2) : .degrees(-2))
+                .onAppear {
+                    // Start the animation when the view appears
+                    isAnimating = true
+                }
+            .animation(
+                Animation.easeInOut(duration: animationDuration)
+                    .repeatForever(autoreverses: true),
+                value: isAnimating
+            )
+    }
+}

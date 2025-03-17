@@ -29,15 +29,17 @@ struct SavedSeedsView : View {
                 Spacer()
                 PerkeoView()
                 Text("There are no saved seeds yet.")
+                    .font(.customBody)
                     .foregroundStyle(.white)
                     .padding(.bottom)
                 Button("Paste Seed") {
                     pasteSeed()
                 }.buttonStyle(.borderedProminent)
+                    .font(.customBody)
                 Spacer()
             }.frame(maxWidth: .infinity)
-            .background(Color(hex: "#1e1e1e"))
-            .navigationTitle("Saved Seeds")
+                .background(Color(hex: "#1e1e1e"))
+                .navigationTitle("Saved Seeds")
                 .navigationBarTitleDisplayMode(.inline)
         }else {
             List {
@@ -50,27 +52,29 @@ struct SavedSeedsView : View {
                 }.onDelete(perform: deleteItems)
             }.background(Color(hex: "#1e1e1e"))
                 .scrollContentBackground(.hidden)
-            .navigationTitle("Saved Seeds")
-            .navigationBarTitleDisplayMode(.inline)
+                .navigationTitle("Saved Seeds")
+                .navigationBarTitleDisplayMode(.inline)
         }
     }
     
     private func pasteSeed(){
         if let clipboardText = UIPasteboard.general.string {
-            withAnimation {
-                modelContext.insert(SeedModel(timestamp: Date(), seed: clipboardText))
+            if clipboardText.range(of: "^[a-zA-Z0-9]{7}$", options: .regularExpression) == nil {
+                withAnimation {
+                    modelContext.insert(SeedModel(timestamp: Date(), seed: clipboardText))
+                }
             }
         }
     }
     
     @ViewBuilder
     private func seedRow(_ item : SeedModel) -> some View {
-        VStack {
+        VStack(alignment: .leading) {
             Text(item.seed)
-                .font(.title2)
+                .font(.customTitle)
                 .foregroundStyle(.white)
             Text("\(dateFormatter.string(from: item.timestamp))")
-                .font(.caption)
+                .font(.customCaption)
                 .foregroundStyle(.white)
         }
     }
