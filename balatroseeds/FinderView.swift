@@ -12,7 +12,7 @@ struct FinderView : View {
     @State private var maxAnte : Int = 1
     @State private var startingAnte : Int = 1
     @State private var version : Version = .v_101f
-    @State private var found : [String] = []
+    @State private var found : [String:Int] = [:]
     @State private var selections : [ItemEdition] = []
     @State private var showSheet = false
     @State private var cached = false
@@ -24,7 +24,6 @@ struct FinderView : View {
     
     func incrementStep() {
         value += 10000
-        
     }
     
     func decrementStep() {
@@ -215,19 +214,7 @@ struct FinderView : View {
                 }.listRowBackground(Color(hex: "#2d2d2d"))
                 
                 if !found.isEmpty {
-                    DisclosureGroup("Found Seeds (\(found.count))") {
-                        ForEach(found, id: \.self) { seed in
-                            NavigationLink(destination: seedNavigation(seed)) {
-                                Text(seed)
-                                    .foregroundStyle(.white)
-                            }.swipeActions {
-                                Button("Save") {
-                                    modelContext.insert(SeedModel(timestamp: Date(), seed: seed))
-                                }.tint(.green)
-                            }
-                        }.listRowBackground(Color(hex: "#2d2d2d"))
-                    }.foregroundStyle(.white)
-                        .listRowBackground(Color(hex: "#2d2d2d"))
+                    renderSeeds()
                 }
                 
             }.clipped()
@@ -249,6 +236,35 @@ struct FinderView : View {
     }
     
     @ViewBuilder
+    private func renderSeeds() -> some View{
+        DisclosureGroup("Found Seeds (\(found.count))") {
+            ForEach(found.keys.shuffled(), id: \.self) { seed in
+                NavigationLink(destination: seedNavigation(seed)) {
+                    if cached {
+                        VStack(alignment: .leading) {
+                            Text(seed)
+                                .font(.customBody)
+                                .foregroundStyle(.white)
+                            Text("score: \(found[seed]!)")
+                                .font(.customCaption)
+                                .foregroundStyle(.white)
+                        }
+                    }else {
+                        Text(seed)
+                            .foregroundStyle(.white)
+                    }
+                    
+                }.swipeActions {
+                    Button("Save") {
+                        modelContext.insert(SeedModel(timestamp: Date(), seed: seed))
+                    }.tint(.green)
+                }
+            }.listRowBackground(Color(hex: "#2d2d2d"))
+        }.foregroundStyle(.white)
+            .listRowBackground(Color(hex: "#2d2d2d"))
+    }
+    
+    @ViewBuilder
     private func label(_ text : String, systemImage image : String) -> some View {
         HStack {
             Image(systemName: image)
@@ -263,7 +279,14 @@ struct FinderView : View {
     private func cacheBasedSearch() {
         print("Using cached search!")
         found.removeAll()
-        found.append(contentsOf: jokerFile.search(selections))
+        //found.append(contentsOf: jokerFile.search(selections))
+        
+        let f = jokerFile.search(selections)
+        
+        for i in f {
+            found[i.key] = i.value
+        }
+        
         print("seeds found: \(found.count)")
         searching = false
     }
@@ -293,7 +316,10 @@ struct FinderView : View {
                 if !FinderView.running {
                     DispatchQueue.main.async {
                         found.removeAll()
-                        found.append(contentsOf: foundSeeds)
+                        
+                        for i in foundSeeds {
+                            found[i] = 0
+                        }
                     }
                     break
                 }
@@ -328,7 +354,11 @@ struct FinderView : View {
             
             DispatchQueue.main.async {
                 searching = false
-                found.append(contentsOf: foundSeeds)
+                found.removeAll()
+                
+                for i in foundSeeds {
+                    found[i] = 0
+                }
             }
             
         }

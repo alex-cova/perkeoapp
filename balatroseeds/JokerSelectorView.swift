@@ -20,14 +20,16 @@ struct JokerSelectorView : View {
                     .font(.customTitle)
                     .padding()
                     .foregroundStyle(.white)
+                
                 Text("\(selections.count) of 10")
                     .font(.customCaption)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(selections.count == 10 ? .red : .white)
             }
             
             HStack {
                 TextField("Search", text: $search)
                     .font(.customBody)
+                    .keyboardType(.asciiCapable)
                     .autocorrectionDisabled()
                     .textFieldStyle(.roundedBorder)
                 
@@ -43,20 +45,29 @@ struct JokerSelectorView : View {
             Divider()
                 .padding(.horizontal)
             ScrollView {
-                LazyVGrid(columns: columns) {
-                    if showSelected {
-                        render(selections)
-                    }else {
-                        ForEach(filter(LegendaryJoker.allCases), id: \.rawValue) { joker in
-                            legendarySelectableJoker(joker as! LegendaryJoker)
-                                .transition(.push(from: .bottom))
+                if showSelected && selections.isEmpty  {
+                    Text("Nothing selected")
+                        .font(.customBody)
+                        .foregroundStyle(.white)
+                    
+                }else {
+                    LazyVGrid(columns: columns) {
+                        if showSelected {
+                            render(selections)
+                        }else {
+                            ForEach(filter(LegendaryJoker.allCases), id: \.rawValue) { joker in
+                                legendarySelectableJoker(joker as! LegendaryJoker)
+                                    .transition(.push(from: .bottom))
+                            }
+                            render(RareJoker.allCases)
+                            render(UnCommonJoker.allCases)
+                            render(CommonJoker.allCases)
+                            render(Spectral.allCases.filter {
+                                !$0.rawValue.starts(with: "RETRY")
+                            })
                         }
-                        render(RareJoker.allCases)
-                        render(UnCommonJoker.allCases)
-                        render(CommonJoker.allCases)
-                        render(Spectral.allCases)
-                    }
-                }.padding()
+                    }.padding()
+                }
             }
         }.background(Color(hex: "#4d4d4d"))
     }
@@ -66,77 +77,51 @@ struct JokerSelectorView : View {
             return items
         }
         
+        let prefx = search.lowercased()
+        
         return items.filter {
-            $0.rawValue.hasPrefix(search)
+            $0.rawValue.lowercased().hasPrefix(prefx) || $0.rawValue.lowercased().hasSuffix(prefx)
         }
     }
     
     @ViewBuilder
     private func render(_ items : [Item]) -> some View{
         ForEach(filter(items), id: \.rawValue) { joker in
-            selectableJoker(joker)
-                .transition(.push(from: .bottom))
+            if let i = joker as? ItemEdition, let x = i.item as? LegendaryJoker {
+                legendarySelectableJoker(x)
+                    .transition(.push(from: .bottom))
+            }else {
+                selectableJoker(joker)
+                    .transition(.push(from: .bottom))
+            }
         }
     }
     
     @ViewBuilder
     private func selectableJoker(_ joker : Item) -> some View {
-        let selected = selections.first(where: { $0.rawValue == joker.rawValue }) != nil
-        
-        SelectableJokerView(selected: selected, joker: joker, onSelect: { j in
-            if selections.count == 10 {
-                return
-            }
-            
-            if(j){
-                if !selections.contains(where: { $0.rawValue == joker.rawValue}){
-                    selections.append(ItemEdition(item: joker))
-                }
-            } else {
-                selections.removeAll(where: {
-                    $0.rawValue == joker.rawValue
-                })
-            }
-        })
+        SelectableJokerView(selections: $selections, joker: joker)
     }
     
     @ViewBuilder
     private func legendarySelectableJoker(_ joker : LegendaryJoker) -> some View {
-        let selected = selections.first(where: { $0.rawValue == joker.rawValue }) != nil
-        
-        LegendarySelectableJokerView(selected: selected, joker: joker, onSelect: { j in
-            if selections.count == 10 {
-                return
-            }
-            
-            if(j){
-                if !selections.contains(where: { $0.rawValue == joker.rawValue}){
-                    selections.append(ItemEdition(item: joker))
-                }
-            } else {
-                selections.removeAll(where: {
-                    $0.rawValue == joker.rawValue
-                })
-            }
-        })
+        LegendarySelectableJokerView(selections: $selections, joker: joker)
     }
 }
 
 struct LegendarySelectableJokerView : View {
     
-    @State var selected = false
+    @Binding var selections : [ItemEdition]
     let joker : LegendaryJoker
-    let onSelect : (Bool) -> Void
     
-    init(selected: Bool = false, joker: LegendaryJoker, onSelect: @escaping (Bool) -> Void) {
-        self._selected = State(initialValue: selected)
-        self.joker = joker
-        self.onSelect = onSelect
+    var selected : Bool {
+        get {
+            selections.first(where: { $0.item.rawValue == joker.rawValue }) != nil
+        }
     }
     
     var body: some View {
         ZStack {
-            joker.sprite(color: selected ? .white : .gray)
+            joker.sprite(color: selected ? .gray : .white)
                 .opacity(selected ? 0.3 : 1.0)
             if selected {
                 Image(systemName: "checkmark.circle.fill")
@@ -144,27 +129,31 @@ struct LegendarySelectableJokerView : View {
                     .foregroundStyle(.white)
             }
         }.onTapGesture {
-            selected.toggle()
-            onSelect(selected)
+            if selections.contains(where: { $0.rawValue == joker.rawValue}) {
+                selections.removeAll(where: {
+                    $0.rawValue == joker.rawValue
+                })
+            }else if selections.count < 10 {
+                selections.append(ItemEdition(item: joker))
+            }
         }
     }
 }
 
 struct SelectableJokerView : View {
     
-    @State var selected = false
+    @Binding var selections : [ItemEdition]
     let joker : Item
-    let onSelect : (Bool) -> Void
     
-    init(selected: Bool = false, joker: Item, onSelect: @escaping (Bool) -> Void) {
-        self._selected = State(initialValue: selected)
-        self.joker = joker
-        self.onSelect = onSelect
+    var selected : Bool {
+        get {
+            selections.first(where: { $0.item.rawValue == joker.rawValue }) != nil
+        }
     }
     
     var body: some View {
         ZStack {
-            joker.sprite(color: selected ? .white : .gray)
+            joker.sprite(color: selected ? .gray : .white)
                 .opacity(selected ? 0.3 : 1.0)
             if selected {
                 Image(systemName: "checkmark.circle.fill")
@@ -173,8 +162,13 @@ struct SelectableJokerView : View {
                 
             }
         }.onTapGesture {
-            selected.toggle()
-            onSelect(selected)
+            if selections.contains(where: { $0.rawValue == joker.rawValue}) {
+                selections.removeAll(where: {
+                    $0.rawValue == joker.rawValue
+                })
+            }else if selections.count < 10 {
+                selections.append(ItemEdition(item: joker))
+            }
         }
     }
 }

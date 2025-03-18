@@ -36,6 +36,7 @@ struct ResumeView: View {
                 LazyVGrid(columns: columns) {
                     ForEach(run.jokers()) { joker in
                         joker.joker.sprite(edition: joker.edition)
+                            .badge(Text("joker.count"))
                     }
 
                     ForEach(run.spectrals(), id: \.rawValue) { spectral in

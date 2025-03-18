@@ -37,6 +37,15 @@ extension Color {
     }
 }
 
+extension String {
+    func isValidSeed() -> Bool{
+        return self.range(of: "^[a-zA-Z0-9]{1,8}$", options: .regularExpression) != nil
+    }
+    
+    func normalizeSeed() -> String {
+        self.uppercased().replacingOccurrences(of: "0", with: "O")
+    }
+}
 
 extension Item {
     

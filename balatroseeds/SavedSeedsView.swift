@@ -59,9 +59,10 @@ struct SavedSeedsView : View {
     
     private func pasteSeed(){
         if let clipboardText = UIPasteboard.general.string {
-            if clipboardText.range(of: "^[a-zA-Z0-9]{7}$", options: .regularExpression) == nil {
+            if clipboardText.isValidSeed() {
                 withAnimation {
-                    modelContext.insert(SeedModel(timestamp: Date(), seed: clipboardText))
+                    modelContext.insert(SeedModel(timestamp: Date(), seed: clipboardText
+                        .normalizeSeed()))
                 }
             }
         }

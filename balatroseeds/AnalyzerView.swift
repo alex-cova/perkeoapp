@@ -37,6 +37,7 @@ struct AnalyzerView : View {
                     .padding(5)
                     .background(.gray)
                     .cornerRadius(8)
+                    .keyboardType(.asciiCapable)
                     .onChange(of: seed) { oldValue, newValue in
                         // Apply character limit (max 7)
                         if newValue.count > 7 {
@@ -50,7 +51,9 @@ struct AnalyzerView : View {
                         
                         // Only update if the text actually needs to change
                         if filtered != newValue {
-                            seed = filtered
+                            seed = filtered.normalizeSeed()
+                        }else {
+                            seed = seed.normalizeSeed()
                         }
                     }
                     .onSubmit {
@@ -298,18 +301,15 @@ struct AnalyzerView : View {
     
     private func paste(){
         if let clipboardText = UIPasteboard.general.string {
-            if clipboardText.range(of: "^[a-zA-Z0-9]{7}$", options: .regularExpression) != nil {
-                seed = clipboardText
-                configSheet.toggle()
+            if clipboardText.isValidSeed(){
+                seed = clipboardText.normalizeSeed()
                 analyze()
             }
         }
-        
+        configSheet.toggle()
     }
     
     private func analyze() {
-        if(seed.isEmpty){ return }
-        
         isLoading = true
         
         DispatchQueue.global(qos: .utility).async {

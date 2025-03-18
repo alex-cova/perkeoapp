@@ -18,6 +18,10 @@ class ItemEdition : Item, Encodable, ObservableObject {
         self.item = item
         self.ante = 0
         self.edition = .NoEdition
+        
+        if item is ItemEdition {
+            fatalError("Revursive ItemEdition not yet supported")
+        }
     }
     
     func nextEdition() {
@@ -126,8 +130,8 @@ class JokerFile : ObservableObject {
         }
     }
     
-    func search(_ items: [ItemEdition]) -> [String] {
-        var result = [String]()
+    func search(_ items: [ItemEdition]) -> [String:Int] {
+        var result = [String:Int]()
         
         for joker in jokerData {
             if result.count > 100 {
@@ -144,7 +148,7 @@ class JokerFile : ObservableObject {
             }
             
             if add {
-                result.append(joker.seed)
+                result[joker.seed] = joker.score
             }
         }
         

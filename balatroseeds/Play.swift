@@ -68,7 +68,7 @@ class Run : Encodable{
             }
         }
         
-        return jokerList.values.sorted {$0.count > $1.count || $0.joker is LegendaryJoker }
+        return jokerList.values.sorted { $0.joker.y > $1.joker.y }
     }
     
     func tags() -> [Tag] {
@@ -164,20 +164,14 @@ class Ante : Encodable, Identifiable {
         }
         
         for i in shopQueue {
-            if(i.item is CommonJoker || i.item is CommonJoker100){
-                continue
-            }
-            
-            if(i.item is UnCommonJoker || i.item is UnCommonJoker100 || i.item is UnCommonJoker101C){
-                continue
-            }
-            
             if(i.item is Joker){
                 jokerList.append(i.asEditionItem())
             }
         }
         
-        return jokerList
+        return jokerList.sorted(by: {
+            $0.y < $1.y
+        })
     }
     
     func addToQueue(value : ShopItem, sticker : Edition?){
