@@ -23,9 +23,8 @@ class Images {
 
 struct ContentView: View {
     
-    @Query private var seeds: [SeedModel]
-    @Environment(\.modelContext) private var modelContext
-    
+    @Query private var seeds: [SeedModel]    
+
     init(){
         LookAndFeel.configure()
     }

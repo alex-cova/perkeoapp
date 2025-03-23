@@ -11,6 +11,7 @@ import SwiftData
 struct SavedSeedsView : View {
     @Query private var seeds: [SeedModel]
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject var model : AnalyzerViewModel
     
     let dateFormatter = DateFormatter()
     
@@ -24,37 +25,44 @@ struct SavedSeedsView : View {
     }
     
     var body: some View {
-        if (seeds.isEmpty){
-            VStack {
-                Spacer()
-                PerkeoView()
-                Text("There are no saved seeds yet.")
-                    .font(.customBody)
-                    .foregroundStyle(.white)
-                    .padding(.bottom)
-                Button("Paste Seed") {
-                    pasteSeed()
-                }.buttonStyle(.borderedProminent)
-                    .font(.customBody)
-                Spacer()
-            }.frame(maxWidth: .infinity)
-                .background(Color(hex: "#1e1e1e"))
-                .navigationTitle("Saved Seeds")
-                .navigationBarTitleDisplayMode(.inline)
-        }else {
-            List {
-                ForEach(seeds) { item in
-                    NavigationLink(destination: seedNavigation(item.seed)
-                        .navigationTitle(item.seed)) {
-                            seedRow(item)
-                        }.listRowBackground(Color(hex: "#4d4d4d"))
-                    
-                }.onDelete(perform: deleteItems)
-            }.background(Color(hex: "#1e1e1e"))
-                .scrollContentBackground(.hidden)
-                .navigationTitle("Saved Seeds")
-                .navigationBarTitleDisplayMode(.inline)
-        }
+        VStack {
+            AnimatedTitle(text: "Saved Seeds")
+            if (seeds.isEmpty){
+                VStack {
+                    Spacer()
+                    PerkeoView()
+                    Text("There are no saved seeds yet.")
+                        .font(.customBody)
+                        .foregroundStyle(.white)
+                        .padding(.bottom)
+                    Button("Paste Seed") {
+                        pasteSeed()
+                    }.buttonStyle(.borderedProminent)
+                        .font(.customBody)
+                    Spacer()
+                }.frame(maxWidth: .infinity)
+                    .background(Color(hex: "#1e1e1e"))
+                    .navigationTitle("Saved Seeds")
+                    .navigationBarTitleDisplayMode(.inline)
+            }else {
+                List {
+                    ForEach(seeds) { item in
+                        NavigationLink(destination: seedNavigation(item.seed)
+                            .environmentObject(model)
+                            .onAppear {
+                                model.changeSeed(item.seed)
+                            }
+                            .navigationTitle(item.seed)) {
+                                seedRow(item)
+                            }.listRowBackground(Color(hex: "#4d4d4d"))
+                        
+                    }.onDelete(perform: deleteItems)
+                }.background(Color(hex: "#1e1e1e"))
+                    .scrollContentBackground(.hidden)
+                    .navigationTitle("Saved Seeds")
+                    .navigationBarTitleDisplayMode(.inline)
+            }
+        }.background(Color(hex: "#1e1e1e"))
     }
     
     private func pasteSeed(){

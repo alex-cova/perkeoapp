@@ -21,6 +21,8 @@ struct FinderView : View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var jokerFile : JokerFile
     static var running = false
+    static var finished = 0
+    @EnvironmentObject var model : AnalyzerViewModel
     
     func incrementStep() {
         value += 10000
@@ -239,7 +241,12 @@ struct FinderView : View {
     private func renderSeeds() -> some View{
         DisclosureGroup("Found Seeds (\(found.count))") {
             ForEach(found.keys.shuffled(), id: \.self) { seed in
-                NavigationLink(destination: seedNavigation(seed)) {
+                NavigationLink(destination: seedNavigation(seed)
+                    .onAppear {
+                        model.changeSeed(seed)
+                    }
+                    .navigationTitle(seed)
+                    .environmentObject(model)) {
                     if cached {
                         VStack(alignment: .leading) {
                             Text(seed)
@@ -305,18 +312,24 @@ struct FinderView : View {
         seedsFound = 0
         found.removeAll()
         
-        DispatchQueue.global(qos: .utility).async {
+        let jobs = 3
+        let split = value / jobs
+        
+        let concurrentQueue = DispatchQueue(label: "com.perkeo.concurrentqueue", attributes: .concurrent)
+        
+        print("Split: \(split) max ante: \(maxAnte)")
+        
+        func job() {
             FinderView.running = true
             
             var foundSeeds : Set<String> = []
+            var last = 0
             
-            for i in 0..<value{
+            for i in 0..<split{
                 let seed = Balatro.generateRandomString()
                 
                 if !FinderView.running {
                     DispatchQueue.main.async {
-                        found.removeAll()
-                        
                         for i in foundSeeds {
                             found[i] = 0
                         }
@@ -324,7 +337,8 @@ struct FinderView : View {
                     break
                 }
                 
-                if foundSeeds.count > 100 {
+                if foundSeeds.count > 25 {
+                    FinderView.finished += 1
                     break
                 }
                 
@@ -344,23 +358,31 @@ struct FinderView : View {
                 
                 if currentMillis % 1000 == 0 {
                     DispatchQueue.main.async {
-                        processed = i
-                        seedsFound = foundSeeds.count
+                        processed += (i - last)
+                        last = i
+                        seedsFound += foundSeeds.count
                     }
                 }
             }
             
-            FinderView.running = false
+            FinderView.finished += 1
             
-            DispatchQueue.main.async {
-                searching = false
-                found.removeAll()
-                
-                for i in foundSeeds {
-                    found[i] = 0
+            if FinderView.finished >= jobs {
+                FinderView.running = false
+                DispatchQueue.main.async {
+                    searching = false
+                    
+                    for i in foundSeeds {
+                        found[i] = 0
+                    }
                 }
             }
-            
+        }
+        
+        for _ in 0..<jobs {
+            concurrentQueue.async {
+                job()
+            }
         }
     }
     

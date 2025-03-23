@@ -184,7 +184,7 @@ class Ante : Encodable, Identifiable {
         packs.append(pack)
     }
     
-    func hasLegendary(_ joker : LegendaryJoker) -> Bool {
+    func hasLegendary(_ joker : Item) -> Bool {
         if let legendaries = legendaries {
             return legendaries.contains {
                 $0.joker.rawValue == joker.rawValue
@@ -229,8 +229,8 @@ class Ante : Encodable, Identifiable {
 //    }
     
     func contains(_ item : Item) -> Bool {
-        if let legendary = item as? LegendaryJoker {
-            return hasLegendary(legendary)
+        if hasLegendary(item) {
+            return true
         }
         
         if let voucher = item as? Voucher {
@@ -254,11 +254,7 @@ class Ante : Encodable, Identifiable {
         return false
     }
     
-    func hasInPack(_ item : Item) -> Bool {
-        if let legendary = item as? LegendaryJoker {
-            return hasLegendary(legendary)
-        }
-        
+    func hasInPack(_ item : Item) -> Bool {        
         for pack in packs {
             if(pack.containsOption(item.rawValue)){
                 return true

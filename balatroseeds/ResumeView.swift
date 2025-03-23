@@ -15,24 +15,22 @@ struct ResumeView: View {
     
     var body: some View {
         VStack {
-            Text("Summary of **\(run.seed)**")
-                .font(.customTitle)
-                .foregroundStyle(.white)
-            ScrollView(.horizontal){
-                HStack {
-                    ForEach(run.vouchers(), id: \.rawValue){ voucher in
-                        voucher.sprite()
-                    }
-                }
-            }
-            ScrollView(.horizontal){
-                HStack {
-                    ForEach(run.tags(), id: \.rawValue) { tag in
-                        tag.sprite()
-                    }
-                }
-            }.padding(.vertical)
+            AnimatedTitle(text: "Summary of \(run.seed)")
             ScrollView {
+                ScrollView(.horizontal){
+                    HStack {
+                        ForEach(run.vouchers(), id: \.rawValue){ voucher in
+                            voucher.sprite()
+                        }
+                    }
+                }
+                ScrollView(.horizontal){
+                    HStack {
+                        ForEach(run.tags(), id: \.rawValue) { tag in
+                            tag.sprite()
+                        }
+                    }
+                }.padding(.vertical)
                 LazyVGrid(columns: columns) {
                     ForEach(run.jokers()) { joker in
                         joker.joker.sprite(edition: joker.edition)

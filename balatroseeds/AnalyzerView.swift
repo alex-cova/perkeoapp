@@ -5,78 +5,52 @@
 //  Created by Alex on 23/02/25.
 //
 import SwiftUI
+import Combine
+import SwiftData
+
+
 
 struct AnalyzerView : View {
-    
-    @State var seed = "IGSPUNF"
-    @State var run : Run?
-    @State var maxAnte = 8
-    @State var startingAnte = 1
-    @Environment(\.modelContext) private var modelContext
-    @State var configSheet = false
-    @State var showman = false
-    @State private var isLoading = false
-    
-    init(seed: String = "") {
-        self.seed = seed
-    }
+    @EnvironmentObject var model : AnalyzerViewModel
     
     var body: some View {
-        LoadingView(isShowing: $isLoading) {
-            mainView()
-        }
+        mainView()
     }
     
     @ViewBuilder
     private func mainView() -> some View {
         VStack{
             HStack {
-                TextField("Seed", text: $seed)
-                    .font(.customTitle)
-                    .multilineTextAlignment(.center)
-                    .padding(5)
-                    .background(.gray)
-                    .cornerRadius(8)
-                    .keyboardType(.asciiCapable)
-                    .onChange(of: seed) { oldValue, newValue in
-                        // Apply character limit (max 7)
-                        if newValue.count > 7 {
-                            seed = String(newValue.prefix(7))
-                        }
-                        
-                        // Filter to only allow alphanumeric characters
-                        let filtered = newValue.filter { char in
-                            return char.isLetter || char.isNumber
-                        }
-                        
-                        // Only update if the text actually needs to change
-                        if filtered != newValue {
-                            seed = filtered.normalizeSeed()
-                        }else {
-                            seed = seed.normalizeSeed()
-                        }
-                    }
-                    .onSubmit {
-                        analyze()
-                    }
-                Button(action: analyze) {
+                TextField("Seed", text: $model.seed, onCommit: {
+                    model.analyze()
+                })
+                .font(.customTitle)
+                .multilineTextAlignment(.center)
+                .padding(5)
+                .background(.gray)
+                .cornerRadius(8)
+                .keyboardType(.asciiCapable)
+                
+                Button(action: {
+                    model.analyze()
+                }) {
                     Image(systemName: "sparkle.magnifyingglass")
                 }.buttonStyle(.borderedProminent)
                     .tint(.blue)
-                Button(action:random){
+                Button(action:model.random){
                     Image(systemName: "bolt")
                 }.buttonStyle(.borderedProminent)
                     .tint(.yellow)
                 Button(action:{
-                    configSheet.toggle()
+                    model.configSheet.toggle()
                 }){
                     Image(systemName: "gear")
                 }.buttonStyle(.borderedProminent)
                     .tint(.gray)
             }.padding(.horizontal)
             
-            if(run != nil){
-                PlayView(run: run!)
+            if(model.run != nil){
+                PlayView()
                     .clipped()
             } else {
                 Spacer()
@@ -92,7 +66,7 @@ struct AnalyzerView : View {
                 Spacer()
             }
         }.background(Color(hex: "#1e1e1e"))
-            .sheet(isPresented: $configSheet) {
+            .sheet(isPresented: $model.configSheet) {
                 configSheetView()
                     .presentationDetents([.medium, .large])
             }
@@ -111,17 +85,17 @@ struct AnalyzerView : View {
     private func configSheetView() -> some View{
         Form {
             Section {
-                Button(action:paste){
+                Button(action:model.paste){
                     label("Paste Seed", systemImage: "document.on.clipboard")
                 }.font(.customBody)
                 
-                Button(action:copy){
+                Button(action:model.copy){
                     label("Copy Seed", systemImage: "document.on.document")
                 }.font(.customBody)
                 
                 Button(action: {
-                    modelContext.insert(SeedModel(timestamp: Date(), seed: seed))
-                    configSheet.toggle()
+                    model.modelContext.mainContext.insert(SeedModel(timestamp: Date(), seed: model.seed))
+                    model.configSheet.toggle()
                 }){
                     label("Save Seed", systemImage: "square.and.arrow.down")
                 }.font(.customBody)
@@ -131,17 +105,17 @@ struct AnalyzerView : View {
                         HStack {
                             Image(systemName: "rectangle.portrait.and.arrow.right")
                                 .foregroundStyle(.red)
-                            Text("starting ante: **\(startingAnte)**")
+                            Text("starting ante: **\(model.startingAnte)**")
                                 .foregroundStyle(.white)
                                 .font(.customBody)
                         }
                     }
                 } onIncrement: {
-                    startingAnte = min(29, startingAnte + 1)
-                    if startingAnte > maxAnte { maxAnte += 1 }
+                    model.startingAnte = min(29, model.startingAnte + 1)
+                    if model.startingAnte > model.maxAnte { model.maxAnte += 1 }
                 } onDecrement: {
-                    startingAnte -= 1
-                    if startingAnte < 1 { startingAnte = 1 }
+                    model.startingAnte -= 1
+                    if model.startingAnte < 1 { model.startingAnte = 1 }
                 }
                 
                 Stepper {
@@ -149,7 +123,7 @@ struct AnalyzerView : View {
                         HStack {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .foregroundStyle(.yellow)
-                            Text("max ante: **\(maxAnte)**")
+                            Text("max ante: **\(model.maxAnte)**")
                                 .foregroundStyle(.white)
                                 .font(.customBody)
                         }
@@ -158,23 +132,23 @@ struct AnalyzerView : View {
                             .font(.customCaption)
                     }
                 } onIncrement: {
-                    maxAnte += 1
-                    if maxAnte > 30 { maxAnte = 30 }
+                    model.maxAnte += 1
+                    if model.maxAnte > 30 { model.maxAnte = 30 }
                 } onDecrement: {
-                    maxAnte -= 1
-                    if maxAnte < startingAnte {
-                        startingAnte = max(maxAnte, 1)
+                    model.maxAnte -= 1
+                    if model.maxAnte < model.startingAnte {
+                        model.startingAnte = max(model.maxAnte, 1)
                     }
-                    if maxAnte < 1 { maxAnte = 1 }
+                    if model.maxAnte < 1 { model.maxAnte = 1 }
                 }
                 
-                Toggle(isOn: $showman){
+                Toggle(isOn: $model.showman){
                     Text("Showman")
                         .font(.customBody)
                 }.foregroundStyle(.white)
                 
                 List {
-                    Picker("Deck", selection: $deck) {
+                    Picker("Deck", selection: $model.deck) {
                         ForEach(Deck.allCases, id: \.rawValue){ deck in
                             Text(deck.rawValue).tag(deck)
                                 .font(.customBody)
@@ -184,7 +158,7 @@ struct AnalyzerView : View {
                 }
                 
                 List {
-                    Picker("Stake", selection: $stake){
+                    Picker("Stake", selection: $model.stake){
                         ForEach(Stake.allCases, id: \.rawValue){ stake in
                             Text(stake.rawValue)
                                 .font(.customBody)
@@ -244,27 +218,22 @@ struct AnalyzerView : View {
             
         }.background(Color(hex: "#1e1e1e"))
             .scrollContentBackground(.hidden)
-        
     }
     
     let columns = [GridItem(.flexible()), GridItem(.flexible()),
                    GridItem(.flexible()),GridItem(.flexible())]
-    
-    @State var disabledItems : [Item] = []
-    @State var deck : Deck = .RED_DECK
-    @State var stake : Stake = .White_Stake
     
     @ViewBuilder
     private func renderItems(_ jokers: [Item]) -> some View{
         LazyVGrid(columns: columns){
             ForEach(jokers, id: \.rawValue) { joker in
                 joker.sprite(color: .white)
-                    .opacity(disabledItems.contains(where: {$0.rawValue == joker.rawValue}) ? 0.3 : 1.0)
+                    .opacity(model.disabledItems.contains(where: {$0.rawValue == joker.rawValue}) ? 0.3 : 1.0)
                     .onTapGesture {
-                        if disabledItems.contains(where: {$0.rawValue == joker.rawValue}){
-                            disabledItems.removeAll(where: {$0.rawValue == joker.rawValue})
+                        if model.disabledItems.contains(where: {$0.rawValue == joker.rawValue}){
+                            model.disabledItems.removeAll(where: {$0.rawValue == joker.rawValue})
                         } else {
-                            disabledItems.append(joker)
+                            model.disabledItems.append(joker)
                         }
                     }
             }
@@ -276,73 +245,24 @@ struct AnalyzerView : View {
         LazyVGrid(columns: columns){
             ForEach(jokers, id: \.rawValue) { joker in
                 joker.sprite(color: .white)
-                    .opacity(disabledItems.contains(where: {$0.rawValue == joker.rawValue}) ? 1.0 : 0.3)
+                    .opacity(model.disabledItems.contains(where: {$0.rawValue == joker.rawValue}) ? 1.0 : 0.3)
                     .onTapGesture {
                         
-                        if disabledItems.contains(where: {$0.rawValue == joker.rawValue}){
-                            disabledItems.removeAll(where: {$0.rawValue == joker.rawValue})
+                        if model.disabledItems.contains(where: {$0.rawValue == joker.rawValue}){
+                            model.disabledItems.removeAll(where: {$0.rawValue == joker.rawValue})
                         } else {
-                            disabledItems.append(joker)
+                            model.disabledItems.append(joker)
                         }
                     }
             }
         }
-    }
-    
-    private func random(){
-        seed = Balatro.generateRandomString()
-        analyze()
-    }
-    
-    private func copy(){
-        UIPasteboard.general.string = seed
-        configSheet.toggle()
-    }
-    
-    private func paste(){
-        if let clipboardText = UIPasteboard.general.string {
-            if clipboardText.isValidSeed(){
-                seed = clipboardText.normalizeSeed()
-                analyze()
-            }
-        }
-        configSheet.toggle()
-    }
-    
-    private func analyze() {
-        isLoading = true
-        
-        DispatchQueue.global(qos: .utility).async {
-            let balatro = Balatro()
-            
-            for option in disabledItems {
-                balatro.options.append(option)
-            }
-            
-            balatro.deck = deck
-            balatro.stake = stake
-            balatro.maxDepth = maxAnte
-            balatro.showman = showman
-            balatro.startingAnte = startingAnte
-            
-            let run = balatro
-                .performAnalysis(seed: seed)
-            
-            DispatchQueue.main.async {
-                if run.seed == self.seed {
-                    self.run = run
-                    self.isLoading = false
-                }
-            }
-        }
-        
     }
 }
 
 #Preview {
     NavigationStack {
         ContentView()
-            .modelContainer(for: SeedModel.self, inMemory: true)
+            .environment(AnalyzerViewModel())
     }
 }
 

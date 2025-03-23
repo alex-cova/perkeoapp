@@ -209,9 +209,7 @@ public class Balatro {
                         let edition = Balatro.getEdition(joker)
 
                         options.append(EditionItem(edition: edition, joker.joker))
-
                     }
-
                 case .Standard:
                     if !analyzeStandard {
                         continue
@@ -251,54 +249,62 @@ public class Balatro {
         return edition ?? .NoEdition
     }
     
-    func configureForSpeed(selections: [Item]) -> Balatro {
+    func configureForSpeed(selections: [ItemEdition]) -> Balatro {
         analyzeBoss = false
         analyzeStandard = false
         analyzeTags = false
         analyzeSpectralss = false
         analyzeArcana = false
         analyzeBuffon = false
+        analyzeShop = false
 
         for selection in selections {
-            if selection is LegendaryJoker {
-                analyzeArcana = true
-                analyzeSpectralss = true
-                break
-            }
-
-            if selection is Tarot {
-                analyzeArcana = true
-            }
-
-            if selection is Planet {
-                analyzeCelestial = true
-            }
-
-            if selection is Tag {
-                analyzeTags = true
-            }
-
-            if selection is Boss {
-                analyzeBoss = true
-            }
-
-            if selection is Joker {
-                analyzeBuffon = true
-            }
-
-            if selection is Voucher {
-                analyzeVoucher = true
-            }
-
-            if selection is Cards {
-                analyzeStandard = true
-            }
-
-            if selection is Spectral {
-                analyzeCelestial = true
-            }
+            enable(selection.item)
         }
 
         return self
+    }
+    
+    private func enable(_ selection : Item) {
+        if selection is LegendaryJoker {
+            analyzeArcana = true
+            analyzeSpectralss = true
+            return
+        }
+        
+        if selection is Tag {
+            analyzeTags = true
+            return
+        }
+
+        if selection is Tarot {
+            analyzeArcana = true
+        }
+
+        if selection is Planet {
+            analyzeCelestial = true
+        }
+
+        if selection is Boss {
+            analyzeBoss = true
+        }
+
+        if selection is Joker {
+            analyzeBuffon = true
+        }
+
+        if selection is Voucher {
+            analyzeVoucher = true
+        }
+
+        if selection is Cards {
+            analyzeStandard = true
+        }
+
+        if selection is Spectral {
+            analyzeCelestial = true
+        }
+        
+        analyzeShop = true
     }
 }

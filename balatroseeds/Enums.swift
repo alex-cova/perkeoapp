@@ -793,7 +793,7 @@ enum Tarot: String, CaseIterable, Item {
     }
 }
 
-enum Tag: String, CaseIterable, Item {
+public enum Tag: String, CaseIterable, Item {
     case Uncommon_Tag = "Uncommon"
     case Rare_Tag = "Rare"
     case Negative_Tag = "Negative"

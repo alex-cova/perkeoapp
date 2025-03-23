@@ -8,30 +8,43 @@
 import SwiftUI
 
 struct PlayView : View {
-    let run : Run
+    @EnvironmentObject var model : AnalyzerViewModel
     
-    init(run: Run){
-        self.run = run
+    init(){
+        
     }
     
     var body: some View {
-        ScrollView {
-            ForEach(run.antes) { a in
-                anteView(ante: a)
-                    .padding(.bottom)
-            }
-        }.background(Color(hex: "#1e1e1e"))
+        LoadingView(isShowing: $model.isLoading) {
+            mainView()
+        }
     }
     
     @ViewBuilder
-    func anteView(ante: Ante) -> some View {
+    private func mainView() -> some View {
+        if let run = model.run {
+            ScrollView {
+                ForEach(run.antes) { a in
+                    anteView(ante: a, run: run)
+                        .padding(.bottom)
+                }
+            }.background(Color(hex: "#1e1e1e"))
+        } else {
+            Text("Loading...")
+                .font(.customBody)
+                .foregroundStyle(.white)
+        }
+    }
+        
+    @ViewBuilder
+    func anteView(ante: Ante, run : Run) -> some View {
         VStack(alignment: .leading) {
             Text("Ante \(ante.ante)")
                 .bold()
                 .font(.customTitle)
                 .foregroundStyle(.white)
             separator()
-            options(ante: ante)
+            options(ante: ante, run: run)
             Text("Shop queue")
                 .font(.customBody)
                 .foregroundStyle(.white)
@@ -53,7 +66,7 @@ struct PlayView : View {
     }
     
     @ViewBuilder
-    func options(ante: Ante) -> some View {
+    func options(ante: Ante, run : Run) -> some View {
         HStack {
             ante.voucher.sprite()
                 .padding(.horizontal)
@@ -71,7 +84,7 @@ struct PlayView : View {
                             }
                         }.buttonStyle(.borderedProminent)
                         Button(action: {
-                            UIPasteboard.general.string = run.seed
+                            model.copy()
                         }, label: {
                             HStack {
                                 Image(systemName: "document.on.document")
@@ -192,7 +205,7 @@ struct EditionView: ViewModifier {
 
 #Preview {
     NavigationStack {
-        PlayView(run: Balatro()
-            .performAnalysis(seed: "IGSPUNF"))
+        PlayView()
+            .environmentObject(AnalyzerViewModel(memoryOnly: true))
     }
 }

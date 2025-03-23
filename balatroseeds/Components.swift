@@ -33,8 +33,7 @@ extension View {
     public func seedNavigation(_ seed: String) -> some View {
         ZStack {
             Color(hex: "#1e1e1e").ignoresSafeArea()
-            PlayView(run: Balatro()
-                .performAnalysis(seed: seed))
+            PlayView()
                 .clipped()
                 .navigationTitle(seed)
         }

@@ -9,11 +9,13 @@ import SwiftUI
 
 struct CommunityView: View {
     
+    @EnvironmentObject var model : AnalyzerViewModel
     let columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
     
     @State private var isAnimating = false
     private var animationDuration: Double = 1.5
     private var bounceHeight: CGFloat = 20.0
+    @State var seeds : [String] = generateSeeds()
     
     var body: some View {
         ZStack {
@@ -23,24 +25,46 @@ struct CommunityView: View {
                     
                 ScrollView {
                     LazyVGrid(columns: columns) {
-                        ForEach(0..<20) { _ in
-                            CommunitySeedView()
+                        ForEach(seeds, id: \.self) { seed in
+                            NavigationLink(destination: PlayView()
+                                .navigationTitle(seed)
+                                .onAppear {
+                                    model.changeSeed(seed)
+                                }) {
+                                    CommunitySeedView(seed: seed)
+                                }
                         }
                     }.scenePadding()
-                }.clipped()
+                        .background(Color(hex: "1e1e1e"))
+                }.background(Color(hex: "1e1e1e"))
+                .clipped()
+                    .refreshable {
+                        seeds = CommunityView.generateSeeds()
+                    }
             }
+        }.background(Color(hex: "1e1e1e"))
+    }
+    
+    private static func generateSeeds() -> [String] {
+        var seeds = [String]()
+        
+        for _ in 0..<80 {
+            seeds.append(Balatro.generateRandomString())
         }
+        
+        return seeds
     }
 }
 
+
+
 struct CommunitySeedView : View {
+    let seed : String
+        
     var body : some View {
         VStack(spacing: 5.0) {
-            Text(Balatro.generateRandomString())
+            Text(seed)
                 .font(.customBody)
-                .foregroundStyle(.white)
-            Text("score: 1.0")
-                .font(.customCaption)
                 .foregroundStyle(.white)
         }.frame(width: 120, height: 100)
             .border(Color.black, width: 5)
