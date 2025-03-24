@@ -126,6 +126,7 @@ class Functions: Lock {
                                   joker3Arr: Functions.joker3SouArr, joker4Arr: Functions.joker4SouArr, rarityArr: Functions.raritySouArr,
                                   editionArr: Functions.editionSouArr, ante, true)
             lock(data.joker)
+            lock(Specials.THE_SOUL)
             return EditionItem(edition: data.edition, data.joker)
         }
         return randchoice(source, Functions.TAROTS)
@@ -499,6 +500,7 @@ class Functions: Lock {
         
         for p in pack {
             if p is EditionItem {
+                unlock(Specials.THE_SOUL)
                 continue
             }
             unlock(p)
