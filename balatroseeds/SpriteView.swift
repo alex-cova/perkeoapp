@@ -10,12 +10,12 @@ import SwiftUI
 struct SpriteImageView: View {
     let spriteSheet: UIImage
     let frame: CGRect
-    let card : Bool
+    let card : Card?
     let edition: Edition?
     let item : Item
     let foregroundColor : Color
     
-    init(_ item : Item, _ sprite : UIImage, _ x : Int,_ y : Int,_ w : Int, _ h : Int, _ card : Bool = false, edition : Edition? = nil,_ foregroundColor : Color = .white){
+    init(_ item : Item, _ sprite : UIImage, _ x : Int,_ y : Int,_ w : Int, _ h : Int, _ card : Card? = nil, edition : Edition? = nil,_ foregroundColor : Color = .white){
         self.item = SpriteImageView.unwrap(item)
         self.spriteSheet = sprite
         self.frame = CGRect(x: x * w, y: y * h, width: w, height: h)
@@ -160,23 +160,20 @@ struct SpriteImageView: View {
                         // Start the animation when the view appears
                         isAnimating = true
                     }
+            } else if item is Card {
+                renderCard()
             } else {
                 if let cgImage = spriteSheet.cgImage?.cropping(to: frame) {
                     if edition == .Negative {
                         Image(decorative: cgImage, scale: spriteSheet.scale, orientation: .up)
                             .resizable()
                             .frame(width: frame.width, height: frame.height)
-                            .background(card ? .white : .clear)
-                            .cornerRadius(card ? 8 : 0)
                             .colorInvert()
                     }else {
                         ZStack {
                             Image(decorative: cgImage, scale: spriteSheet.scale, orientation: .up)
                                 .resizable()
                                 .frame(width: frame.width, height: frame.height)
-                                .background(card ? .white : .clear)
-                                .cornerRadius(card ? 8 : 0)
-                            
                             if edition != nil {
                                 editionView()
                             }
@@ -194,6 +191,113 @@ struct SpriteImageView: View {
                     .repeatForever(autoreverses: true),
                 value: isAnimating
             )
+    }
+    
+    
+    private func backgroundCard(_ c : Card) -> AnyView {
+        /*
+         {
+         'Bonus': { x: 1, y: 1 },
+         'Mult': { x: 2, y: 1 },
+         'Wild': { x: 3, y: 1 },
+         'Glass': { x: 5, y: 1 },
+         'Steel': { x: 6, y: 1 },
+         'Stone': { x: 5, y: 0 },
+         'Gold': { x: 6, y: 0 },
+         'Lucky': { x: 4, y: 1 }
+         };
+         */
+        var x = 1
+        var y = 0
+        
+        if let en =  c.enhancement  {
+            if en == .Luck {
+                x = 4
+                y = 1
+            } else if en == .Bonus {
+                x = 1
+                y = 1
+            } else if en == .Wild {
+                x = 3
+                y = 1
+            } else if en == .Gold {
+                x = 6
+                y = 0
+            } else if en == .Stone {
+                x = 5
+                y = 0
+            } else if en == .Steel {
+                x = 6
+                y = 1
+            } else if en == .Glass {
+                x = 5
+                y = 1
+            } else if en == .Mult {
+                x = 2
+                y = 1
+            }
+        }
+        
+        let frame = CGRect(x: x * 71, y: y * 95, width: 71, height: 95)
+        
+        if let cgImage = Images.enhancers.cgImage?.cropping(to: frame) {
+            return AnyView(Image(decorative: cgImage, scale: Images.enhancers.scale, orientation: .up)
+                .resizable()
+                .frame(width: frame.width, height: frame.height)
+            )
+        }else{
+            return AnyView(Text("fuck"))
+        }
+    }
+    
+    private func renderCard() -> some View{
+        let c = card!
+        
+        return ZStack {
+            backgroundCard(c)
+            
+            if let cgImage = spriteSheet.cgImage?.cropping(to: frame) {
+                Image(decorative: cgImage, scale: spriteSheet.scale, orientation: .up)
+                    .resizable()
+                    .frame(width: frame.width, height: frame.height)
+            }
+            
+            if c.seal != .NoSeal {
+                renderSeal(c)
+            }
+        }
+    }
+    
+    
+    private func renderSeal(_ c : Card) -> AnyView {
+        
+        var x = 0
+        var y = 0
+        
+        if c.seal == .RedSeal {
+            x = 5
+            y = 4
+        } else if c.seal == .GoldSeal {
+            x = 2
+            y = 0
+        } else if c.seal == .PurpleSeal {
+            x = 4
+            y = 4
+        } else if c.seal == .BlueSeal {
+            x = 6
+            y = 4
+        }
+        
+        let frame = CGRect(x: x * 71, y: y * 95, width: 71, height: 95)
+        
+        if let cgImage = Images.enhancers.cgImage?.cropping(to: frame) {
+            return AnyView(Image(decorative: cgImage, scale: Images.enhancers.scale, orientation: .up)
+                .resizable()
+                .frame(width: frame.width, height: frame.height)
+            )
+        }else{
+            return AnyView(Text("fuck"))
+        }
     }
     
     private func editionText() -> String {
@@ -216,7 +320,7 @@ struct SpriteImageView: View {
 }
 
 #Preview {
-    VStack {
+    ScrollView {
         HStack {
             LegendaryJoker.Perkeo.sprite(edition: .Negative)
             LegendaryJoker.Triboulet.sprite(edition: .Holographic)
@@ -245,6 +349,19 @@ struct SpriteImageView: View {
             RareJoker.Baseball_Card.sprite()
             CommonJoker.Delayed_Gratification.sprite()
             EditionItem(edition: .Negative, LegendaryJoker.Perkeo).sprite(edition: .Negative)
+        }
+        HStack {
+            Card(Cards.H_K, .Luck, .NoEdition, .RedSeal).sprite()
+            Card(Cards.H_K, .Gold, .NoEdition, .BlueSeal).sprite()
+            Card(Cards.H_K, .Mult, .NoEdition, .PurpleSeal).sprite()
+            Card(Cards.H_K, .Bonus, .NoEdition, .GoldSeal).sprite()
+            Card(Cards.H_K, .Glass, .NoEdition, .RedSeal).sprite()
+            
+        }
+        HStack {
+            Card(Cards.H_K, .Stone, .NoEdition, .RedSeal).sprite()
+            Card(Cards.H_K, .Steel, .NoEdition, .RedSeal).sprite()
+            Card(Cards.H_K, .Wild, .NoEdition, .NoSeal).sprite()
         }
     }.background(Color(hex: "#1e1e1e"))
 }

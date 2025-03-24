@@ -18,6 +18,7 @@ class Images {
     static let tags = UIImage(named: "tags")!
     static let cards = UIImage(named: "8BitDeck")!
     static let editions = UIImage(named: "Editions")!
+    static let enhancers = UIImage(named: "Enhancers")!
     static let sprite = SpriteSheet()
 }
 

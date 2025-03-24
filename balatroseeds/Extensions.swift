@@ -52,11 +52,11 @@ extension Item {
     func sprite(edition: Edition? = nil, color: Color = .white) -> SpriteImageView {
         
         if let card = self as? Card {
-            return SpriteImageView(self, Images.cards, card.rank.index(), card.suit.index(), 71, 95, true, color)
+            return SpriteImageView(self, Images.cards, card.rank.index(), card.suit.index(), 71, 95, card, color)
         }
         
         if(self.rawValue == Specials.BLACKHOLE.rawValue){
-            return SpriteImageView(self, Images.tarots, 9, 3, 71, 95, false, color)
+            return SpriteImageView(self, Images.tarots, 9, 3, 71, 95, nil, color)
         }
         
         let jokers = Images.sprite.readJokers()
@@ -71,7 +71,7 @@ extension Item {
         
         for tarot in tarots {
             if(tarot.name == self.rawValue){
-                return SpriteImageView(self, Images.tarots, tarot.pos.x, tarot.pos.y, 71, 95, false,  color)
+                return SpriteImageView(self, Images.tarots, tarot.pos.x, tarot.pos.y, 71, 95, nil,  color)
             }
         }
         
@@ -79,7 +79,7 @@ extension Item {
         
         for voucher in vouchers {
             if(voucher.name == self.rawValue){
-                return SpriteImageView(self, Images.vouchers, voucher.pos.x, voucher.pos.y, 71, 95, false, color)
+                return SpriteImageView(self, Images.vouchers, voucher.pos.x, voucher.pos.y, 71, 95, nil, color)
             }
         }
         
@@ -87,7 +87,7 @@ extension Item {
         
         for tag in tags {
             if(tag.name == "\(self.rawValue) Tag"){
-                return SpriteImageView(self, Images.tags, tag.pos.x, tag.pos.y, 34, 34, false, color)
+                return SpriteImageView(self, Images.tags, tag.pos.x, tag.pos.y, 34, 34, nil, color)
             }
         }
         
@@ -95,7 +95,7 @@ extension Item {
         
         for boss in bosses {
             if(boss.name == self.rawValue){
-                return SpriteImageView(self, Images.bosses, boss.pos.x, boss.pos.y, 34, 34, false, color)
+                return SpriteImageView(self, Images.bosses, boss.pos.x, boss.pos.y, 34, 34, nil, color)
             }
         }
         
