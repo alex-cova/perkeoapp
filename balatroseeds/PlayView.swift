@@ -16,7 +16,7 @@ struct PlayView : View {
     
     var body: some View {
         LoadingView(isShowing: $model.isLoading) {
-            mainView()
+            
         }
     }
     
