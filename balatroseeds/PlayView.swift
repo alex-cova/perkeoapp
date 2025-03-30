@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 struct PlayView : View {
     @EnvironmentObject var model : AnalyzerViewModel
     
@@ -16,7 +17,7 @@ struct PlayView : View {
     
     var body: some View {
         LoadingView(isShowing: $model.isLoading) {
-            
+            mainView()
         }
     }
     
