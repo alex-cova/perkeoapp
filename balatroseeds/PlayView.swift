@@ -72,7 +72,7 @@ struct PlayView : View {
             ante.voucher.sprite()
                 .padding(.horizontal)
             VStack(alignment: .leading) {
-                if ante.ante == 1 {
+                if ante.ante == model.startingAnte {
                     HStack {
                         Spacer()
                         NavigationLink(destination: ResumeView(run: run)){

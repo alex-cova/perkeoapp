@@ -24,28 +24,36 @@ class Images {
 
 struct ContentView: View {
     
-    @Query private var seeds: [SeedModel]    
+    @Query private var seeds: [SeedModel]
+    @State private var activeTab: TabItem = .analyzer
 
     init(){
         LookAndFeel.configure()
     }
     
     var body: some View {
-        TabView {
-            Tab("Analyzer", systemImage: "sparkle.magnifyingglass") {
-                AnalyzerView()
-            }
-            Tab("Finder", systemImage: "mail.and.text.magnifyingglass") {
-                FinderView()
-            }
-            Tab("Community", systemImage: "person.3.fill"){
-                CommunityView()
-            }
-            Tab("Saved", systemImage: "externaldrive") {
-                SavedSeedsView()
-            }.badge(seeds.count)
-        }.tint(.red)
-            .font(.customBody)
+        ZStack(alignment: .bottom) {
+            TabView(selection: $activeTab) {
+                Tab.init(value: .analyzer) {
+                    AnalyzerView()
+                        .toolbarVisibility(.hidden, for: .tabBar)
+                }
+                Tab.init(value: .finder) {
+                    FinderView()
+                        .toolbarVisibility(.hidden, for: .tabBar)
+                }
+                Tab.init(value: .community){
+                    CommunityView()
+                        .toolbarVisibility(.hidden, for: .tabBar)
+                }
+                Tab.init(value: .saved) {
+                    SavedSeedsView()
+                        .toolbarVisibility(.hidden, for: .tabBar)
+                }.badge(seeds.count)
+            }.tint(.red)
+                .font(.customBody)
+            InteractiveTabBar(activeTab: $activeTab)
+        }
         
     }
 }

@@ -218,7 +218,7 @@ enum Specials: String, CaseIterable, Item {
     }
 }
 
-enum Voucher: String, CaseIterable, Item {
+enum Voucher: String, CaseIterable, Item, Identifiable {
     case Overstock = "Overstock"
     case Overstock_Plus = "Overstock Plus"
     case Clearance_Sale = "Clearance Sale"
@@ -251,6 +251,10 @@ enum Voucher: String, CaseIterable, Item {
     case Retcon = "Retcon"
     case Paint_Brush = "Paint Brush"
     case Palett = "Palette"
+    
+    var id : String {
+        rawValue
+    }
 
     var ordinal: Int {
         switch self {

@@ -74,7 +74,10 @@ class AnalyzerViewModel : ObservableObject, Observable {
     
     public func copy(){
         UIPasteboard.general.string = seed
-        configSheet.toggle()
+        
+        if configSheet {
+            configSheet.toggle()
+        }
     }
     
     public func paste(){
@@ -105,13 +108,7 @@ class AnalyzerViewModel : ObservableObject, Observable {
         }
     }
         
-    public func analyze() {
-        if let run = run {
-            if run.seed == seed {
-                return
-            }
-        }
-    
+    public func analyze() {    
         isLoading = true
         
         DispatchQueue.global(qos: .utility).async {

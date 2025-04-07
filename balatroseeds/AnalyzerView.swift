@@ -29,7 +29,7 @@ struct AnalyzerView : View {
                 .padding(5)
                 .background(.gray)
                 .cornerRadius(8)
-                .keyboardType(.asciiCapable)
+                .keyboardType(.alphabet)
                 
                 Button(action: {
                     model.analyze()

@@ -55,8 +55,10 @@ class Util {
         for i in (0..<s.count).reversed() {
             let index = s.index(s.startIndex, offsetBy: i)
             let character = s[index]
-            let r = Double(character.asciiValue!)
-            num = fract(1.1239285023 / num * r * 3.141592653589793 + 3.141592653589793 * Double(i + 1))
+            if let char = character.asciiValue {
+                let r = Double(char)
+                num = fract(1.1239285023 / num * r * 3.141592653589793 + 3.141592653589793 * Double(i + 1))
+            }
         }
         
         if(num.isNaN) {
