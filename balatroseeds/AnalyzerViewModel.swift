@@ -107,6 +107,11 @@ class AnalyzerViewModel : ObservableObject, Observable {
             seed = filtered
         }
     }
+    
+    public func test() -> AnalyzerViewModel {
+        analyze()
+        return self
+    }
         
     public func analyze() {    
         isLoading = true

@@ -36,7 +36,7 @@ struct PlayView : View {
                 .foregroundStyle(.white)
         }
     }
-        
+    
     @ViewBuilder
     func anteView(ante: Ante, run : Run) -> some View {
         VStack(alignment: .leading) {
@@ -129,7 +129,15 @@ struct PlayView : View {
                     .font(.customCaption)
                     .foregroundStyle(.white)
                 separator()
-                ScrollView(.horizontal) {
+                if(pack.options.count > 4){
+                    ScrollView(.horizontal) {
+                        HStack {
+                            ForEach(pack.options) { option in
+                                optionView(option: option, ante: ante)
+                            }
+                        }
+                    }
+                } else {
                     HStack {
                         ForEach(pack.options) { option in
                             optionView(option: option, ante: ante)
@@ -207,6 +215,7 @@ struct EditionView: ViewModifier {
 #Preview {
     NavigationStack {
         PlayView()
-            .environmentObject(AnalyzerViewModel(memoryOnly: true))
+            .environmentObject(AnalyzerViewModel(memoryOnly: true)
+                .test())
     }
 }

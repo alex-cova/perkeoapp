@@ -72,11 +72,11 @@ struct InteractiveTabBar: View {
                 }
                 /// This gives us the elevation we needed to push the active tab
                 .frame(width: 25, height: 25, alignment: .bottom)
-                .foregroundStyle(isActive ? .white : .primary)
+                .foregroundStyle(isActive ? .white : Color(uiColor:  UIColor.systemGray))
             
             Text(tab.rawValue)
-                .font(.caption2)
-                .foregroundStyle(isActive ? .red : .gray)
+                .font(.customCaption)
+                .foregroundStyle(isActive ? .red : Color(uiColor:  UIColor.systemGray))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
         .contentShape(.rect)
