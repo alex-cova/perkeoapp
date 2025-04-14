@@ -257,6 +257,7 @@ public class Balatro {
         analyzeArcana = false
         analyzeBuffon = false
         analyzeShop = false
+        analyzeVoucher = false
 
         for selection in selections {
             enable(selection.item)

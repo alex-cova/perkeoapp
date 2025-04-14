@@ -35,10 +35,10 @@ struct SavedSeedsView : View {
                         .font(.customBody)
                         .foregroundStyle(.white)
                         .padding(.bottom)
-                    Button("Paste Seed") {
-                        pasteSeed()
-                    }.buttonStyle(.borderedProminent)
-                        .font(.customBody)
+                    Button(action: pasteSeed) {
+                        Text("Add seed from clipboard")
+                            .font(.customBody)
+                    }
                     Spacer()
                 }.frame(maxWidth: .infinity)
                     .background(Color(hex: "#1e1e1e"))
@@ -57,6 +57,10 @@ struct SavedSeedsView : View {
                             }.listRowBackground(Color(hex: "#4d4d4d"))
                         
                     }.onDelete(perform: deleteItems)
+                    Button(action: pasteSeed) {
+                        Text("Add seed from clipboard")
+                            .font(.customBody)
+                    }
                 }.background(Color(hex: "#1e1e1e"))
                     .scrollContentBackground(.hidden)
                     .navigationTitle("Saved Seeds")
@@ -96,7 +100,6 @@ struct SavedSeedsView : View {
         }
     }
 }
-
 
 
 #Preview {

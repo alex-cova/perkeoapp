@@ -237,10 +237,18 @@ struct FinderView : View {
         }.background(Color(hex: "#1e1e1e"))
     }
     
+    private func keys() -> [String] {
+        if cached {
+            return found.keys.sorted { found[$0]! > found[$1]! }
+        }
+        
+        return found.keys.shuffled()
+    }
+    
     @ViewBuilder
     private func renderSeeds() -> some View{
         DisclosureGroup("Found Seeds (\(found.count))") {
-            ForEach(found.keys.shuffled(), id: \.self) { seed in
+            ForEach(keys(), id: \.self) { seed in
                 NavigationLink(destination: seedNavigation(seed)
                     .onAppear {
                         model.changeSeed(seed)
@@ -303,7 +311,7 @@ struct FinderView : View {
             return
         }
         
-        if !jokerFile.isEmpty {
+        if !jokerFile.isEmpty && cached {
             cacheBasedSearch()
             return
         }

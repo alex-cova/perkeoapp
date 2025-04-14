@@ -49,24 +49,21 @@ struct JokerSelectorView : View {
                     Text("Nothing selected")
                         .font(.customBody)
                         .foregroundStyle(.white)
-                    
                 }else {
-                    LazyVGrid(columns: columns) {
-                        if showSelected {
-                            render(selections)
-                        }else {
-                            ForEach(filter(LegendaryJoker.allCases), id: \.rawValue) { joker in
-                                legendarySelectableJoker(joker as! LegendaryJoker)
-                                    .transition(.push(from: .bottom))
-                            }
-                            render(RareJoker.allCases)
-                            render(UnCommonJoker.allCases)
-                            render(CommonJoker.allCases)
-                            render(Spectral.allCases.filter {
-                                !$0.rawValue.starts(with: "RETRY")
-                            })
-                        }
-                    }.padding()
+                    if showSelected {
+                        render(selections, name: "Selections")
+                    }else {
+                        renderLegendary()
+                        render(Voucher.allCases, name: "Vouchers")
+                        render(RareJoker.allCases, name: "Rare Jokers")
+                        render(UnCommonJoker.allCases, name: "Uncommon")
+                        render(CommonJoker.allCases, name: "Common")
+                        render(Spectral.allCases.filter {
+                            !$0.rawValue.starts(with: "RETRY")
+                        }, name: "Spectrals")
+                        
+                    }
+                    
                 }
             }
         }.background(Color(hex: "#4d4d4d"))
@@ -85,15 +82,37 @@ struct JokerSelectorView : View {
     }
     
     @ViewBuilder
-    private func render(_ items : [Item]) -> some View{
-        ForEach(filter(items), id: \.rawValue) { joker in
-            if let i = joker as? ItemEdition, let x = i.item as? LegendaryJoker {
-                legendarySelectableJoker(x)
-                    .transition(.push(from: .bottom))
-            }else {
-                selectableJoker(joker)
-                    .transition(.push(from: .bottom))
-            }
+    private func renderLegendary() -> some View{
+        VStack {
+            Text("Legendary")
+                .foregroundStyle(.white)
+                .font(.customBody)
+            LazyVGrid(columns: columns) {
+                ForEach(filter(LegendaryJoker.allCases), id: \.rawValue) { joker in
+                    legendarySelectableJoker(joker as! LegendaryJoker)
+                        .transition(.push(from: .bottom))
+                }
+            }.padding()
+        }
+    }
+    
+    @ViewBuilder
+    private func render(_ items : [Item], name : String) -> some View{
+        VStack {
+            Text(name)
+                .foregroundStyle(.white)
+                .font(.customBody)
+            LazyVGrid(columns: columns) {
+                ForEach(filter(items), id: \.rawValue) { joker in
+                    if let i = joker as? ItemEdition, let x = i.item as? LegendaryJoker {
+                        legendarySelectableJoker(x)
+                            .transition(.push(from: .bottom))
+                    }else {
+                        selectableJoker(joker)
+                            .transition(.push(from: .bottom))
+                    }
+                }
+            }.padding()
         }
     }
     

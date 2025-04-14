@@ -233,6 +233,15 @@ class Ante : Encodable, Identifiable {
             return true
         }
         
+        if shop.contains(item.rawValue) {
+            return true
+        }
+        
+        if hasInPack(item) {
+            return true
+        }
+        
+        
         if let voucher = item as? Voucher {
             if voucher == self.voucher {
                 return true
@@ -241,14 +250,6 @@ class Ante : Encodable, Identifiable {
         
         if let tag = item as? Tag {
             return tags.contains(where: { $0 == tag })
-        }
-        
-        if shop.contains(item.rawValue) {
-            return true
-        }
-        
-        if hasInPack(item) {
-            return true
         }
         
         return false
