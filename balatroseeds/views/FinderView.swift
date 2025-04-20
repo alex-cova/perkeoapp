@@ -49,6 +49,12 @@ struct FinderView : View {
         selections.append(contentsOf: x)
     }
     
+    var heavySearch : Bool {
+        get {
+            maxAnte - startingAnte > 8
+        }
+    }
+    
     @ViewBuilder
     private func controlsView() -> some View {
  
@@ -73,7 +79,7 @@ struct FinderView : View {
             Stepper {
                 VStack(alignment: .leading) {
                     HStack {
-                        Image(systemName: "rectangle.portrait.and.arrow.right")
+                        Image(systemName: "arrow.right.square")
                             .foregroundStyle(.red)
                         Text("starting ante: **\(startingAnte)**")
                             .font(.customBody)
@@ -91,15 +97,18 @@ struct FinderView : View {
             Stepper {
                 VStack(alignment: .leading) {
                     HStack {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundStyle(.yellow)
-                        Text("max ante: **\(maxAnte)**")
+                        Image(systemName: heavySearch ? "exclamationmark.triangle.fill" : "arrow.left.square")
+                            .foregroundStyle(heavySearch ? .yellow : .red)
+                        Text("last ante: **\(maxAnte)**")
                             .foregroundStyle(.white)
                             .font(.customBody)
                     }
-                    Text("The deepest, the slow to analyze.")
-                        .foregroundStyle(.white)
-                        .font(.customCaption)
+                    
+                    if(heavySearch){
+                        Text("This might take a while")
+                            .foregroundStyle(.white)
+                            .font(.customCaption)
+                    }
                 }
             } onIncrement: {
                 maxAnte += 1

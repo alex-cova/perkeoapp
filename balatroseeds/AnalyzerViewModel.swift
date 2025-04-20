@@ -9,13 +9,14 @@ import SwiftUI
 import Combine
 import SwiftData
 
-class AnalyzerViewModel : ObservableObject, Observable {
+public class AnalyzerViewModel : ObservableObject, Observable {
     @Published var seed : String = "IGSPUNF"
     @Published var maxAnte : Int = 8
     @Published var startingAnte : Int = 1
     @Published var showman : Bool = false
     private var cancellables : Set<AnyCancellable> = []
     @Published var configSheet = false
+    @Published var copyEvent = false
     var modelContext : ModelContainer
     @Published var disabledItems : [Item] = []
     @Published var deck : Deck = .RED_DECK
@@ -23,6 +24,8 @@ class AnalyzerViewModel : ObservableObject, Observable {
     @Published var isLoading = false
     @Published var run : Run?
     @Published private var version : Version = .v_101f
+    @Published var toast: Toast? = nil
+    @Published var activeTab: TabItem = .analyzer
     
     init(memoryOnly: Bool = false) {
         self.modelContext  = {
@@ -41,12 +44,20 @@ class AnalyzerViewModel : ObservableObject, Observable {
         initListeners()
     }
     
+    var firstAnte : Int {
+        get {
+            run?.antes.first?.ante ?? startingAnte
+        }
+    }
+    
     init(modelContainer: ModelContainer){
         self.modelContext = modelContainer
         self.maxAnte = 1
     }
     
     func changeSeed(_ seed : String){
+        self.startingAnte = 1
+        self.maxAnte = 8
         if self.seed == seed {
             if run == nil {
                 analyze()
@@ -76,8 +87,10 @@ class AnalyzerViewModel : ObservableObject, Observable {
         UIPasteboard.general.string = seed
         
         if configSheet {
-            configSheet.toggle()
+            configSheet = false
         }
+        
+        toast = .init(style: .success, message: "Seed \(seed) copied to clipboard")
     }
     
     public func paste(){
@@ -113,7 +126,12 @@ class AnalyzerViewModel : ObservableObject, Observable {
         return self
     }
         
-    public func analyze() {    
+    public func analyze() {
+        if(isLoading){
+            return
+        }
+        
+        print("Loading: \(self.seed)")
         isLoading = true
         
         DispatchQueue.global(qos: .utility).async {

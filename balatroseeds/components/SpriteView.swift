@@ -72,7 +72,7 @@ struct SpriteImageView: View {
                     Image(decorative: cgImage2, scale: Images.jokers.scale, orientation: .up)
                         .resizable()
                         .frame(width: frame.width, height: frame.height)
-                        .rotationEffect( isAnimating ? .degrees(-5) : .degrees(5))
+                        .scaleEffect( isAnimating ? 1.0 : 1.08)
                 }
             }
         }else{

@@ -23,9 +23,8 @@ class Images {
 }
 
 struct ContentView: View {
-    
+    @EnvironmentObject var model : AnalyzerViewModel
     @Query private var seeds: [SeedModel]
-    @State private var activeTab: TabItem = .analyzer
 
     init(){
         LookAndFeel.configure()
@@ -33,7 +32,7 @@ struct ContentView: View {
     
     var body: some View {
         ZStack(alignment: .bottom) {
-            TabView(selection: $activeTab) {
+            TabView(selection: $model.activeTab) {
                 Tab.init(value: .analyzer) {
                     AnalyzerView()
                         .toolbarVisibility(.hidden, for: .tabBar)
@@ -52,8 +51,15 @@ struct ContentView: View {
                 }.badge(seeds.count)
             }.tint(.red)
                 .font(.customBody)
-            InteractiveTabBar(activeTab: $activeTab)
-        }
+            InteractiveTabBar(activeTab: $model.activeTab)
+        }.toastView(toast: $model.toast)
+            .sheet(isPresented: $model.configSheet) {
+                ConfigView()
+                    .presentationDetents([.medium, .large])
+                    .onDisappear {
+                        model.analyze()
+                    }
+            }
         
     }
 }

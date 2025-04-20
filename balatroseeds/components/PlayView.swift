@@ -72,7 +72,7 @@ struct PlayView : View {
             ante.voucher.sprite()
                 .padding(.horizontal)
             VStack(alignment: .leading) {
-                if ante.ante == model.startingAnte {
+                if ante.ante == model.firstAnte {
                     HStack {
                         Spacer()
                         NavigationLink(destination: ResumeView(run: run)){
@@ -96,6 +96,12 @@ struct PlayView : View {
                             }
                         }).buttonStyle(.borderedProminent)
                             .tint(.green)
+                        Button(action:{
+                            model.configSheet.toggle()
+                        }){
+                            Image(systemName: "gear")
+                        }.buttonStyle(.borderedProminent)
+                            .tint(.gray)
                         Spacer()
                     }.padding(.bottom)
                 }

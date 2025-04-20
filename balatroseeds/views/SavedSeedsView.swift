@@ -20,10 +20,6 @@ struct SavedSeedsView : View {
         dateFormatter.timeStyle = .short
     }
     
-    func copy(_ seed : String){
-        UIPasteboard.general.string = seed
-    }
-    
     var body: some View {
         VStack {
             AnimatedTitle(text: "Saved Seeds")
@@ -72,10 +68,20 @@ struct SavedSeedsView : View {
     private func pasteSeed(){
         if let clipboardText = UIPasteboard.general.string {
             if clipboardText.isValidSeed() {
-                withAnimation {
-                    modelContext.insert(SeedModel(timestamp: Date(), seed: clipboardText
-                        .normalizeSeed()))
+                
+                let missing = seeds.filter { $0.seed == clipboardText }
+                    .isEmpty
+                
+                if missing {
+                    withAnimation {
+                        modelContext.insert(SeedModel(timestamp: Date(), seed: clipboardText
+                            .normalizeSeed()))
+                    }
+                }else {
+                    model.toast = .init(style: .warning, message: "Seed already saved")
                 }
+            }else {
+                model.toast = .init(style: .error, message: "Not a valid seed")
             }
         }
     }

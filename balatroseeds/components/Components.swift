@@ -147,6 +147,50 @@ extension View {
                 .navigationTitle(seed)
         }
     }
+    
+    @ViewBuilder
+    public func label(_ text : String, systemImage image : String) -> some View {
+        HStack {
+            Image(systemName: image)
+            Text(text)
+                .foregroundStyle(.white)
+                .font(.customBody)
+        }.foregroundStyle(.red)
+    }
+        
+    @ViewBuilder
+    public func renderItems(_ jokers: [Item], columns : [GridItem], model : AnalyzerViewModel) -> some View{
+        LazyVGrid(columns: columns){
+            ForEach(jokers, id: \.rawValue) { joker in
+                joker.sprite(color: .white)
+                    .opacity(model.disabledItems.contains(where: {$0.rawValue == joker.rawValue}) ? 0.3 : 1.0)
+                    .onTapGesture {
+                        if model.disabledItems.contains(where: {$0.rawValue == joker.rawValue}){
+                            model.disabledItems.removeAll(where: {$0.rawValue == joker.rawValue})
+                        } else {
+                            model.disabledItems.append(joker)
+                        }
+                    }
+            }
+        }
+    }
+    @ViewBuilder
+    public func renderVoucher(_ jokers: [Item], columns : [GridItem], model : AnalyzerViewModel) -> some View{
+        LazyVGrid(columns: columns){
+            ForEach(jokers, id: \.rawValue) { joker in
+                joker.sprite(color: .white)
+                    .opacity(model.disabledItems.contains(where: {$0.rawValue == joker.rawValue}) ? 1.0 : 0.3)
+                    .onTapGesture {
+                        
+                        if model.disabledItems.contains(where: {$0.rawValue == joker.rawValue}){
+                            model.disabledItems.removeAll(where: {$0.rawValue == joker.rawValue})
+                        } else {
+                            model.disabledItems.append(joker)
+                        }
+                    }
+            }
+        }
+    }
 }
 
 struct PerkeoView : View {
