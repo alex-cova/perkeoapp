@@ -9,9 +9,9 @@ import SwiftUI
 
 enum TabItem: String, CaseIterable {
     case analyzer = "Analyzer"
+    case saved = "Saved"
     case finder = "Finder"
     case community = "Community"
-    case saved = "Saved"
     
     var symbolImage: String {
         switch self {

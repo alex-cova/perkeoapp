@@ -36,6 +36,10 @@ struct CommunityView: View {
                         }
                     }.scenePadding()
                         .background(Color(hex: "1e1e1e"))
+                    Text("Thanks to LocalThunk for the amazing game, to the people at Balatro discord server, to math, tacodiva, saul and other friends of the community for their help and support! ")
+                        .font(.customCaption)
+                        .foregroundStyle(.white)
+                        .padding()
                 }.background(Color(hex: "1e1e1e"))
                 .clipped()
                     .refreshable {

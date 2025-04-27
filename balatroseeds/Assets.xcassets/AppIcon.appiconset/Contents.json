@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "puerkeo.png",
+      "filename" : "icontest.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -13,7 +13,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "puerkeo 1.png",
+      "filename" : "icontest 1.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -25,7 +25,7 @@
           "value" : "tinted"
         }
       ],
-      "filename" : "puerkeo 2.png",
+      "filename" : "icontest 2.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"

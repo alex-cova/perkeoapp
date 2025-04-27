@@ -41,6 +41,10 @@ struct AnalyzerView : View {
                     Image(systemName: "bolt")
                 }.buttonStyle(.borderedProminent)
                     .tint(.yellow)
+                Button(action:model.paste){
+                    Image(systemName: "clipboard")
+                }.buttonStyle(.borderedProminent)
+                .tint(.green)
             }.padding(.horizontal)
             
             if(model.run != nil){
@@ -54,7 +58,7 @@ struct AnalyzerView : View {
                         .font(.customBody)
                     Label("Generate a random seed", systemImage: "bolt")
                         .font(.customBody)
-                    Label("Copy/Paste and configurations", systemImage: "gear")
+                    Label("Paste seed", systemImage: "clipboard")
                         .font(.customBody)
                 }.foregroundStyle(.white)
                 Spacer()

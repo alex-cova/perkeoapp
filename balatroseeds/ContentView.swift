@@ -37,6 +37,10 @@ struct ContentView: View {
                     AnalyzerView()
                         .toolbarVisibility(.hidden, for: .tabBar)
                 }
+                Tab.init(value: .saved) {
+                    SavedSeedsView()
+                        .toolbarVisibility(.hidden, for: .tabBar)
+                }.badge(seeds.count)
                 Tab.init(value: .finder) {
                     FinderView()
                         .toolbarVisibility(.hidden, for: .tabBar)
@@ -45,10 +49,6 @@ struct ContentView: View {
                     CommunityView()
                         .toolbarVisibility(.hidden, for: .tabBar)
                 }
-                Tab.init(value: .saved) {
-                    SavedSeedsView()
-                        .toolbarVisibility(.hidden, for: .tabBar)
-                }.badge(seeds.count)
             }.tint(.red)
                 .font(.customBody)
             InteractiveTabBar(activeTab: $model.activeTab)

@@ -101,7 +101,10 @@ public class AnalyzerViewModel : ObservableObject, Observable {
                 print("invalid seed")
             }
         }
-        configSheet.toggle()
+        
+        if configSheet {
+            configSheet.toggle()
+        }
     }
     
     private func normalizeSeed(newValue : String){
