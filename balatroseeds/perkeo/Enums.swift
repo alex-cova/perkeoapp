@@ -874,8 +874,6 @@ enum Spectral: String, CaseIterable, Item {
     case Trance = "Trance"
     case Medium = "Medium"
     case Cryptid = "Cryptid"
-    case RETRY = "RETRY"
-    case RETRY2 = "RETRY2"
 
    public var ordinal: Int {
         switch self {
@@ -895,8 +893,6 @@ enum Spectral: String, CaseIterable, Item {
         case .Trance: return 13
         case .Medium: return 14
         case .Cryptid: return 15
-        case .RETRY: return 16
-        case .RETRY2: return 17
         }
     }
 
@@ -1453,7 +1449,6 @@ enum CommonJoker: String, CaseIterable, Item, Joker {
 }
 
 enum Packs: String, CaseIterable, Item {
-    case RETRY = "RETRY"
     case Arcana_Pack = "Arcana Pack"
     case Jumbo_Arcana_Pack = "Jumbo Arcana Pack"
     case Mega_Arcana_Pack = "Mega Arcana Pack"
@@ -1472,7 +1467,6 @@ enum Packs: String, CaseIterable, Item {
 
     public var value: Double {
         switch self {
-        case .RETRY: return 22.42
         case .Arcana_Pack: return 4
         case .Jumbo_Arcana_Pack: return 2
         case .Mega_Arcana_Pack: return 0.5
@@ -1493,7 +1487,6 @@ enum Packs: String, CaseIterable, Item {
 
     public var ordinal: Int {
         switch self {
-        case .RETRY: return 0
         case .Arcana_Pack: return 1
         case .Jumbo_Arcana_Pack: return 2
         case .Mega_Arcana_Pack: return 3
