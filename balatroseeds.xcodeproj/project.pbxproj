@@ -37,28 +37,6 @@
 			);
 			target = FAD030AF2D287FDC00F83E2B /* balatroseeds */;
 		};
-		FA287EAE2D459E9500F96796 /* Exceptions for "balatroseedsUITests" folder in "balatroseeds" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				bosses.json,
-				jokers.json,
-				tags.json,
-				tarots.json,
-				vouchers.json,
-			);
-			target = FAD030AF2D287FDC00F83E2B /* balatroseeds */;
-		};
-		FA287EAF2D459E9500F96796 /* Exceptions for "balatroseedsUITests" folder in "balatroseedsUITests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				bosses.json,
-				jokers.json,
-				tags.json,
-				tarots.json,
-				vouchers.json,
-			);
-			target = FAD030C92D287FDE00F83E2B /* balatroseedsUITests */;
-		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -77,10 +55,6 @@
 		};
 		FAD030CD2D287FDE00F83E2B /* balatroseedsUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				FA287EAE2D459E9500F96796 /* Exceptions for "balatroseedsUITests" folder in "balatroseeds" target */,
-				FA287EAF2D459E9500F96796 /* Exceptions for "balatroseedsUITests" folder in "balatroseedsUITests" target */,
-			);
 			path = balatroseedsUITests;
 			sourceTree = "<group>";
 		};
