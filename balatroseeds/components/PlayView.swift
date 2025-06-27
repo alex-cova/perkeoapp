@@ -7,9 +7,25 @@
 
 import SwiftUI
 
+struct ActivityViewController: UIViewControllerRepresentable {
+    let activityItems: [Any]
+    let applicationActivities: [UIActivity]?
+    
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(
+            activityItems: activityItems,
+            applicationActivities: applicationActivities
+        )
+    }
+    
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+}
 
 struct PlayView : View {
     @EnvironmentObject var model : AnalyzerViewModel
+    
+
+    
     
     init(){
         
@@ -20,11 +36,13 @@ struct PlayView : View {
             mainView()
         }
     }
-    
+
     @ViewBuilder
     private func mainView() -> some View {
         if let run = model.run {
             ScrollView {
+                actions(run: run)
+                    .padding(.top)
                 ForEach(run.antes) { a in
                     anteView(ante: a, run: run)
                         .padding(.bottom)
@@ -67,44 +85,55 @@ struct PlayView : View {
     }
     
     @ViewBuilder
+    func actions(run : Run) -> some View {
+        VStack(alignment: .leading) {
+                HStack {
+                    Spacer()
+                    NavigationLink(destination: ResumeView(run: run)){
+                        VStack {
+                            Image(systemName: "checklist")
+                                .foregroundStyle(.white)
+                            Text("Summary")
+                                .bold()
+                                .font(.customCaption)
+                        }.frame(width: 45, height: 40)
+                    }.buttonStyle(.borderedProminent)
+                        .tint(.blue)
+                    Button(action: {
+                        model.copy()
+                    }, label: {
+                        VStack {
+                            Image(systemName: "document.on.document")
+                                .foregroundStyle(.white)
+                            Text("Copy")
+                                .bold()
+                                .font(.customCaption)
+                        }.frame(width: 45, height: 40)
+                    }).buttonStyle(.borderedProminent)
+                        .tint(.green)
+                    Button(action:{
+                        model.configSheet.toggle()
+                    }){
+                        VStack {
+                            Image(systemName: "filemenu.and.selection")
+                            Text("Menu")
+                                .bold()
+                                .font(.customCaption)
+                        }.frame(width: 45, height: 40)
+                    }.buttonStyle(.borderedProminent)
+                        .tint(.gray)
+                    Spacer()
+                }.padding(.bottom)
+            
+        }
+    }
+    
+    @ViewBuilder
     func options(ante: Ante, run : Run) -> some View {
         HStack {
             ante.voucher.sprite()
                 .padding(.horizontal)
-            VStack(alignment: .leading) {
-                if ante.ante == model.firstAnte {
-                    HStack {
-                        Spacer()
-                        NavigationLink(destination: ResumeView(run: run)){
-                            HStack {
-                                Image(systemName: "checklist")
-                                    .foregroundStyle(.white)
-                                Text("Summary")
-                                    .bold()
-                                    .font(.customCaption)
-                            }
-                        }.buttonStyle(.borderedProminent)
-                        Button(action: {
-                            model.copy()
-                        }, label: {
-                            HStack {
-                                Image(systemName: "document.on.document")
-                                    .foregroundStyle(.white)
-                                Text("Copy")
-                                    .bold()
-                                    .font(.customCaption)
-                            }
-                        }).buttonStyle(.borderedProminent)
-                            .tint(.green)
-                        Button(action:{
-                            model.configSheet.toggle()
-                        }){
-                            Image(systemName: "gear")
-                        }.buttonStyle(.borderedProminent)
-                            .tint(.gray)
-                        Spacer()
-                    }.padding(.bottom)
-                }
+            
                 HStack {
                     ante.boss.sprite()
                     ForEach(astList(set: ante.tags), id: \.self.rawValue) { tag in
@@ -113,7 +142,7 @@ struct PlayView : View {
                         }
                     }
                 }
-            }
+            
             
         }.padding(.horizontal)
     }

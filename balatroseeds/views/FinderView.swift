@@ -23,6 +23,11 @@ struct FinderView : View {
     static var running = false
     static var finished = 0
     @EnvironmentObject var model : AnalyzerViewModel
+    var cachedDescription : String  {
+        get {
+            "Every seed has a legendary joker, but we are limited to \(jokerFile.jokerData.count.formatted()) posible seeds"
+        }
+    }
     
     func incrementStep() {
         value += 10000
@@ -162,7 +167,7 @@ struct FinderView : View {
                                     DispatchQueue.main.async {
                                         print("Read data: \(self.jokerFile.jokerData.count)")
                                         self.isLoading = false
-                                        
+                                      
                                     }
                                 }
                                 
@@ -171,7 +176,7 @@ struct FinderView : View {
                         }
                     }
                     if cached {
-                        Text("Every seed has a legendary joker, but we are limited to 32, 546 posible seeds")
+                        Text(cachedDescription)
                             .foregroundStyle(.white)
                             .font(.customCaption)
                     }

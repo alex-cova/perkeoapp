@@ -70,7 +70,7 @@ struct InteractiveTabBar: View {
                             .matchedGeometryEffect(id: "ACTIVETAB", in: animation)
                     }
                 }
-                /// This gives us the elevation we needed to push the active tab
+            /// This gives us the elevation we needed to push the active tab
                 .frame(width: 25, height: 25, alignment: .bottom)
                 .foregroundStyle(isActive ? .white : Color(uiColor:  UIColor.systemGray))
             
@@ -157,15 +157,15 @@ extension View {
                 .font(.customBody)
         }.foregroundStyle(.red)
     }
-        
+    
     @ViewBuilder
-    public func renderItems(_ jokers: [Item], columns : [GridItem], model : AnalyzerViewModel) -> some View{
+    public func renderItems(_ jokers: [Item], columns : [GridItem], model : AnalyzerViewModel) -> some View {
         LazyVGrid(columns: columns){
             ForEach(jokers, id: \.rawValue) { joker in
                 joker.sprite(color: .white)
-                    .opacity(model.disabledItems.contains(where: {$0.rawValue == joker.rawValue}) ? 0.3 : 1.0)
+                    .opacity(model.isSelected(joker) ? 0.3 : 1.0)
                     .onTapGesture {
-                        if model.disabledItems.contains(where: {$0.rawValue == joker.rawValue}){
+                        if model.isSelected(joker) {
                             model.disabledItems.removeAll(where: {$0.rawValue == joker.rawValue})
                         } else {
                             model.disabledItems.append(joker)
@@ -203,10 +203,10 @@ struct PerkeoView : View {
         legendaryJokerImage(x: 7, y: 8)
             .padding()
             .rotationEffect( isAnimating ? .degrees(2) : .degrees(-2))
-                .onAppear {
-                    // Start the animation when the view appears
-                    isAnimating = true
-                }
+            .onAppear {
+                // Start the animation when the view appears
+                isAnimating = true
+            }
             .animation(
                 Animation.easeInOut(duration: animationDuration)
                     .repeatForever(autoreverses: true),
@@ -226,10 +226,10 @@ struct TribouleteView : View {
         Image("triboulete")
             .padding()
             .rotationEffect( isAnimating ? .degrees(2) : .degrees(-2))
-                .onAppear {
-                    // Start the animation when the view appears
-                    isAnimating = true
-                }
+            .onAppear {
+                // Start the animation when the view appears
+                isAnimating = true
+            }
             .animation(
                 Animation.easeInOut(duration: animationDuration)
                     .repeatForever(autoreverses: true),
@@ -256,10 +256,10 @@ struct AnimatedTitle : View {
             .foregroundStyle(.white)
             .scaleEffect(.random(in:  1.2...1.4 ))
             .rotationEffect( isAnimating ? .degrees(2) : .degrees(-2))
-                .onAppear {
-                    // Start the animation when the view appears
-                    isAnimating = true
-                }
+            .onAppear {
+                // Start the animation when the view appears
+                isAnimating = true
+            }
             .animation(
                 Animation.easeInOut(duration: animationDuration)
                     .repeatForever(autoreverses: true),

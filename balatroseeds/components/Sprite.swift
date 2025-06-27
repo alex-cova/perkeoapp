@@ -24,7 +24,7 @@ class SpriteSheet {
     var tags : [Sprite] = []
     var vouchers : [Sprite] = []
     var bosses : [Sprite] = []
-    
+        
     public func readBosses() -> [Sprite] {
         if(!bosses.isEmpty){
             return bosses

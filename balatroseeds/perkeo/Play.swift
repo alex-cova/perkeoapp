@@ -58,12 +58,23 @@ class Run : Encodable{
         for ante in antes {
             for joker in ante.jokers() {
                 if jokerList[joker.rawValue] != nil {
-                    jokerList[joker.rawValue]!.count += 1
+                    var j = jokerList[joker.rawValue]!
+                    j.count += 1
+                    
                     if joker.edition != .NoEdition {
                         jokerList[joker.rawValue]!.edition = joker.edition
                     }
+                    
+                    if ante.ante < j.ante {
+                        j.ante = ante.ante
+                        j.source = joker.source ?? ""
+                    }
+                    
+                    
                 }else {
-                    jokerList[joker.rawValue] = JokerCount(joker: joker, count: 1, edition: joker.edition)
+                    jokerList[joker.rawValue] = JokerCount(joker: joker, count: 1,
+                                                           edition: joker.edition, ante: ante.ante,
+                                                           source: joker.source ?? "")
                 }
             }
         }
@@ -116,6 +127,8 @@ struct JokerCount : Identifiable {
     let joker : Item
     var count : Int
     var edition : Edition = .NoEdition
+    var ante : Int
+    var source : String
 }
 
 
@@ -158,14 +171,14 @@ class Ante : Encodable, Identifiable {
         for pack in packs {
             if(pack.kind == .Buffoon){
                 pack.options.forEach {
-                    jokerList.append($0)
+                    jokerList.append($0.atSource("pack"))
                 }
             }
         }
         
         for i in shopQueue {
             if(i.item is Joker){
-                jokerList.append(i.asEditionItem())
+                jokerList.append(i.asEditionItem("shop"))
             }
         }
         
@@ -295,8 +308,8 @@ class SearchableItem : Encodable, Identifiable {
         case edition
     }
     
-    func asEditionItem() -> EditionItem {
-        return EditionItem(edition: edition ?? .NoEdition, item)
+    func asEditionItem(_ source : String? = nil) -> EditionItem {
+        return EditionItem(edition: edition ?? .NoEdition, item, source)
     }
     
     func encode(to encoder: Encoder) throws {

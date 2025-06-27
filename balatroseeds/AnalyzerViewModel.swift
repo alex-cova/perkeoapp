@@ -26,7 +26,8 @@ public class AnalyzerViewModel : ObservableObject, Observable {
     @Published private var version : Version = .v_101f
     @Published var toast: Toast? = nil
     @Published var activeTab: TabItem = .analyzer
-    
+    @Published var autoBuyVoucher = true
+
     init(memoryOnly: Bool = false) {
         self.modelContext  = {
             let schema = Schema([
@@ -44,6 +45,14 @@ public class AnalyzerViewModel : ObservableObject, Observable {
         initListeners()
     }
     
+    func isSelected(_ joker : Item) -> Bool {
+        if showman && joker.rawValue == UnCommonJoker.Showman.rawValue {
+            return true
+        }
+
+        return disabledItems.contains(where: {$0.rawValue == joker.rawValue})
+    }
+
     var firstAnte : Int {
         get {
             run?.antes.first?.ante ?? startingAnte
@@ -69,7 +78,7 @@ public class AnalyzerViewModel : ObservableObject, Observable {
     }
     
     private func initListeners(){
-        $seed.debounce(for: 0.5, scheduler: RunLoop.main)
+        $seed.debounce(for: 1.5, scheduler: RunLoop.main)
             .dropFirst()
             .sink { [weak self] s in
                 guard let self = self else { return }
@@ -98,7 +107,7 @@ public class AnalyzerViewModel : ObservableObject, Observable {
             if clipboardText.isValidSeed(){
                 seed = clipboardText.normalizeSeed()
             }else {
-                print("invalid seed")
+                toast = .init(style: .error, message: "Not a valid seed in the clipboard")
             }
         }
         
@@ -140,7 +149,7 @@ public class AnalyzerViewModel : ObservableObject, Observable {
         DispatchQueue.global(qos: .utility).async {
             let balatro = Balatro()
             
-            for option in  self.disabledItems {
+            for option in self.disabledItems {
                 balatro.options.append(option)
             }
             
@@ -149,8 +158,7 @@ public class AnalyzerViewModel : ObservableObject, Observable {
             balatro.maxDepth =  self.maxAnte
             balatro.showman =  self.showman
             balatro.startingAnte =  self.startingAnte
-            
-        
+
             let run = balatro
                 .performAnalysis(seed:  self.seed)
                         

@@ -102,7 +102,67 @@ extension Item {
         if(self.rawValue == Specials.THE_SOUL.rawValue){
             return SpriteImageView(self, Images.tarots, 2, 2, 71, 95, edition: edition, color)
         }
+                
+        for deck in Deck.allCases {
+            if(self.rawValue == deck.rawValue){
+                switch deck {
+                case .RED_DECK:
+                    return SpriteImageView(self, Images.enhancers, 0, 0, 71, 95)
+                case .BLUE_DECK:
+                    return SpriteImageView(self, Images.enhancers, 0, 2, 71, 95)
+                case .GREEN_DECK:
+                    return SpriteImageView(self, Images.enhancers, 2, 2, 71, 95)
+                case .YELLOW_DECK:
+                    return SpriteImageView(self, Images.enhancers, 1, 2, 71, 95)
+                case .BLACK_DECK:
+                    return SpriteImageView(self, Images.enhancers, 3, 2, 71, 95)
+                case .MAGIC_DECK:
+                    return SpriteImageView(self, Images.enhancers, 0, 3, 71, 95)
+                case .NEBULA_DECK:
+                    return SpriteImageView(self, Images.enhancers, 3, 0, 71, 95)
+                case .GHOST_DECK:
+                    return SpriteImageView(self, Images.enhancers, 6, 2, 71, 95)
+                case .ABANDONED_DECK:
+                    return SpriteImageView(self, Images.enhancers, 3, 3, 71, 95)
+                case.CHECKERED_DECK:
+                    return SpriteImageView(self, Images.enhancers, 1, 3, 71, 95)
+                case .ZODIAC_DECK:
+                    return SpriteImageView(self, Images.enhancers, 4, 3, 71, 95)
+                case .PAINTED_DECK:
+                    return SpriteImageView(self, Images.enhancers, 3, 4, 71, 95)
+                case .ANAGLYPH_DECK:
+                    return SpriteImageView(self, Images.enhancers, 2, 4, 71, 95)
+                case .PLASMA_DECK:
+                    return SpriteImageView(self, Images.enhancers, 4, 2, 71, 95)
+                case .ERRATIC_DECK:
+                    return SpriteImageView(self, Images.enhancers, 2, 3, 71, 95)
+                }
+            }
+        }
         
+        for chip in Stake.allCases {
+            if self.rawValue == chip.rawValue {
+                switch chip {
+                case .White_Stake:
+                    return SpriteImageView(self, Images.chips, 0, 0, 29, 29)
+                case .Red_Stake:
+                    return SpriteImageView(self, Images.chips, 1, 0, 29, 29)
+                case .Green_Stake:
+                    return SpriteImageView(self, Images.chips, 2, 0, 29, 29)
+                case .Blue_Stake:
+                    return SpriteImageView(self, Images.chips, 3, 0, 29, 29)
+                case .Black_Stake:
+                    return SpriteImageView(self, Images.chips, 4, 0, 29, 29)
+                case .Purple_Stake:
+                    return SpriteImageView(self, Images.chips, 0, 1, 29, 29)
+                case .Orange_Stake:
+                    return SpriteImageView(self, Images.chips, 1, 1, 29, 29)
+                case .Gold_Stake:
+                    return SpriteImageView(self, Images.chips, 2, 1, 29, 29)
+                }
+            }
+        }
+
         print("Missing: \(self.rawValue)")
         
         return SpriteImageView(self,Images.vouchers, 7, 3, 34, 45)

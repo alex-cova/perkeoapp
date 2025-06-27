@@ -7,6 +7,20 @@
 
 import Foundation
 
+extension Int {
+    /// Returns the formatted string representation of the integer using the specified number style.
+    /// - Parameters:
+    ///   - style: The number style to use (default is .decimal).
+    ///   - locale: The locale to use (default is current).
+    /// - Returns: A formatted string, or nil if formatting fails.
+    func formatted(style: NumberFormatter.Style = .decimal, locale: Locale = .current) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = style
+        formatter.locale = locale
+        return formatter.string(from: NSNumber(value: self)) ?? "\(self)"
+    }
+}
+
 extension String {
     func charAt(_ i : Int) -> Character {
         let index = self.index(self.startIndex, offsetBy: i)

@@ -55,8 +55,7 @@ struct ResumeView: View {
                 }.padding(.vertical)
                 LazyVGrid(columns: columns) {
                     ForEach(run.jokers()) { joker in
-                        joker.joker.sprite(edition: joker.edition)
-                            .badge(Text("joker.count"))
+                        renderCard(joker)
                     }
 
                     ForEach(run.spectrals(), id: \.rawValue) { spectral in
@@ -83,6 +82,20 @@ struct ResumeView: View {
                 }
             }
         
+    }
+    
+    @ViewBuilder
+    func renderCard(_ joker : JokerCount) -> some View {
+        VStack {
+            joker.joker.sprite(edition: joker.edition)
+            
+            if !joker.source.isEmpty {
+                Text("At ante \(joker.ante) in \(joker.source)")
+                    .font(.customCaption)
+                    .foregroundStyle(.white)
+                    .padding(.bottom)
+            }
+        }
     }
 
 }

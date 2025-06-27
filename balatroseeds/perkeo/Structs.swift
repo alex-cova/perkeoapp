@@ -110,24 +110,20 @@ class Card: Item {
 class EditionItem: Encodable, Identifiable, Item {
     let edition: Edition
     let item: Item
+    let source : String?
 
-    init(edition: Edition, _ item: Item) {
-        
+    init(edition: Edition, _ item: Item, _ source : String? = nil) {
         if item is EditionItem {
             fatalError("Cannot create EditionItem from EditionItem")
         }
         
         self.edition = edition
         self.item = item
+        self.source = source
     }
-
-    init(_ item: Item) {
-        if item is EditionItem {
-            fatalError("Cannot create EditionItem from EditionItem")
-        }
-        
-        self.edition = .NoEdition
-        self.item = item
+    
+    convenience init(_ item: Item) {
+        self.init(edition: .NoEdition, item, nil)
     }
 
     enum CodingKeys: CodingKey {
@@ -135,6 +131,10 @@ class EditionItem: Encodable, Identifiable, Item {
         case item
     }
 
+    func atSource(_ source : String) ->  EditionItem{
+        return EditionItem(edition: edition, item, source)
+    }
+    
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         if  edition != .NoEdition {

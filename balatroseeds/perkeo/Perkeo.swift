@@ -179,7 +179,7 @@ class JokerFile : ObservableObject {
     
     private func read(from inputStream: InputStream) throws -> [DataItem] {
         var dataList: [DataItem] = []
-        let seedLength = 7
+        let seedLength = 8
         var seedBuffer = [UInt8](repeating: 0, count: seedLength)
         var intBuffer = [UInt8](repeating: 0, count: 4) // Int.bitWidth / 8
         
@@ -191,7 +191,7 @@ class JokerFile : ObservableObject {
                 throw NSError(domain: "DataReaderError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to decode seed"])
             }
             
-            if (seed.range(of: "^[a-zA-Z0-9]{7}$", options: .regularExpression) == nil){
+            if (seed.range(of: "^[a-zA-Z0-9]{8}$", options: .regularExpression) == nil){
                 throw NSError(domain: "DataReaderError", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid seed: '\(seed)'"])
             }
             
@@ -226,7 +226,8 @@ class JokerFile : ObservableObject {
         let bytesRead = inputStream.read(&buffer, maxLength: bytesToRead)
         
         if bytesRead != bytesToRead {
-            throw NSError(domain: "DataReaderError", code: 3, userInfo: [NSLocalizedDescriptionKey: "Failed to read expected number of bytes"])
+            throw NSError(domain: "DataReaderError", code: 3, userInfo: [NSLocalizedDescriptionKey:
+                                                                            "Failed to read expected number of bytes \(buffer.count) vs \(bytesRead)"])
         }
     }
     /*

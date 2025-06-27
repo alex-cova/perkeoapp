@@ -37,7 +37,7 @@ public class Balatro {
     static func generateRandomString() -> String {
         var result = ""
 
-        for _ in 0..<7 {
+        for _ in 0..<8 {
             let index = Int.random(in: 0..<CHARACTERS.count)
             result = result + String(CHARACTERS.charAt(index))
         }
@@ -69,6 +69,7 @@ public class Balatro {
     var deck = Deck.RED_DECK
     var stake = Stake.White_Stake
     var showman = false
+    var autoBuyVoucher = false
     
     func performAnalysis(seed: String) -> Run {
         var cards: [Int] = Array(repeating: 50, count: maxDepth)
@@ -107,7 +108,9 @@ public class Balatro {
                 let voucher = inst.nextVoucher(a)
                 play.voucher = voucher
 
-                inst.lock(voucher)
+                if autoBuyVoucher {
+                    inst.lock(voucher)
+                }
 
                 // Unlock next level voucher
                 for i in stride(from: 0, to: Functions.VOUCHERS.count, by: 2) {
@@ -249,7 +252,7 @@ public class Balatro {
         return edition ?? .NoEdition
     }
     
-    func configureForSpeed(selections: [ItemEdition]) -> Balatro {
+    func configureForSpeed(selections: [Item]) -> Balatro {
         analyzeBoss = false
         analyzeStandard = false
         analyzeTags = false
@@ -260,7 +263,7 @@ public class Balatro {
         analyzeVoucher = false
 
         for selection in selections {
-            enable(selection.item)
+            enable(selection)
         }
 
         return self
