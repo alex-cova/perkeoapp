@@ -53,6 +53,7 @@ struct ContentView: View {
                 }
             }.tint(.red)
                 .font(.customBody)
+                .padding(.bottom, model.activeTab == .analyzer ? 0  : 60)
             InteractiveTabBar(activeTab: $model.activeTab)
         }.toastView(toast: $model.toast)
             .sheet(isPresented: $model.configSheet) {

@@ -81,7 +81,7 @@ struct PlayView : View {
         Rectangle()
             .foregroundStyle(Color(hex: "#2d2d2d"))
             .frame(height: 1)
-            .padding(.bottom)
+            .padding(.bottom, 4)
     }
     
     @ViewBuilder
@@ -90,36 +90,36 @@ struct PlayView : View {
                 HStack {
                     Spacer()
                     NavigationLink(destination: ResumeView(run: run)){
-                        VStack {
+                        HStack {
                             Image(systemName: "checklist")
                                 .foregroundStyle(.white)
                             Text("Summary")
                                 .bold()
                                 .font(.customCaption)
-                        }.frame(width: 45, height: 40)
+                        }.frame(width: 75, height: 25)
                     }.buttonStyle(.borderedProminent)
                         .tint(.blue)
                     Button(action: {
                         model.copy()
                     }, label: {
-                        VStack {
+                        HStack {
                             Image(systemName: "document.on.document")
                                 .foregroundStyle(.white)
                             Text("Copy")
                                 .bold()
                                 .font(.customCaption)
-                        }.frame(width: 45, height: 40)
+                        }.frame(width: 75, height: 25)
                     }).buttonStyle(.borderedProminent)
                         .tint(.green)
                     Button(action:{
                         model.configSheet.toggle()
                     }){
-                        VStack {
+                        HStack {
                             Image(systemName: "filemenu.and.selection")
                             Text("Menu")
                                 .bold()
                                 .font(.customCaption)
-                        }.frame(width: 45, height: 40)
+                        }.frame(width: 75, height: 25)
                     }.buttonStyle(.borderedProminent)
                         .tint(.gray)
                     Spacer()

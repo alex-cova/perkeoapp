@@ -232,7 +232,7 @@ struct FinderView : View {
                 if !found.isEmpty {
                     renderSeeds()
                 }
-                
+                 
             }.clipped()
                 .background(Color(hex: "#1e1e1e"))
                 .scrollContentBackground(.hidden)

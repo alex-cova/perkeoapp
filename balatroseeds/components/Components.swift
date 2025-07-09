@@ -47,7 +47,8 @@ struct InteractiveTabBar: View {
         .padding(.bottom, 10)
         .background {
             Rectangle()
-                .fill(Color(hex: "#1e1e1e").shadow(.drop(color: Color(hex: "#1e1e1e").opacity(0.2), radius: 5)))
+                .foregroundStyle(Color(hex: "#2d2d2d")
+                    .opacity(activeTab == .analyzer ? 0.4 : 1.0))
                 .ignoresSafeArea()
                 .padding(.top, 20)
         }
@@ -59,14 +60,14 @@ struct InteractiveTabBar: View {
     func TabButton(_ tab: TabItem) -> some View {
         let isActive = (activeDraggingTab ?? activeTab) == tab
         
-        VStack(spacing: 6) {
+        VStack(spacing: 5) {
             Image(systemName: tab.symbolImage)
                 .symbolVariant(.fill)
                 .frame(width: isActive ? 50 : 25, height: isActive ? 50 : 25)
                 .background {
                     if isActive {
                         Circle()
-                            .fill(.red.gradient)
+                            .fill(.red.gradient.opacity(0.4))
                             .matchedGeometryEffect(id: "ACTIVETAB", in: animation)
                     }
                 }
@@ -76,7 +77,7 @@ struct InteractiveTabBar: View {
             
             Text(tab.rawValue)
                 .font(.customCaption)
-                .foregroundStyle(isActive ? .red : Color(uiColor:  UIColor.systemGray))
+                .foregroundStyle(isActive ? .red : Color(uiColor:  UIColor.white))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
         .contentShape(.rect)

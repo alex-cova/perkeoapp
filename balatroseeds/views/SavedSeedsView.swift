@@ -41,7 +41,12 @@ struct SavedSeedsView : View {
                     .navigationTitle("Saved Seeds")
                     .navigationBarTitleDisplayMode(.inline)
             }else {
+                
                 List {
+                    Button(action: pasteSeed) {
+                        Text("Add seed from clipboard")
+                            .font(.customBody)
+                    }
                     ForEach(seeds) { item in
                         NavigationLink(destination: seedNavigation(item.seed)
                             .environmentObject(model)
@@ -53,10 +58,6 @@ struct SavedSeedsView : View {
                             }.listRowBackground(Color(hex: "#4d4d4d"))
                         
                     }.onDelete(perform: deleteItems)
-                    Button(action: pasteSeed) {
-                        Text("Add seed from clipboard")
-                            .font(.customBody)
-                    }
                 }.background(Color(hex: "#1e1e1e"))
                     .scrollContentBackground(.hidden)
                     .navigationTitle("Saved Seeds")

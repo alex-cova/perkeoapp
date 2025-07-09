@@ -46,7 +46,7 @@ struct AnalyzerView : View {
                 }.buttonStyle(.borderedProminent)
                 .tint(.green)
             }.padding(.horizontal)
-            
+     
             if(model.run != nil){
                 PlayView()
                     .clipped()
