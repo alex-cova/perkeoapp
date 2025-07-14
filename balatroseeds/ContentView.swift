@@ -27,12 +27,49 @@ class Images {
 struct ContentView: View {
     @EnvironmentObject var model : AnalyzerViewModel
     @Query private var seeds: [SeedModel]
-
+    
     init(){
         LookAndFeel.configure()
     }
     
     var body: some View {
+        if #available(iOS 18, *) {
+            tabView()
+        }else {
+            TabView(selection: $model.activeTab) {
+                AnalyzerView()
+                    .tag(TabItem.analyzer)
+                    .tabItem {
+                        Label(TabItem.analyzer.rawValue, systemImage: TabItem.analyzer.symbolImage)
+                            }
+                SavedSeedsView()
+                    .tag(TabItem.saved)
+                    .tabItem {
+                        Label(TabItem.saved.rawValue, systemImage: TabItem.saved.symbolImage)
+                    }
+                FinderView()
+                    .tag(TabItem.finder)
+                    .tabItem {
+                        Label(TabItem.finder.rawValue, systemImage: TabItem.finder.symbolImage)
+                    }
+                CommunityView()
+                    .tag(TabItem.community)
+                    .tabItem {
+                        Label(TabItem.community.rawValue, systemImage: TabItem.community.symbolImage)
+                    }
+            }.toastView(toast: $model.toast)
+                .sheet(isPresented: $model.configSheet) {
+                    ConfigView()
+                        .presentationDetents([.medium, .large])
+                        .onDisappear {
+                            model.analyze()
+                        }
+                }
+        }
+    }
+    
+    @available(iOS 18, *)
+    func tabView() -> some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $model.activeTab) {
                 Tab.init(value: .analyzer) {
@@ -63,7 +100,6 @@ struct ContentView: View {
                         model.analyze()
                     }
             }
-        
     }
 }
 
