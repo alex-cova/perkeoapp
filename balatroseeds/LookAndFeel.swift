@@ -20,11 +20,21 @@ class LookAndFeel {
         UILabel.appearance().font = UIFont(name: "m6x11plus", size: 12)
         UITableView.appearance().separatorColor = UIColor.systemRed
         UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont.init(name: "m6x11plus", size: 15)! ], for: .normal)
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.titleTextAttributes = [
+            .font: UIFont(name: "m6x11plus", size: 24)!,
+            .foregroundColor: UIColor.white
+        ]
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
     }
 }
 
 #Preview {
     NavigationStack {
         ContentView()
+            .environment(AnalyzerViewModel())
     }
 }

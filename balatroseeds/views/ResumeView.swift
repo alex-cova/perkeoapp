@@ -18,6 +18,8 @@ struct ResumeView: View {
     
     var body: some View {
         VStack {
+            Spacer()
+                .frame(height: 25)
             AnimatedTitle(text: "Summary of \(run.seed)")
             ScrollView {
                 InfiniteScrollView(collection: run.vouchers()) { card in
@@ -64,7 +66,7 @@ struct ResumeView: View {
                     }
                 }
             }
-        }.background(Color(hex: "#1e1e1e"))
+        }.background(Color.customBackground)
             .onReceive(timer) { _ in
                 if let scrollView = scrollView {
                     scrollView.contentOffset.x += 0.35

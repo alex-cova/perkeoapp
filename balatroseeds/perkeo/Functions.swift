@@ -12,18 +12,16 @@ class Functions: Lock {
     static let SPECTRALS: [Spectral] = Spectral.allCases
     static let LEGENDARY_JOKERS: [LegendaryJoker] = LegendaryJoker.allCases
     static let UNCOMMON_JOKERS: [UnCommonJoker] = UnCommonJoker.allCases
-    static let UNCOMMON_JOKERS_101C: [UnCommonJoker101C] = UnCommonJoker101C.allCases
-    static let UNCOMMON_JOKERS_100: [UnCommonJoker100] = UnCommonJoker100.allCases
     static let CARDS: [Cards] = Cards.allCases
     static let ENHANCEMENTS: [Enhancement] = Enhancement.allCases
     static let VOUCHERS: [Voucher] = Voucher.allCases
     static let TAGS: [Tag] = Tag.allCases
     static let PACKS: [PackType] = PackType.allCases
     static let RARE_JOKERS: [RareJoker] = RareJoker.allCases
-    static let RARE_JOKERS_101C: [RareJoker101C] = RareJoker101C.allCases
-    static let RARE_JOKERS_100: [RareJoker100] = RareJoker100.allCases
+    
+    
     static let COMMON_JOKERS: [CommonJoker] = CommonJoker.allCases
-    static let COMMON_JOKERS_100: [CommonJoker100] = CommonJoker100.allCases
+    
     static let BOSSES: [Boss] = Boss.allCases
     
     var params: InstanceParams
@@ -117,7 +115,14 @@ class Functions: Lock {
             lock(Specials.THE_SOUL)
             return EditionItem(edition: data.edition, data.joker)
         }
-        return randchoice(source, Functions.TAROTS)
+        
+        let tarot = randchoice(source, Functions.TAROTS)
+        
+        if tarot == Tarot.The_Wheel_of_Fortune {
+            return EditionItem(edition: nextWheelOfFortune(), tarot)
+        }
+        
+        return tarot
     }
     
     func nextPlanet(_ source: String, _ ante: Int, _ soulable: Bool) -> Item {
@@ -158,16 +163,19 @@ class Functions: Lock {
         return randchoice(source, Functions.SPECTRALS)
     }
     
+    func nextWheelOfFortune() -> Edition {
+            //1 / 4
+            if (random("wheel_of_fortune") > 0.25) {
+                return pollEdition("wheel_of_fortune", nil, true, true);
+            }
+
+            return Edition.NoEdition;
+        }
+    
     func edition(_ ante: Int, editionArr: [String]) -> Edition {
         // Get edition
-        var editionRate: Double = 1
-        
-        if isVoucherActive(Voucher.Glow_Up) {
-            editionRate = 4
-        } else if isVoucherActive(Voucher.Hone) {
-            editionRate = 2
-        }
-        
+        let editionRate = getEditionRate()
+
         var edition: Edition = .NoEdition
         let editionPoll = random(editionArr[ante])
         
@@ -185,6 +193,54 @@ class Functions: Lock {
         
         return edition
     }
+    
+    func  getEditionRate() -> Double {
+        var editionRate = 1.0
+
+            if (isVoucherActive(Voucher.Glow_Up)) {
+                editionRate = 4.0
+            } else if (isVoucherActive(Voucher.Hone)) {
+                editionRate = 2.0
+            }
+
+            return editionRate
+        }
+    
+    func pollEdition(_ coordinate : String, _ modifier : Double?, _ noNegative : Bool, _ guaranteed : Bool) -> Edition {
+           var editionPoll = random(coordinate)
+           var editionRate = getEditionRate()
+
+           if (guaranteed) {
+               if (editionPoll > 1 - 0.003 * 25 && !noNegative) {
+                   return Edition.Polychrome
+               } else if (editionPoll > 1 - 0.006 * 25) {
+                   return Edition.Polychrome
+               } else if (editionPoll > 1 - 0.02 * 25) {
+                   return Edition.Holographic
+               } else if (editionPoll > 1 - 0.04 * 25) {
+                   return Edition.Foil
+               }
+           } else {
+               if (editionPoll > 1 - multi(0.003, modifier) && !noNegative) {
+                   return Edition.Negative
+               } else if (editionPoll > 1 - 0.006 * multi(editionRate, modifier)) {
+                   return Edition.Polychrome
+               } else if (editionPoll > 1 - 0.02 * multi(editionRate, modifier)) {
+                   return Edition.Holographic
+               } else if (editionPoll > 1 - 0.04 * multi(editionRate, modifier)) {
+                   return Edition.Foil
+               }
+           }
+
+        return Edition.NoEdition
+       }
+
+    private func multi(_ editionRate : Double,  _ mod : Double?) -> Double {
+        if (mod == nil) { return editionRate }
+
+           return editionRate * mod!;
+       }
+    
     
     static let setA = Set.of(
         "Gros Michel", "Ice Cream", "Cavendish", "Luchador", "Turtle Bean", "Diet Cola", "Popcorn",
@@ -232,29 +288,11 @@ class Functions: Lock {
             }
             
         case "3":
-            if params.version > 10103 {
                 joker = randchoice(joker3Arr[ante], Functions.RARE_JOKERS)
-            } else if params.version > 10099 {
-                joker = randchoice(joker3Arr[ante], Functions.RARE_JOKERS_101C)
-            } else {
-                joker = randchoice(joker3Arr[ante], Functions.RARE_JOKERS_100)
-            }
-            
         case "2":
-            if params.version > 10103 {
                 joker = randchoice(joker2Arr[ante], Functions.UNCOMMON_JOKERS)
-            } else if params.version > 10099 {
-                joker = randchoice(joker2Arr[ante], Functions.UNCOMMON_JOKERS_101C)
-            } else {
-                joker = randchoice(joker2Arr[ante], Functions.UNCOMMON_JOKERS_100)
-            }
-            
         default:
-            if params.version > 10099 {
                 joker = randchoice(joker1Arr[ante], Functions.COMMON_JOKERS)
-            } else {
-                joker = randchoice(joker1Arr[ante], Functions.COMMON_JOKERS_100)
-            }
         }
         
         // Get next joker stickers

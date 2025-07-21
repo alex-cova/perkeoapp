@@ -130,9 +130,9 @@ public class Balatro {
 
             if analyzeShop {
                 for _ in stride(from: 1, to: cardsPerAnte[a - 1], by: 1) {
-                    var sticker: Edition?
-
+                    
                     let item = inst.nextShopItem(a)
+                    var sticker: Edition?
 
                     if item.type == .Joker {
                         if item.jokerData.stickers.eternal {
@@ -146,6 +146,11 @@ public class Balatro {
                         }
                         if item.jokerData.edition != .NoEdition {
                             sticker = item.jokerData.edition
+                        }
+                    } else {
+                        if item.item is EditionItem {
+                            let ei =  item.item as? EditionItem
+                            sticker = ei?.edition
                         }
                     }
 

@@ -10,7 +10,7 @@ import Combine
 import SwiftData
 
 public class AnalyzerViewModel : ObservableObject, Observable {
-    @Published var seed : String = "IGSPUNF"
+    @Published var seed : String = ""
     @Published var maxAnte : Int = 8
     @Published var startingAnte : Int = 1
     @Published var showman : Bool = false
@@ -27,7 +27,20 @@ public class AnalyzerViewModel : ObservableObject, Observable {
     @Published var toast: Toast? = nil
     @Published var activeTab: TabItem = .analyzer
     @Published var autoBuyVoucher = true
+    @Published var showInput = false
+    @Published var showSummary = false
 
+    
+    var title : String {
+        get {
+            if seed.isEmpty {
+                return "WELCOME"
+            }
+            
+            return seed
+        }
+    }
+    
     init(memoryOnly: Bool = false) {
         self.modelContext  = {
             let schema = Schema([
@@ -75,6 +88,7 @@ public class AnalyzerViewModel : ObservableObject, Observable {
         }
         self.run = nil
         self.seed = seed
+        analyze()
     }
     
     private func initListeners(){
@@ -83,13 +97,13 @@ public class AnalyzerViewModel : ObservableObject, Observable {
             .sink { [weak self] s in
                 guard let self = self else { return }
                 self.normalizeSeed(newValue: String(s))
-                analyze()
             }
             .store(in: &cancellables)
     }
     
     public func random(){
         seed = Balatro.generateRandomString()
+        analyze()
     }
     
     public func copy(){
@@ -101,6 +115,11 @@ public class AnalyzerViewModel : ObservableObject, Observable {
         
         toast = .init(style: .success, message: "Seed \(seed) copied to clipboard")
     }
+    
+    public func enterSeed() {
+        showInput.toggle()
+    }
+    
     
     public func paste(){
         if let clipboardText = UIPasteboard.general.string {
@@ -133,6 +152,12 @@ public class AnalyzerViewModel : ObservableObject, Observable {
         }
     }
     
+    public var showOptions : Bool {
+        get {
+            return activeTab == .analyzer
+        }
+    }
+    
     public func test() -> AnalyzerViewModel {
         analyze()
         return self
@@ -145,6 +170,7 @@ public class AnalyzerViewModel : ObservableObject, Observable {
         
         print("Loading: \(self.seed)")
         isLoading = true
+        showInput = false
         
         DispatchQueue.global(qos: .utility).async {
             let balatro = Balatro()

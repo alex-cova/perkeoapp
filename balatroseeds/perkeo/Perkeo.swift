@@ -20,7 +20,7 @@ class ItemEdition : Item, Encodable, ObservableObject {
         self.edition = .NoEdition
         
         if item is ItemEdition {
-            fatalError("Revursive ItemEdition not yet supported")
+            fatalError("Recursive ItemEdition not yet supported")
         }
     }
     
@@ -78,6 +78,25 @@ class ItemEdition : Item, Encodable, ObservableObject {
     }
 }
 
+struct CompressedSeed {
+    let memory : [Int64]
+    
+    func getBit(index : Int) -> Bool{
+        let  word = index / 64;
+        let bit = index % 64;
+        return (memory[word] & (1 << bit)) != 0;
+    }
+    
+    
+    
+    var seed : String {
+        get {
+            return Seed32bit().decode(Int(UInt32(truncatingIfNeeded: memory[0])))
+        }
+    }
+    
+}
+
 struct DataItem {
     let seed : String
     let score : Int
@@ -123,15 +142,43 @@ struct DataItem {
 class JokerFile : ObservableObject {
     
     var jokerData : [DataItem] = []
+    var compressed  : [CompressedSeed] = []
     
     var isEmpty : Bool {
         get {
-            jokerData.isEmpty
+            jokerData.isEmpty && compressed.isEmpty
         }
     }
     
     func search(_ items: [ItemEdition]) -> [String:Int] {
         var result = [String:Int]()
+        
+        let jokers = items.filter { $0.item is Stored }
+            .map { $0.item as! Stored }
+            
+        
+        if !compressed.isEmpty {
+            for compress in compressed {
+                if result.count > 100 {
+                    break
+                }
+                
+                var add = true
+                
+                for item in jokers {
+                    if !compress.getBit(index: item.index) {
+                        add = false
+                        break
+                    }
+                }
+                
+                if add {
+                    result[compress.seed] = 0
+                }
+            }
+            
+            return result
+        }
         
         for joker in jokerData {
             if result.count > 100 {
@@ -155,14 +202,38 @@ class JokerFile : ObservableObject {
         return result
     }
     
+    func readInstant() -> [CompressedSeed] {
+        jokerData = []
+        
+        if !compressed.isEmpty {
+            return compressed
+        }
+        
+        guard let url = Bundle.main.url(forResource: "canio", withExtension: "jkr") else {
+            print("canio not found")
+            return []
+        }
+        
+        do {
+            let data = try Data(contentsOf: url)
+            compressed = try readCompressed(from: InputStream(data: data))
+            return compressed
+        }catch {
+            print(error)
+        }
+        
+        return []
+    }
     
     func read() -> [DataItem] {
+        compressed = []
+        
         if !jokerData.isEmpty {
             return jokerData
         }
         
         guard let url = Bundle.main.url(forResource: "perkeo", withExtension: "jkr") else {
-            print("not found")
+            print("perkeo not found")
             return []
         }
         
@@ -175,6 +246,40 @@ class JokerFile : ObservableObject {
         }
         
         return []
+    }
+    
+    func readCompressed(from inputStream: InputStream) throws -> [CompressedSeed] {
+        var compressedList: [CompressedSeed] = []
+        var buffer = [UInt8](repeating: 0, count: 8)
+
+        inputStream.open()
+        defer { inputStream.close() }
+
+        func readLong() throws -> Int64 {
+            let bytesRead = inputStream.read(&buffer, maxLength: 8)
+            if bytesRead != 8 {
+                throw NSError(domain: "ReadError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Unexpected end of stream"])
+            }
+            
+            buffer.reverse()
+            return buffer.withUnsafeBytes {
+                $0.load(as: Int64.self)
+            }
+        }
+
+        while inputStream.hasBytesAvailable {
+            do {
+                let a = try readLong()
+                let b = try readLong()
+                let c = try readLong()
+                let d = try readLong()
+                compressedList.append(CompressedSeed(memory: [a, b, c, d]))
+            } catch {
+                break  // Exit loop on partial read
+            }
+        }
+        
+        return compressedList
     }
     
     private func read(from inputStream: InputStream) throws -> [DataItem] {

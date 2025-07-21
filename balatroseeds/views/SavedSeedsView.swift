@@ -20,50 +20,71 @@ struct SavedSeedsView : View {
         dateFormatter.timeStyle = .short
     }
     
-    var body: some View {
+    @ViewBuilder
+    private func renderSeeds() -> some View {
         VStack {
             AnimatedTitle(text: "Saved Seeds")
-            if (seeds.isEmpty){
-                VStack {
-                    Spacer()
-                    PerkeoView()
-                    Text("There are no saved seeds yet.")
+            List {
+                Button(action: pasteSeed) {
+                    Text("Add seed from clipboard")
+                        .foregroundStyle(.red)
                         .font(.customBody)
-                        .foregroundStyle(.white)
-                        .padding(.bottom)
-                    Button(action: pasteSeed) {
-                        Text("Add seed from clipboard")
-                            .font(.customBody)
-                    }
-                    Spacer()
-                }.frame(maxWidth: .infinity)
-                    .background(Color(hex: "#1e1e1e"))
-                    .navigationTitle("Saved Seeds")
-                    .navigationBarTitleDisplayMode(.inline)
-            }else {
-                
-                List {
-                    Button(action: pasteSeed) {
-                        Text("Add seed from clipboard")
-                            .font(.customBody)
-                    }
-                    ForEach(seeds) { item in
-                        NavigationLink(destination: seedNavigation(item.seed)
-                            .environmentObject(model)
-                            .onAppear {
-                                model.changeSeed(item.seed)
-                            }
-                            .navigationTitle(item.seed)) {
-                                seedRow(item)
-                            }.listRowBackground(Color(hex: "#4d4d4d"))
-                        
-                    }.onDelete(perform: deleteItems)
-                }.background(Color(hex: "#1e1e1e"))
-                    .scrollContentBackground(.hidden)
-                    .navigationTitle("Saved Seeds")
-                    .navigationBarTitleDisplayMode(.inline)
+                }
+                ForEach(seeds) { item in
+                    NavigationLink(destination: seedNavigation(item.seed)
+                        .environmentObject(model)
+                        .onAppear {
+                            model.changeSeed(item.seed)
+                        }
+                        .navigationTitle(item.seed)) {
+                            seedRow(item)
+                        }.toolbar {
+                            Button(action: {
+                                model.showSummary.toggle()
+                            }) {
+                                Image(systemName:"checklist")
+                            }.tint(.red)
+                        }
+                        .listRowBackground(Color.customRowBackground)
+                    
+                }.onDelete(perform: deleteItems)
+            }.background(Color.customBackground)
+                .scrollContentBackground(.hidden)
+                .navigationTitle("Saved Seeds")
+                .navigationBarTitleDisplayMode(.inline)
+            Spacer()
+        }.clipped()
+            .background(Color.customBackground)
+    }
+    
+    @ViewBuilder
+    private func emptySeeds() -> some View {
+        VStack {
+            AnimatedTitle(text: "Saved Seeds")
+            Spacer()
+            RareJoker.Blueprint.sprite()
+            Text("There are no saved seeds yet.")
+                .font(.customBody)
+                .foregroundStyle(.white)
+                .padding(.bottom)
+            Button(action: pasteSeed) {
+                Text("Add seed from clipboard")
+                    .font(.customBody)
             }
-        }.background(Color(hex: "#1e1e1e"))
+            .tint(.red)
+            Spacer()
+        }.frame(maxWidth: .infinity)
+            .background(Color.customBackground)
+            .navigationTitle("Saved Seeds")
+            .navigationBarTitleDisplayMode(.inline)
+    }
+    
+    var body: some View {
+        if (seeds.isEmpty){
+            emptySeeds()
+        }else {
+            renderSeeds()
+        }
     }
     
     private func pasteSeed(){

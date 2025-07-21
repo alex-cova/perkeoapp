@@ -19,7 +19,7 @@ struct CommunityView: View {
     
     var body: some View {
         ZStack {
-            Color(hex: "1e1e1e").ignoresSafeArea()
+            Color.customBackground.ignoresSafeArea()
             VStack {
                 AnimatedTitle(text: "Community Seeds")
                     
@@ -28,6 +28,13 @@ struct CommunityView: View {
                         ForEach(seeds, id: \.self) { seed in
                             NavigationLink(destination: PlayView()
                                 .navigationTitle(seed)
+                                .toolbar {
+                                    Button(action: {
+                                        model.showSummary.toggle()
+                                    }) {
+                                        Image(systemName:"checklist")
+                                    }.tint(.red)
+                                }
                                 .onAppear {
                                     model.changeSeed(seed)
                                 }) {
@@ -40,13 +47,13 @@ struct CommunityView: View {
                         .font(.customCaption)
                         .foregroundStyle(.white)
                         .padding()
-                }.background(Color(hex: "1e1e1e"))
+                }.background(Color.customBackground)
                 .clipped()
                     .refreshable {
                         seeds = CommunityView.generateSeeds()
                     }
             }
-        }.background(Color(hex: "1e1e1e"))
+        }.background(Color.customBackground)
     }
     
     private static func generateSeeds() -> [String] {

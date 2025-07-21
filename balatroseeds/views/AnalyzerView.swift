@@ -11,7 +11,11 @@ import SwiftData
 
 
 struct AnalyzerView : View {
+    
     @EnvironmentObject var model : AnalyzerViewModel
+    
+    let columns = [GridItem(.flexible()), GridItem(.flexible()),
+                   GridItem(.flexible()),GridItem(.flexible())]
     
     var body: some View {
         mainView()
@@ -20,60 +24,42 @@ struct AnalyzerView : View {
     @ViewBuilder
     private func mainView() -> some View {
         VStack{
-            HStack {
-                TextField("Seed", text: $model.seed, onCommit: {
-                    model.analyze()
-                })
-                .font(.customTitle)
-                .multilineTextAlignment(.center)
-                .padding(5)
-                .background(.gray)
-                .cornerRadius(8)
-                .keyboardType(.alphabet)
-                
-                Button(action: {
-                    model.analyze()
-                }) {
-                    Image(systemName: "sparkle.magnifyingglass")
-                }.buttonStyle(.borderedProminent)
-                    .tint(.blue)
-                Button(action:model.random){
-                    Image(systemName: "bolt")
-                }.buttonStyle(.borderedProminent)
-                    .tint(.yellow)
-                Button(action:model.paste){
-                    Image(systemName: "clipboard")
-                }.buttonStyle(.borderedProminent)
-                .tint(.green)
-            }.padding(.horizontal)
-     
             if(model.run != nil){
                 PlayView()
                     .clipped()
             } else {
                 Spacer()
+                    .frame(maxWidth: .infinity)
                 PerkeoView()
+                
                 VStack(alignment: .leading, spacing: 10.0) {
-                    Label("Analyze seed", systemImage: "sparkle.magnifyingglass")
+                    Text("On the top right corner you will find the following options:")
+                        .font(.customCaption)
+                    Label("Seed Options (Copy, Paste, Random)", systemImage: "option")
                         .font(.customBody)
-                    Label("Generate a random seed", systemImage: "bolt")
+                    Label("Run Settings", systemImage: "gear")
                         .font(.customBody)
-                    Label("Paste seed", systemImage: "clipboard")
+                    Label("Seed summary", systemImage: "checklist")
                         .font(.customBody)
                 }.foregroundStyle(.white)
+                Button(action: {
+                    model.showInput.toggle()
+                }) {
+                    Text("Enter a seed")
+                        .font(.customBody)
+                }.buttonStyle(.borderedProminent)
+                    .padding(.vertical)
+                    .tint(.red)
                 Spacer()
+                    .frame(maxWidth: .infinity)
             }
-        }.background(Color(hex: "#1e1e1e"))
+        }.background(Color.customBackground)
     }
-    
-    let columns = [GridItem(.flexible()), GridItem(.flexible()),
-                   GridItem(.flexible()),GridItem(.flexible())]
-    
 
 }
 
 #Preview {
-    NavigationStack {
+    NavigationView {
         ContentView()
             .environment(AnalyzerViewModel())
     }

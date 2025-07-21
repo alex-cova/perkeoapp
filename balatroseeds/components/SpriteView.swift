@@ -345,7 +345,7 @@ struct SpriteImageView: View {
         }
         HStack {
             UnCommonJoker.Ceremonial_Dagger.sprite()
-            CommonJoker100.Ball.sprite()
+            CommonJoker.Ball.sprite()
             RareJoker.Baseball_Card.sprite()
             CommonJoker.Delayed_Gratification.sprite()
             EditionItem(edition: .Negative, LegendaryJoker.Perkeo).sprite(edition: .Negative)

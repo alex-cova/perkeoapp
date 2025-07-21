@@ -35,6 +35,9 @@ extension Color {
         
         self.init(red: red, green: green, blue: blue)
     }
+    
+    static let customBackground = Color(hex: "#1e1e1e")
+    static let customRowBackground = Color(hex: "#4d4d4d")
 }
 
 extension String {
@@ -71,7 +74,7 @@ extension Item {
         
         for tarot in tarots {
             if(tarot.name == self.rawValue){
-                return SpriteImageView(self, Images.tarots, tarot.pos.x, tarot.pos.y, 71, 95, nil,  color)
+                return SpriteImageView(self, Images.tarots, tarot.pos.x, tarot.pos.y, 71, 95, edition: edition,  color)
             }
         }
         

@@ -142,7 +142,7 @@ extension View {
     @ViewBuilder
     public func seedNavigation(_ seed: String) -> some View {
         ZStack {
-            Color(hex: "#1e1e1e").ignoresSafeArea()
+            Color.customBackground.ignoresSafeArea()
             PlayView()
                 .clipped()
                 .navigationTitle(seed)

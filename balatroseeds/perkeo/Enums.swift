@@ -21,6 +21,10 @@ public protocol Joker {
     var type: JokerType { get }
 }
 
+public protocol Stored {
+    var index : Int { get }
+}
+
 public enum JokerType {
     case LEGENDARY
     case RARE
@@ -202,7 +206,7 @@ enum Stake: String, CaseIterable, Item {
     }
 }
 
-enum Specials: String, CaseIterable, Item {
+enum Specials: String, CaseIterable, Item, Stored {
     case BLACKHOLE = "Black Hole"
     case THE_SOUL = "The Soul"
 
@@ -212,13 +216,17 @@ enum Specials: String, CaseIterable, Item {
         case .THE_SOUL: return 1
         }
     }
+    
+    public var index : Int {
+        188 + ordinal
+    }
 
     public var y: Int {
         9
     }
 }
 
-enum Voucher: String, CaseIterable, Item, Identifiable {
+enum Voucher: String, CaseIterable, Item, Identifiable, Stored {
     case Overstock = "Overstock"
     case Overstock_Plus = "Overstock Plus"
     case Clearance_Sale = "Clearance Sale"
@@ -254,6 +262,10 @@ enum Voucher: String, CaseIterable, Item, Identifiable {
     
     var id : String {
         rawValue
+    }
+    
+    public var index : Int {
+        32 + ordinal
     }
 
     public var ordinal: Int {
@@ -305,7 +317,7 @@ enum Version: Int, CaseIterable {
     case v_101f = 10106
 }
 
-enum UnCommonJoker101C: String, CaseIterable, Item, Joker {
+enum UnCommonJoker: String, CaseIterable, Item, Joker, Stored {
     case Joker_Stencil = "Joker Stencil"
     case Four_Fingers = "Four Fingers"
     case Mime = "Mime"
@@ -447,299 +459,12 @@ enum UnCommonJoker101C: String, CaseIterable, Item, Joker {
     var type: JokerType {
         return .UNCOMMON
     }
-}
-
-enum UnCommonJoker100: String, CaseIterable, Item, Joker {
-    case Joker_Stencil = "Joker Stencil"
-    case Four_Fingers = "Four Fingers"
-    case Mime = "Mime"
-    case Ceremonial_Dagger = "Ceremonial Dagger"
-    case Marble_Joker = "Marble Joker"
-    case Loyalty_Card = "Loyalty Card"
-    case Dusk = "Dusk"
-    case Fibonacci = "Fibonacci"
-    case Steel_Joker = "Steel Joker"
-    case Hack = "Hack"
-    case Pareidolia = "Pareidolia"
-    case Space_Joker = "Space Joker"
-    case Burglar = "Burglar"
-    case Blackboard = "Blackboard"
-    case Constellation = "Constellation"
-    case Hiker = "Hiker"
-    case Card_Sharp = "Card Sharp"
-    case Madness = "Madness"
-    case Vampire = "Vampire"
-    case Shortcut = "Shortcut"
-    case Hologram = "Hologram"
-    case Vagabond = "Vagabond"
-    case Cloud_9 = "Cloud 9"
-    case Rocket = "Rocket"
-    case Midas_Mask = "Midas Mask"
-    case Luchador = "Luchador"
-    case Gift_Card = "Gift Card"
-    case Turtle_Bean = "Turtle Bean"
-    case Erosion = "Erosion"
-    case Reserved_Parking = "Reserved Parking"
-    case To_the_Moon = "To the Moon"
-    case Stone_Joker = "Stone Joker"
-    case Lucky_Cat = "Lucky Cat"
-    case Bull = "Bull"
-    case Diet_Cola = "Diet Cola"
-    case Trading_Card = "Trading Card"
-    case Flash_Card = "Flash Card"
-    case Spare_Trousers = "Spare Trousers"
-    case Ramen = "Ramen"
-    case Seltzer = "Seltzer"
-    case Castle = "Castle"
-    case Mr_Bones = "Mr. Bones"
-    case Acrobat = "Acrobat"
-    case Sock_and_Buskin = "Sock and Buskin"
-    case Troubadour = "Troubadour"
-    case Certificate = "Certificate"
-    case Smeared_Joker = "Smeared Joker"
-    case Throwback = "Throwback"
-    case Rough_Gem = "Rough Gem"
-    case Bloodstone = "Bloodstone"
-    case Arrowhead = "Arrowhead"
-    case Onyx_Agate = "Onyx Agate"
-    case Glass_Joker = "Glass Joker"
-    case Showman = "Showman"
-    case Flower_Pot = "Flower Pot"
-    case Merry_Andy = "Merry Andy"
-    case Oops_All_6s = "Oops! All 6s"
-    case The_Idol = "The Idol"
-    case Seeing_Double = "Seeing Double"
-    case Matador = "Matador"
-    case Stuntman = "Stuntman"
-    case Satellite = "Satellite"
-    case Cartomancer = "Cartomancer"
-    case Astronomer = "Astronomer"
-    case Burnt_Joker = "Burnt Joker"
-    case Bootstraps = "Bootstraps"
-
-    public var ordinal: Int {
-        switch self {
-        case .Joker_Stencil: return 0
-        case .Four_Fingers: return 1
-        case .Mime: return 2
-        case .Ceremonial_Dagger: return 3
-        case .Marble_Joker: return 4
-        case .Loyalty_Card: return 5
-        case .Dusk: return 6
-        case .Fibonacci: return 7
-        case .Steel_Joker: return 8
-        case .Hack: return 9
-        case .Pareidolia: return 10
-        case .Space_Joker: return 11
-        case .Burglar: return 12
-        case .Blackboard: return 13
-        case .Constellation: return 14
-        case .Hiker: return 15
-        case .Card_Sharp: return 16
-        case .Madness: return 17
-        case .Vampire: return 18
-        case .Shortcut: return 19
-        case .Hologram: return 20
-        case .Vagabond: return 21
-        case .Cloud_9: return 22
-        case .Rocket: return 23
-        case .Midas_Mask: return 24
-        case .Luchador: return 25
-        case .Gift_Card: return 26
-        case .Turtle_Bean: return 27
-        case .Erosion: return 28
-        case .Reserved_Parking: return 29
-        case .To_the_Moon: return 30
-        case .Stone_Joker: return 31
-        case .Lucky_Cat: return 32
-        case .Bull: return 33
-        case .Diet_Cola: return 34
-        case .Trading_Card: return 35
-        case .Flash_Card: return 36
-        case .Spare_Trousers: return 37
-        case .Ramen: return 38
-        case .Seltzer: return 39
-        case .Castle: return 40
-        case .Mr_Bones: return 41
-        case .Acrobat: return 42
-        case .Sock_and_Buskin: return 43
-        case .Troubadour: return 44
-        case .Certificate: return 45
-        case .Smeared_Joker: return 46
-        case .Throwback: return 47
-        case .Rough_Gem: return 48
-        case .Bloodstone: return 49
-        case .Arrowhead: return 50
-        case .Onyx_Agate: return 51
-        case .Glass_Joker: return 52
-        case .Showman: return 53
-        case .Flower_Pot: return 54
-        case .Merry_Andy: return 55
-        case .Oops_All_6s: return 56
-        case .The_Idol: return 57
-        case .Seeing_Double: return 58
-        case .Matador: return 59
-        case .Stuntman: return 60
-        case .Satellite: return 61
-        case .Cartomancer: return 62
-        case .Astronomer: return 63
-        case .Burnt_Joker: return 64
-        case .Bootstraps: return 65
-        }
-    }
-
-    public var y: Int {
-        1
-    }
-
-    var type: JokerType {
-        return .UNCOMMON
+    
+    public var index : Int {
+        64 + ordinal
     }
 }
 
-enum UnCommonJoker: String, CaseIterable, Item, Joker {
-    case Joker_Stencil = "Joker Stencil"
-    case Four_Fingers = "Four Fingers"
-    case Mime = "Mime"
-    case Ceremonial_Dagger = "Ceremonial Dagger"
-    case Marble_Joker = "Marble Joker"
-    case Loyalty_Card = "Loyalty Card"
-    case Dusk = "Dusk"
-    case Fibonacci = "Fibonacci"
-    case Steel_Joker = "Steel Joker"
-    case Hack = "Hack"
-    case Pareidolia = "Pareidolia"
-    case Space_Joker = "Space Joker"
-    case Burglar = "Burglar"
-    case Blackboard = "Blackboard"
-    case Sixth_Sense = "Sixth Sense"
-    case Constellation = "Constellation"
-    case Hiker = "Hiker"
-    case Card_Sharp = "Card Sharp"
-    case Madness = "Madness"
-    case Seance = "Seance"
-    case Vampire = "Vampire"
-    case Shortcut = "Shortcut"
-    case Hologram = "Hologram"
-    case Cloud_9 = "Cloud 9"
-    case Rocket = "Rocket"
-    case Midas_Mask = "Midas Mask"
-    case Luchador = "Luchador"
-    case Gift_Card = "Gift Card"
-    case Turtle_Bean = "Turtle Bean"
-    case Erosion = "Erosion"
-    case To_the_Moon = "To the Moon"
-    case Stone_Joker = "Stone Joker"
-    case Lucky_Cat = "Lucky Cat"
-    case Bull = "Bull"
-    case Diet_Cola = "Diet Cola"
-    case Trading_Card = "Trading Card"
-    case Flash_Card = "Flash Card"
-    case Spare_Trousers = "Spare Trousers"
-    case Ramen = "Ramen"
-    case Seltzer = "Seltzer"
-    case Castle = "Castle"
-    case Mr_Bones = "Mr. Bones"
-    case Acrobat = "Acrobat"
-    case Sock_and_Buskin = "Sock and Buskin"
-    case Troubadour = "Troubadour"
-    case Certificate = "Certificate"
-    case Smeared_Joker = "Smeared Joker"
-    case Throwback = "Throwback"
-    case Rough_Gem = "Rough Gem"
-    case Bloodstone = "Bloodstone"
-    case Arrowhead = "Arrowhead"
-    case Onyx_Agate = "Onyx Agate"
-    case Glass_Joker = "Glass Joker"
-    case Showman = "Showman"
-    case Flower_Pot = "Flower Pot"
-    case Merry_Andy = "Merry Andy"
-    case Oops_All_6s = "Oops! All 6s"
-    case The_Idol = "The Idol"
-    case Seeing_Double = "Seeing Double"
-    case Matador = "Matador"
-    case Satellite = "Satellite"
-    case Cartomancer = "Cartomancer"
-    case Astronomer = "Astronomer"
-    case Bootstrap = "Bootstraps"
-
-    public var ordinal: Int {
-        switch self {
-        case .Joker_Stencil: return 0
-        case .Four_Fingers: return 1
-        case .Mime: return 2
-        case .Ceremonial_Dagger: return 3
-        case .Marble_Joker: return 4
-        case .Loyalty_Card: return 5
-        case .Dusk: return 6
-        case .Fibonacci: return 7
-        case .Steel_Joker: return 8
-        case .Hack: return 9
-        case .Pareidolia: return 10
-        case .Space_Joker: return 11
-        case .Burglar: return 12
-        case .Blackboard: return 13
-        case .Sixth_Sense: return 14
-        case .Constellation: return 15
-        case .Hiker: return 16
-        case .Card_Sharp: return 17
-        case .Madness: return 18
-        case .Seance: return 19
-        case .Vampire: return 20
-        case .Shortcut: return 21
-        case .Hologram: return 22
-        case .Cloud_9: return 23
-        case .Rocket: return 24
-        case .Midas_Mask: return 25
-        case .Luchador: return 26
-        case .Gift_Card: return 27
-        case .Turtle_Bean: return 28
-        case .Erosion: return 29
-        case .To_the_Moon: return 30
-        case .Stone_Joker: return 31
-        case .Lucky_Cat: return 32
-        case .Bull: return 33
-        case .Diet_Cola: return 34
-        case .Trading_Card: return 35
-        case .Flash_Card: return 36
-        case .Spare_Trousers: return 37
-        case .Ramen: return 38
-        case .Seltzer: return 39
-        case .Castle: return 40
-        case .Mr_Bones: return 41
-        case .Acrobat: return 42
-        case .Sock_and_Buskin: return 43
-        case .Troubadour: return 44
-        case .Certificate: return 45
-        case .Smeared_Joker: return 46
-        case .Throwback: return 47
-        case .Rough_Gem: return 48
-        case .Bloodstone: return 49
-        case .Arrowhead: return 50
-        case .Onyx_Agate: return 51
-        case .Glass_Joker: return 52
-        case .Showman: return 53
-        case .Flower_Pot: return 54
-        case .Merry_Andy: return 55
-        case .Oops_All_6s: return 56
-        case .The_Idol: return 57
-        case .Seeing_Double: return 58
-        case .Matador: return 59
-        case .Satellite: return 60
-        case .Cartomancer: return 61
-        case .Astronomer: return 62
-        case .Bootstrap: return 63
-        }
-    }
-
-    public var y: Int {
-        1
-    }
-
-    var type: JokerType {
-        return .UNCOMMON
-    }
-}
 
 enum Tarot: String, CaseIterable, Item {
     case The_Fool = "The Fool"
@@ -797,7 +522,7 @@ enum Tarot: String, CaseIterable, Item {
     }
 }
 
-public enum Tag: String, CaseIterable, Item {
+public enum Tag: String, CaseIterable, Item, Stored {
     case Uncommon_Tag = "Uncommon"
     case Rare_Tag = "Rare"
     case Negative_Tag = "Negative"
@@ -855,9 +580,13 @@ public enum Tag: String, CaseIterable, Item {
     public var y: Int {
         8
     }
+    
+    public var index : Int {
+        return 231 + ordinal
+    }
 }
 
-enum Spectral: String, CaseIterable, Item {
+enum Spectral: String, CaseIterable, Item, Stored {
     case Familiar = "Familiar"
     case Grim = "Grim"
     case Incantation = "Incantation"
@@ -899,9 +628,13 @@ enum Spectral: String, CaseIterable, Item {
     public var y: Int {
         5
     }
+    
+    public var index : Int {
+        195 + ordinal
+    }
 }
 
-enum RareJoker101C: String, CaseIterable, Item, Joker {
+enum RareJoker: String, CaseIterable, Item, Joker, Stored {
     case DNA = "DNA"
     case Vampire = "Vampire"
     case Vagabond = "Vagabond"
@@ -921,7 +654,7 @@ enum RareJoker101C: String, CaseIterable, Item, Joker {
     case Invisible_Joker = "Invisible Joker"
     case Brainstorm = "Brainstorm"
     case Drivers_License = "Drivers License"
-    case Burnt_Joke = "Burnt Joker"
+    case Burnt_Joker = "Burnt Joker"
 
     public var ordinal: Int {
         switch self {
@@ -944,7 +677,7 @@ enum RareJoker101C: String, CaseIterable, Item, Joker {
         case .Invisible_Joker: return 16
         case .Brainstorm: return 17
         case .Drivers_License: return 18
-        case .Burnt_Joke: return 19
+        case .Burnt_Joker: return 19
         }
     }
 
@@ -955,117 +688,13 @@ enum RareJoker101C: String, CaseIterable, Item, Joker {
     public var type: JokerType {
         return .RARE
     }
-}
-
-enum RareJoker100: String, CaseIterable, Item, Joker {
-    case DNA = "DNA"
-    case Sixth_Sense = "Sixth Sense"
-    case Seance = "Seance"
-    case Baron = "Baron"
-    case Obelisk = "Obelisk"
-    case Baseball_Card = "Baseball Card"
-    case Ancient_Joker = "Ancient Joker"
-    case Campfire = "Campfire"
-    case Blueprint = "Blueprint"
-    case Wee_Joker = "Wee Joker"
-    case Hit_the_Road = "Hit the Road"
-    case The_Duo = "The Duo"
-    case The_Trio = "The Trio"
-    case The_Family = "The Family"
-    case The_Order = "The Order"
-    case The_Tribe = "The Tribe"
-    case Invisible_Joker = "Invisible Joker"
-    case Brainstorm = "Brainstorm"
-    case Drivers_License = "Drivers Licens"
-
-    public var ordinal: Int {
-        switch self {
-        case .DNA: return 0
-        case .Sixth_Sense: return 1
-        case .Seance: return 2
-        case .Baron: return 3
-        case .Obelisk: return 4
-        case .Baseball_Card: return 5
-        case .Ancient_Joker: return 6
-        case .Campfire: return 7
-        case .Blueprint: return 8
-        case .Wee_Joker: return 9
-        case .Hit_the_Road: return 10
-        case .The_Duo: return 11
-        case .The_Trio: return 12
-        case .The_Family: return 13
-        case .The_Order: return 14
-        case .The_Tribe: return 15
-        case .Invisible_Joker: return 16
-        case .Brainstorm: return 17
-        case .Drivers_License: return 18
-        }
-    }
-
-    public var y: Int {
-        2
-    }
-
-    var type: JokerType {
-        return .RARE
+    
+    public var index : Int {
+        211 + ordinal
     }
 }
 
-enum RareJoker: String, CaseIterable, Item, Joker {
-    case DNA = "DNA"
-    case Vagabond = "Vagabond"
-    case Baron = "Baron"
-    case Obelisk = "Obelisk"
-    case Baseball_Card = "Baseball Card"
-    case Ancient_Joker = "Ancient Joker"
-    case Campfire = "Campfire"
-    case Blueprint = "Blueprint"
-    case Wee_Joker = "Wee Joker"
-    case Hit_the_Road = "Hit the Road"
-    case The_Duo = "The Duo"
-    case The_Trio = "The Trio"
-    case The_Family = "The Family"
-    case The_Order = "The Order"
-    case The_Tribe = "The Tribe"
-    case Stuntman = "Stuntman"
-    case Invisible_Joker = "Invisible Joker"
-    case Brainstorm = "Brainstorm"
-    case Drivers_License = "Drivers License"
-    case Burnt_Joke = "Burnt Joker"
 
-    public var ordinal: Int {
-        switch self {
-        case .DNA: return 0
-        case .Vagabond: return 1
-        case .Baron: return 2
-        case .Obelisk: return 3
-        case .Baseball_Card: return 4
-        case .Ancient_Joker: return 5
-        case .Campfire: return 6
-        case .Blueprint: return 7
-        case .Wee_Joker: return 8
-        case .Hit_the_Road: return 9
-        case .The_Duo: return 10
-        case .The_Trio: return 11
-        case .The_Family: return 12
-        case .The_Order: return 13
-        case .The_Tribe: return 14
-        case .Stuntman: return 15
-        case .Invisible_Joker: return 16
-        case .Brainstorm: return 17
-        case .Drivers_License: return 18
-        case .Burnt_Joke: return 19
-        }
-    }
-
-    public var y: Int {
-        2
-    }
-
-    var type: JokerType {
-        return .RARE
-    }
-}
 
 enum Planet: String, CaseIterable, Item {
     case Mercury = "Mercury"
@@ -1103,7 +732,7 @@ enum Planet: String, CaseIterable, Item {
     }
 }
 
-enum LegendaryJoker: String, CaseIterable, Item, Joker {
+enum LegendaryJoker: String, CaseIterable, Item, Joker, Stored {
     case Canio = "Canio"
     case Triboulet = "Triboulet"
     case Yorick = "Yorick"
@@ -1122,6 +751,10 @@ enum LegendaryJoker: String, CaseIterable, Item, Joker {
 
     public var y: Int {
         10
+    }
+    
+    public var index : Int {
+        190 + ordinal
     }
 
     var type: JokerType {
@@ -1174,7 +807,7 @@ enum Deck: String, CaseIterable, Item {
     }
 }
 
-enum CommonJoker100: String, CaseIterable, Item, Joker {
+enum CommonJoker: String, CaseIterable, Item, Joker, Stored {
     case Joker = "Joker"
     case Greedy_Joker = "Greedy Joker"
     case Lusty_Joker = "Lusty Joker"
@@ -1236,6 +869,10 @@ enum CommonJoker100: String, CaseIterable, Item, Joker {
     case Hanging_Chad = "Hanging Chad"
     case Shoot_the_Moon = "Shoot the Moon"
 
+    public var index : Int {
+        return 128 + ordinal
+    }
+    
     public var ordinal: Int {
         switch self {
         case .Joker: return 0
@@ -1310,143 +947,6 @@ enum CommonJoker100: String, CaseIterable, Item, Joker {
     }
 }
 
-enum CommonJoker: String, CaseIterable, Item, Joker {
-    case Joker = "Joker"
-    case Greedy_Joker = "Greedy Joker"
-    case Lusty_Joker = "Lusty Joker"
-    case Wrathful_Joker = "Wrathful Joker"
-    case Gluttonous_Joker = "Gluttonous Joker"
-    case Jolly_Joker = "Jolly Joker"
-    case Zany_Joker = "Zany Joker"
-    case Mad_Joker = "Mad Joker"
-    case Crazy_Joker = "Crazy Joker"
-    case Droll_Joker = "Droll Joker"
-    case Sly_Joker = "Sly Joker"
-    case Wily_Joker = "Wily Joker"
-    case Clever_Joker = "Clever Joker"
-    case Devious_Joker = "Devious Joker"
-    case Crafty_Joker = "Crafty Joker"
-    case Half_Joker = "Half Joker"
-    case Credit_Card = "Credit Card"
-    case Banner = "Banner"
-    case Mystic_Summit = "Mystic Summit"
-    case Ball = "8 Ball"
-    case Misprint = "Misprint"
-    case Raised_Fist = "Raised Fist"
-    case Chaos_the_Clown = "Chaos the Clown"
-    case Scary_Face = "Scary Face"
-    case Abstract_Joker = "Abstract Joker"
-    case Delayed_Gratification = "Delayed Gratification"
-    case Gros_Michel = "Gros Michel"
-    case Even_Steven = "Even Steven"
-    case Odd_Todd = "Odd Todd"
-    case Scholar = "Scholar"
-    case Business_Card = "Business Card"
-    case Supernova = "Supernova"
-    case Ride_the_Bus = "Ride the Bus"
-    case Egg = "Egg"
-    case Runner = "Runner"
-    case Ice_Cream = "Ice Cream"
-    case Splash = "Splash"
-    case Blue_Joker = "Blue Joker"
-    case Faceless_Joker = "Faceless Joker"
-    case Green_Joker = "Green Joker"
-    case Superposition = "Superposition"
-    case To_Do_List = "To Do List"
-    case Cavendish = "Cavendish"
-    case Red_Card = "Red Card"
-    case Square_Joker = "Square Joker"
-    case Riffraff = "Riff-raff"
-    case Photograph = "Photograph"
-    case Reserved_Parking = "Reserved Parking"
-    case Mail_In_Rebate = "Mail In Rebate"
-    case Hallucination = "Hallucination"
-    case Fortune_Teller = "Fortune Teller"
-    case Juggler = "Juggler"
-    case Drunkard = "Drunkard"
-    case Golden_Joker = "Golden Joker"
-    case Popcorn = "Popcorn"
-    case Walkie_Talkie = "Walkie Talkie"
-    case Smiley_Face = "Smiley Face"
-    case Golden_Ticket = "Golden Ticket"
-    case Swashbuckler = "Swashbuckler"
-    case Hanging_Chad = "Hanging Chad"
-    case Shoot_the_Moo = "Shoot the Moon"
-
-    public var ordinal: Int {
-        switch self {
-        case .Joker: return 0
-        case .Greedy_Joker: return 1
-        case .Lusty_Joker: return 2
-        case .Wrathful_Joker: return 3
-        case .Gluttonous_Joker: return 4
-        case .Jolly_Joker: return 5
-        case .Zany_Joker: return 6
-        case .Mad_Joker: return 7
-        case .Crazy_Joker: return 8
-        case .Droll_Joker: return 9
-        case .Sly_Joker: return 10
-        case .Wily_Joker: return 11
-        case .Clever_Joker: return 12
-        case .Devious_Joker: return 13
-        case .Crafty_Joker: return 14
-        case .Half_Joker: return 15
-        case .Credit_Card: return 16
-        case .Banner: return 17
-        case .Mystic_Summit: return 18
-        case .Ball: return 19
-        case .Misprint: return 20
-        case .Raised_Fist: return 21
-        case .Chaos_the_Clown: return 22
-        case .Scary_Face: return 23
-        case .Abstract_Joker: return 24
-        case .Delayed_Gratification: return 25
-        case .Gros_Michel: return 26
-        case .Even_Steven: return 27
-        case .Odd_Todd: return 28
-        case .Scholar: return 29
-        case .Business_Card: return 30
-        case .Supernova: return 31
-        case .Ride_the_Bus: return 32
-        case .Egg: return 33
-        case .Runner: return 34
-        case .Ice_Cream: return 35
-        case .Splash: return 36
-        case .Blue_Joker: return 37
-        case .Faceless_Joker: return 38
-        case .Green_Joker: return 39
-        case .Superposition: return 40
-        case .To_Do_List: return 41
-        case .Cavendish: return 42
-        case .Red_Card: return 43
-        case .Square_Joker: return 44
-        case .Riffraff: return 45
-        case .Photograph: return 46
-        case .Reserved_Parking: return 47
-        case .Mail_In_Rebate: return 48
-        case .Hallucination: return 49
-        case .Fortune_Teller: return 50
-        case .Juggler: return 51
-        case .Drunkard: return 52
-        case .Golden_Joker: return 53
-        case .Popcorn: return 54
-        case .Walkie_Talkie: return 55
-        case .Smiley_Face: return 56
-        case .Golden_Ticket: return 57
-        case .Swashbuckler: return 58
-        case .Hanging_Chad: return 59
-        case .Shoot_the_Moo: return 60
-        }
-    }
-
-    public var y: Int {
-        return 0
-    }
-
-    var type: JokerType {
-        return .COMMO
-    }
-}
 
 enum Packs: String, CaseIterable, Item {
     case Arcana_Pack = "Arcana Pack"

@@ -41,13 +41,11 @@ struct PlayView : View {
     private func mainView() -> some View {
         if let run = model.run {
             ScrollView {
-                actions(run: run)
-                    .padding(.top)
                 ForEach(run.antes) { a in
                     anteView(ante: a, run: run)
                         .padding(.bottom)
                 }
-            }.background(Color(hex: "#1e1e1e"))
+            }.background(Color.customBackground)
         } else {
             Text("Loading...")
                 .font(.customBody)
@@ -79,55 +77,12 @@ struct PlayView : View {
     @ViewBuilder
     func separator() -> some View {
         Rectangle()
-            .foregroundStyle(Color(hex: "#2d2d2d"))
+            .foregroundStyle(Color.customRowBackground)
             .frame(height: 1)
             .padding(.bottom, 4)
     }
     
-    @ViewBuilder
-    func actions(run : Run) -> some View {
-        VStack(alignment: .leading) {
-                HStack {
-                    Spacer()
-                    NavigationLink(destination: ResumeView(run: run)){
-                        HStack {
-                            Image(systemName: "checklist")
-                                .foregroundStyle(.white)
-                            Text("Summary")
-                                .bold()
-                                .font(.customCaption)
-                        }.frame(width: 75, height: 25)
-                    }.buttonStyle(.borderedProminent)
-                        .tint(.blue)
-                    Button(action: {
-                        model.copy()
-                    }, label: {
-                        HStack {
-                            Image(systemName: "document.on.document")
-                                .foregroundStyle(.white)
-                            Text("Copy")
-                                .bold()
-                                .font(.customCaption)
-                        }.frame(width: 75, height: 25)
-                    }).buttonStyle(.borderedProminent)
-                        .tint(.green)
-                    Button(action:{
-                        model.configSheet.toggle()
-                    }){
-                        HStack {
-                            Image(systemName: "filemenu.and.selection")
-                            Text("Menu")
-                                .bold()
-                                .font(.customCaption)
-                        }.frame(width: 75, height: 25)
-                    }.buttonStyle(.borderedProminent)
-                        .tint(.gray)
-                    Spacer()
-                }.padding(.bottom)
-            
-        }
-    }
-    
+
     @ViewBuilder
     func options(ante: Ante, run : Run) -> some View {
         HStack {
@@ -157,12 +112,20 @@ struct PlayView : View {
     func packsView(ante : Ante) -> some View {
         ForEach(ante.packs) { pack in
             VStack {
-                Text("\(pack.type.rawValue)")
-                    .font(.customBody)
-                    .foregroundStyle(.white)
-                Text(choiceText(pack.choices))
-                    .font(.customCaption)
-                    .foregroundStyle(.white)
+                HStack(spacing: 10) {
+                    Text("\(pack.type.rawValue)")
+                        .font(.customBody)
+                        .foregroundStyle(.white)
+                    Text(choiceText(pack.choices))
+                        .font(.customCaption)
+                        .foregroundStyle(.white)
+                        .background {
+                            RoundedRectangle(cornerRadius: 4)
+                                .foregroundStyle(.blue)
+                                .frame(minWidth: 55)
+                                
+                        }
+                }
                 separator()
                 if(pack.options.count > 4){
                     ScrollView(.horizontal) {

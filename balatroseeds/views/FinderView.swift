@@ -11,11 +11,12 @@ struct FinderView : View {
     @State private var value = 100000
     @State private var maxAnte : Int = 1
     @State private var startingAnte : Int = 1
-    @State private var version : Version = .v_101f
+    
     @State private var found : [String:Int] = [:]
     @State private var selections : [ItemEdition] = []
     @State private var showSheet = false
     @State private var cached = false
+    @State private var instant = false
     @State private var searching = false
     @State private var isLoading = false
     @Environment(\.modelContext) private var modelContext
@@ -26,6 +27,12 @@ struct FinderView : View {
     var cachedDescription : String  {
         get {
             "Every seed has a legendary joker, but we are limited to \(jokerFile.jokerData.count.formatted()) posible seeds"
+        }
+    }
+    
+    var compressedDescription : String  {
+        get {
+            "Every seed has a Joker/Card of your selection, but we don't know the order. \(jokerFile.compressed.count.formatted()) posible seeds in the palm of your hand"
         }
     }
     
@@ -62,7 +69,7 @@ struct FinderView : View {
     
     @ViewBuilder
     private func controlsView() -> some View {
- 
+        DisclosureGroup("Heavy Search") {
             Stepper {
                 VStack {
                     Text("Seeds to analyze")
@@ -99,6 +106,7 @@ struct FinderView : View {
                 if startingAnte < 1 { startingAnte = 1 }
             }
             
+            
             Stepper {
                 VStack(alignment: .leading) {
                     HStack {
@@ -125,17 +133,94 @@ struct FinderView : View {
                 }
                 if maxAnte < 1 { maxAnte = 1 }
             }
-            
-            
-            Picker("Version", selection: $version) {
-                Text("100n").tag(Version.v_100n)
-                Text("101c").tag(Version.v_101c)
-                Text("101f").tag(Version.v_101f)
-            }.foregroundStyle(.white)
-                .font(.customBody)
-                .bold()
-                .tint(.white)
-        
+        }.font(.customBody)
+            .foregroundStyle(Color(UIColor.systemRed))
+    }
+    
+    
+    @ViewBuilder
+    private func instantSection() -> some View {
+        Toggle(isOn: $instant, label: {
+            HStack {
+                Image(systemName: cached ?  "bolt.fill": "bolt")
+                    .foregroundStyle(.red)
+                    .font(.title)
+                VStack(alignment: .leading) {
+                    Text("Use instant search")
+                        .font(.customBody)
+                        .foregroundStyle(.white)
+                    Text("Selections will appear at any ante")
+                        .font(.customCaption)
+                        .foregroundStyle(.white)
+                }
+            }
+        }).onChange(of: instant){ old, new in
+            if new {
+                _cached.wrappedValue = false
+                Task {
+                    self.isLoading = true
+                    
+                    DispatchQueue.global(qos: .utility).async {
+                        _ = self.jokerFile.readInstant()
+                        
+                        DispatchQueue.main.async {
+                            print("Read data: \(self.jokerFile.compressed.count)")
+                            self.isLoading = false
+                        }
+                    }
+                    
+                    
+                }
+            }
+        }
+        if instant {
+            Text(compressedDescription)
+                .foregroundStyle(.white)
+                .font(.customCaption)
+        }
+    }
+    
+    @ViewBuilder
+    private func legendarySection() -> some View {
+        Toggle(isOn: $cached, label: {
+            HStack {
+                Image(systemName: cached ?  "speedometer": "gauge.with.dots.needle.0percent")
+                    .foregroundStyle(.red)
+                    .font(.title)
+                VStack {
+                    Text("Use legendary search")
+                        .font(.customBody)
+                        .foregroundStyle(.white)
+                    Text("Every seed has a legendary joker")
+                        .font(.customCaption)
+                        .foregroundStyle(.white)
+                }
+            }
+        }).onChange(of: cached){ old, new in
+            if new {
+                _instant.wrappedValue = false
+                Task {
+                    self.isLoading = true
+                    
+                    DispatchQueue.global(qos: .utility).async {
+                        _ = self.jokerFile.read()
+                        
+                        DispatchQueue.main.async {
+                            print("Read data: \(self.jokerFile.jokerData.count)")
+                            self.isLoading = false
+                          
+                        }
+                    }
+                    
+                    
+                }
+            }
+        }
+        if cached {
+            Text(cachedDescription)
+                .foregroundStyle(.white)
+                .font(.customCaption)
+        }
     }
     
     @ViewBuilder
@@ -147,40 +232,9 @@ struct FinderView : View {
                     if !cached {
                         controlsView()
                     }
-                    
-                    Toggle(isOn: $cached, label: {
-                        HStack {
-                            Image(systemName: cached ?  "speedometer": "gauge.with.dots.needle.0percent")
-                                .foregroundStyle(.red)
-                            Text("Use legendary seeds cached search")
-                                .font(.customBody)
-                                .foregroundStyle(.white)
-                        }
-                    }).onChange(of: cached){ old, new in
-                        if new {
-                            Task {
-                                self.isLoading = true
-                                
-                                DispatchQueue.global(qos: .utility).async {
-                                    _ = self.jokerFile.read()
-                                    
-                                    DispatchQueue.main.async {
-                                        print("Read data: \(self.jokerFile.jokerData.count)")
-                                        self.isLoading = false
-                                      
-                                    }
-                                }
-                                
-                                
-                            }
-                        }
-                    }
-                    if cached {
-                        Text(cachedDescription)
-                            .foregroundStyle(.white)
-                            .font(.customCaption)
-                    }
-                }.listRowBackground(Color(hex: "#2d2d2d"))
+                    legendarySection()
+                    instantSection()
+                }.listRowBackground(Color.customRowBackground)
                 
                 Section {
                     Button(action: {
@@ -227,14 +281,14 @@ struct FinderView : View {
                             label("Search", systemImage: "magnifyingglass")
                         }).tint(.green)
                     }
-                }.listRowBackground(Color(hex: "#2d2d2d"))
+                }.listRowBackground(Color.customRowBackground)
                 
                 if !found.isEmpty {
                     renderSeeds()
                 }
                  
             }.clipped()
-                .background(Color(hex: "#1e1e1e"))
+                .background(Color.customBackground)
                 .scrollContentBackground(.hidden)
                 .navigationBarTitleDisplayMode(.inline)
                 .sheet(isPresented: $showSheet){
@@ -242,13 +296,14 @@ struct FinderView : View {
                 }.sheet(isPresented: $searching){
                     searchView()
                         .presentationDetents([.medium])
+                        .presentationBackground(Color.customBackground)
                         .onAppear {
                             doSearch()
                         }.onDisappear {
                             FinderView.running = false
                         }
                 }
-        }.background(Color(hex: "#1e1e1e"))
+        }.background(Color.customBackground)
     }
     
     private func keys() -> [String] {
@@ -268,6 +323,13 @@ struct FinderView : View {
                         model.changeSeed(seed)
                     }
                     .navigationTitle(seed)
+                    .toolbar {
+                        Button(action: {
+                            model.showSummary.toggle()
+                        }) {
+                            Image(systemName:"checklist")
+                        }.tint(.red)
+                    }
                     .environmentObject(model)) {
                     if cached {
                         VStack(alignment: .leading) {
@@ -288,9 +350,9 @@ struct FinderView : View {
                         modelContext.insert(SeedModel(timestamp: Date(), seed: seed))
                     }.tint(.green)
                 }
-            }.listRowBackground(Color(hex: "#2d2d2d"))
+            }.listRowBackground(Color.customRowBackground)
         }.foregroundStyle(.white)
-            .listRowBackground(Color(hex: "#2d2d2d"))
+            .listRowBackground(Color.customRowBackground)
     }
     
     @ViewBuilder
@@ -325,7 +387,7 @@ struct FinderView : View {
             return
         }
         
-        if !jokerFile.isEmpty && cached {
+        if !jokerFile.isEmpty && (cached || instant) {
             cacheBasedSearch()
             return
         }
@@ -418,9 +480,11 @@ struct FinderView : View {
             
             if seedsFound == 0 {
                 Text("Searching...")
+                    .foregroundStyle(.white)
                     .font(.customTitle)
             } else {
                 Text("\(seedsFound) seed found")
+                    .foregroundStyle(.white)
                     .font(.customTitle)
             }
             
@@ -428,6 +492,7 @@ struct FinderView : View {
                 ProgressView(value: Double(processed) / Double(value))
                     .padding(.horizontal)
                 Text("\(processed) / \(value)")
+                    .foregroundStyle(.white)
                     .font(.customBody)
             }
             Spacer()
