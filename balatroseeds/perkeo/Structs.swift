@@ -16,12 +16,15 @@ class JokerData {
     var rarity : String = "Common"
     var edition : Edition  = .NoEdition
     var stickers : JokerStickers = JokerStickers()
+    var source : String?
     
-    init(_ joker: Item,_ rarity: String,_ edition: Edition,_ stickers: JokerStickers) {
+    init(_ joker: Item,_ rarity: String,_ edition: Edition,_ stickers: JokerStickers,
+         _ source : String? = nil) {
         self.joker = joker
         self.rarity = rarity
         self.edition = edition
         self.stickers = stickers
+        self.source = source
     }
     
     init(){
@@ -30,6 +33,7 @@ class JokerData {
     
     func asEditionItem() -> EditionItem {
         EditionItem(edition: edition, joker)
+            .atSource(source ?? "")
     }
     
     func sprite() -> SpriteImageView {

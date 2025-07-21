@@ -15,6 +15,16 @@ class Run : Encodable{
         self.antes = antes
     }
     
+    func wheels() -> [EditionItem] {
+        var list = [EditionItem]()
+        
+        antes.forEach { run in
+            list.append(contentsOf: run.wheels())
+        }
+        
+        return list
+    }
+    
     func toJson() -> String {
         do {
             return try String(data: JSONEncoder().encode(self),encoding: .utf8)!
@@ -159,6 +169,22 @@ class Ante : Encodable, Identifiable {
         case voucher
     }
     
+    func wheels() -> [EditionItem] {
+        var list : [EditionItem] =  []
+        
+        for pack in packs {
+            if(pack.kind == .Arcana){
+                pack.options.forEach { card in
+                    if(card.item.rawValue == Tarot.The_Wheel_of_Fortune.rawValue){
+                        list.append(card)
+                    }
+                }
+            }
+        }
+        
+        return list
+    }
+    
     func jokers() -> [EditionItem] {
         var jokerList : [EditionItem] =  []
         
@@ -212,7 +238,9 @@ class Ante : Encodable, Identifiable {
                 
                 for option in pack.options {
                     if option.item is LegendaryJoker {
-                        legendaries!.append(JokerData(option.item, "Legendary", option.edition, JokerStickers()))
+                        legendaries!.append(JokerData(option.item, "Legendary",
+                                                      option.edition, JokerStickers(),
+                                                      "\(pack.kind)"))
                     }
                 }
             }

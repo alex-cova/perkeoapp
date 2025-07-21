@@ -207,8 +207,8 @@ class Functions: Lock {
         }
     
     func pollEdition(_ coordinate : String, _ modifier : Double?, _ noNegative : Bool, _ guaranteed : Bool) -> Edition {
-           var editionPoll = random(coordinate)
-           var editionRate = getEditionRate()
+           let editionPoll = random(coordinate)
+           let editionRate = getEditionRate()
 
            if (guaranteed) {
                if (editionPoll > 1 - 0.003 * 25 && !noNegative) {
