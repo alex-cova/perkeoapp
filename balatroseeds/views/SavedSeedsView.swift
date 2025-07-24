@@ -32,20 +32,30 @@ struct SavedSeedsView : View {
                 }
                 ForEach(seeds) { item in
                     NavigationLink(destination: seedNavigation(item.seed)
-                        .environmentObject(model)
-                        .onAppear {
-                            model.changeSeed(item.seed)
-                        }
-                        .navigationTitle(item.seed)) {
-                            seedRow(item)
-                        }.toolbar {
+                        .toastView(toast: $model.toast)
+                        .toolbar {
                             Button(action: {
                                 model.showSummary.toggle()
                             }) {
                                 Image(systemName:"checklist")
                             }.tint(.red)
+                            Button(action: {
+                                model.copy()
+                            }) {
+                                Image(systemName:"document.on.clipboard")
+                            }.tint(.red)
+                            Button(action: {
+                                model.configSheet.toggle()
+                            }) {
+                                Image(systemName:"gear")
+                            }.tint(.red)
                         }
-                        .listRowBackground(Color.customRowBackground)
+                        .environmentObject(model)
+                        .onAppear {
+                            model.changeSeed(item.seed)
+                        }.navigationTitle(item.seed)) {
+                            seedRow(item)
+                        }.listRowBackground(Color.customRowBackground)
                     
                 }.onDelete(perform: deleteItems)
             }.background(Color.customBackground)

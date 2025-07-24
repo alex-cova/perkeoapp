@@ -27,14 +27,27 @@ struct CommunityView: View {
                     LazyVGrid(columns: columns) {
                         ForEach(seeds, id: \.self) { seed in
                             NavigationLink(destination: PlayView()
-                                .navigationTitle(seed)
+                                .clipped()
+                                .background(Color.customBackground.ignoresSafeArea())
+                                .toastView(toast: $model.toast)
                                 .toolbar {
                                     Button(action: {
                                         model.showSummary.toggle()
                                     }) {
                                         Image(systemName:"checklist")
                                     }.tint(.red)
+                                    Button(action: {
+                                        model.copy()
+                                    }) {
+                                        Image(systemName:"document.on.clipboard")
+                                    }.tint(.red)
+                                    Button(action: {
+                                        model.configSheet.toggle()
+                                    }) {
+                                        Image(systemName:"gear")
+                                    }.tint(.red)
                                 }
+                                .navigationTitle(seed)
                                 .onAppear {
                                     model.changeSeed(seed)
                                 }) {

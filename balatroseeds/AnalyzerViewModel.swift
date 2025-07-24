@@ -116,6 +116,16 @@ public class AnalyzerViewModel : ObservableObject, Observable {
         toast = .init(style: .success, message: "Seed \(seed) copied to clipboard")
     }
     
+    public func copy(seed: String){
+        UIPasteboard.general.string = seed
+        
+        if configSheet {
+            configSheet = false
+        }
+        
+        toast = .init(style: .success, message: "Seed \(seed) copied to clipboard")
+    }
+    
     public func enterSeed() {
         showInput.toggle()
     }

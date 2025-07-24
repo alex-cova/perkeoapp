@@ -47,7 +47,7 @@ struct InteractiveTabBar: View {
         .padding(.bottom, 10)
         .background {
             Rectangle()
-                .foregroundStyle(Color(hex: "#2d2d2d")
+                .foregroundStyle(Color.customBackground
                     .opacity(activeTab == .analyzer ? 0.4 : 1.0))
                 .ignoresSafeArea()
                 .padding(.top, 20)
@@ -98,7 +98,7 @@ struct InteractiveTabBar: View {
                     let location = value.location
                     /// Checking if the location falls within any stored locations; if so, switching to the appropriate index
                     if let index = tabButtonLocations.firstIndex(where: { $0.contains(location) }) {
-                        withAnimation(.snappy(duration: 0.25, extraBounce: 0)) {
+                        withAnimation(.smooth(duration: 0.25, extraBounce: 0)) {
                             activeDraggingTab = TabItem.allCases[index]
                         }
                     }

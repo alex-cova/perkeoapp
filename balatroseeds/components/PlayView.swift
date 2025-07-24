@@ -24,9 +24,6 @@ struct ActivityViewController: UIViewControllerRepresentable {
 struct PlayView : View {
     @EnvironmentObject var model : AnalyzerViewModel
     
-
-    
-    
     init(){
         
     }

@@ -77,8 +77,29 @@ struct JokerSelectorView : View {
         let prefx = search.lowercased()
         
         return items.filter {
-            $0.rawValue.lowercased().hasPrefix(prefx) || $0.rawValue.lowercased().hasSuffix(prefx)
+            $0.rawValue.lowercased().hasPrefix(prefx) || $0.rawValue.lowercased().hasSuffix(prefx) ||
+            levenshtein($0.rawValue.lowercased(), prefx) < 2
         }
+    }
+    
+    private func levenshtein(_ aStr: String, _ bStr: String) -> Int {
+        let a = Array(aStr.lowercased())
+        let b = Array(bStr.lowercased())
+        
+        let empty = [Int](repeating: 0, count: b.count + 1)
+        var last = [Int](0...b.count)
+
+        for (i, aChar) in a.enumerated() {
+            var current = [i + 1] + empty
+            for (j, bChar) in b.enumerated() {
+                current[j + 1] = aChar == bChar
+                    ? last[j]
+                    : min(last[j], last[j + 1], current[j]) + 1
+            }
+            last = current
+        }
+
+        return last[b.count]
     }
     
     @ViewBuilder
@@ -98,21 +119,27 @@ struct JokerSelectorView : View {
     
     @ViewBuilder
     private func render(_ items : [Item], name : String) -> some View{
-        VStack {
-            Text(name)
-                .foregroundStyle(.white)
-                .font(.customBody)
-            LazyVGrid(columns: columns) {
-                ForEach(filter(items), id: \.rawValue) { joker in
-                    if let i = joker as? ItemEdition, let x = i.item as? LegendaryJoker {
-                        legendarySelectableJoker(x)
-                            .transition(.push(from: .bottom))
-                    }else {
-                        selectableJoker(joker)
-                            .transition(.push(from: .bottom))
+        let filteredItems = filter(items)
+        
+        if(filteredItems.isEmpty){
+            EmptyView()
+        } else {
+            VStack {
+                Text(name)
+                    .foregroundStyle(.white)
+                    .font(.customBody)
+                LazyVGrid(columns: columns) {
+                    ForEach(filteredItems, id: \.rawValue) { joker in
+                        if let i = joker as? ItemEdition, let x = i.item as? LegendaryJoker {
+                            legendarySelectableJoker(x)
+                                .transition(.push(from: .bottom))
+                        }else {
+                            selectableJoker(joker)
+                                .transition(.push(from: .bottom))
+                        }
                     }
-                }
-            }.padding()
+                }.padding()
+            }
         }
     }
     

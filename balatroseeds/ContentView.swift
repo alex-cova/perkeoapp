@@ -35,17 +35,18 @@ struct ContentView: View {
     var body: some View {
         if #available(iOS 18, *) {
             tabView()
-                .navigationTitle(model.activeTab == .analyzer ? model.title : "")
+                .navigationTitle(model.activeTab == .analyzer ? model.title: "")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     if model.showOptions {
                         toolbar()
                     }
-                }.sheet(isPresented: $model.showInput) {
+                }
+                .sheet(isPresented: $model.showInput) {
                     SeedInput()
                         .presentationDetents([.medium])
                         .presentationBackground(Color.customBackground)
-                        
+                    
                 }
         }else {
             tabView17()

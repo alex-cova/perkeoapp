@@ -329,6 +329,16 @@ struct FinderView : View {
                         }) {
                             Image(systemName:"checklist")
                         }.tint(.red)
+                        Button(action: {
+                            model.copy()
+                        }) {
+                            Image(systemName:"document.on.clipboard")
+                        }.tint(.red)
+                        Button(action: {
+                            model.configSheet.toggle()
+                        }) {
+                            Image(systemName:"gear")
+                        }.tint(.red)
                     }
                     .environmentObject(model)) {
                     if cached {
@@ -349,6 +359,9 @@ struct FinderView : View {
                     Button("Save") {
                         modelContext.insert(SeedModel(timestamp: Date(), seed: seed))
                     }.tint(.green)
+                    Button("Copy") {
+                        model.copy(seed: seed)
+                    }.tint(.blue)
                 }
             }.listRowBackground(Color.customRowBackground)
         }.foregroundStyle(.white)

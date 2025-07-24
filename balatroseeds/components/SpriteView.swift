@@ -39,12 +39,12 @@ struct SpriteImageView: View {
             Image(decorative: cgImage, scale: Images.editions.scale, orientation: .up)
                 .resizable()
                 .frame(width: frame.width, height: frame.height)
-                .opacity(isAnimating ? 1 : 0.3)
+                .opacity(isAnimating ? 0.3 : 1.0)
         }else{
             Text("fuck")
         }
     }
-    
+        
     @ViewBuilder
     private func editionView() -> some View {
         if(edition == .Foil) {
@@ -123,8 +123,6 @@ struct SpriteImageView: View {
     }
     
     @State private var isAnimating = false
-    
-    
     var animationDuration: Double = 1.5
     var bounceHeight: CGFloat = 20.0
     
@@ -137,8 +135,8 @@ struct SpriteImageView: View {
                             .colorInvert()
                     }else {
                         getHologram()
+                        editionView()
                     }
-                    editionView()
                 }.onAppear {
                     isAnimating = true
                 }
@@ -305,9 +303,7 @@ struct SpriteImageView: View {
             return ""
         }
         
-        
         if e == .NoEdition {
-            
             return ""
         }
         
@@ -350,6 +346,13 @@ struct SpriteImageView: View {
             CommonJoker.Delayed_Gratification.sprite()
             EditionItem(edition: .Negative, LegendaryJoker.Perkeo).sprite(edition: .Negative)
         }
+        
+        HStack {
+            Tarot.The_Wheel_of_Fortune.sprite(edition: .Foil)
+            Tarot.The_Wheel_of_Fortune.sprite(edition: .Polychrome)
+            Tarot.The_Wheel_of_Fortune.sprite(edition: .Holographic)
+            Tarot.The_Wheel_of_Fortune.sprite(edition: .Negative)
+        }
         HStack {
             Card(Cards.H_K, .Luck, .NoEdition, .RedSeal).sprite()
             Card(Cards.H_K, .Gold, .NoEdition, .BlueSeal).sprite()
@@ -363,5 +366,6 @@ struct SpriteImageView: View {
             Card(Cards.H_K, .Steel, .NoEdition, .RedSeal).sprite()
             Card(Cards.H_K, .Wild, .NoEdition, .NoSeal).sprite()
         }
+        
     }.background(Color(hex: "#1e1e1e"))
 }
