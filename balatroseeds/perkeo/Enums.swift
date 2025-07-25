@@ -30,40 +30,40 @@ public enum JokerType {
     case RARE
     case UNCOMMON
     case COMMO
-
+    
 }
 
 public enum PackType: String, CaseIterable, Item {
     case RETRY = "RETRY"
-
+    
     case Arcana_Pack = "Arcana Pack"
     case Jumbo_Arcana_Pack = "Jumbo Arcana Pack"
     case Mega_Arcana_Pack = "Mega Arcana Pack"
-
+    
     case Celestial_Pack = "Celestial Pack"
     case Jumbo_Celestial_Pack = "Jumbo Celestial Pack"
     case Mega_Celestial_Pack = "Mega Celestial Pack"
-
+    
     case Standard_Pack = "Standard Pack"
     case Jumbo_Standard_Pack = "Jumbo Standard Pack"
     case Mega_Standard_Pack = "Mega Standard Pack"
-
+    
     case Buffoon_Pack = "Buffoon Pack"
     case Jumbo_Buffoon_Pack = "Jumbo Buffoon Pack"
     case Mega_Buffoon_Pack = "Mega Buffoon Pack"
-
+    
     case Spectral_Pack = "Spectral Pack"
     case Jumbo_Spectral_Pack = "Jumbo Spectral Pack"
     case Mega_Spectral_Pack = "Mega Spectral Pack"
-
+    
     public var ordinal: Int {
         0
     }
-
+    
     public var y: Int {
         0
     }
-
+    
     var value: Double {
         switch self {
         case .RETRY:
@@ -88,8 +88,8 @@ public enum PackType: String, CaseIterable, Item {
             return 0.07
         }
     }
-
-     var kind: PackKind {
+    
+    var kind: PackKind {
         switch self {
         case .Arcana_Pack, .Jumbo_Arcana_Pack, .Mega_Arcana_Pack:
             return .Arcana
@@ -105,23 +105,23 @@ public enum PackType: String, CaseIterable, Item {
             fatalError("Invalid pack type: \(self)")
         }
     }
-
+    
     var isMega: Bool {
         return self == .Mega_Arcana_Pack || self == .Mega_Celestial_Pack
-            || self == .Mega_Standard_Pack || self == .Mega_Buffoon_Pack
-            || self == .Mega_Spectral_Pack
+        || self == .Mega_Standard_Pack || self == .Mega_Buffoon_Pack
+        || self == .Mega_Spectral_Pack
     }
-
+    
     var isJumbo: Bool {
         return self == .Jumbo_Arcana_Pack || self == .Jumbo_Celestial_Pack
-            || self == .Jumbo_Standard_Pack || self == .Jumbo_Buffoon_Pack
-            || self == .Jumbo_Spectral_Pack
+        || self == .Jumbo_Standard_Pack || self == .Jumbo_Buffoon_Pack
+        || self == .Jumbo_Spectral_Pack
     }
-
+    
     var isBuffoon: Bool {
         return self == .Buffoon_Pack || self == .Jumbo_Buffoon_Pack || self == .Mega_Buffoon_Pack
     }
-
+    
     var isSpectral: Bool {
         return self == .Spectral_Pack || self == .Jumbo_Spectral_Pack || self == .Mega_Spectral_Pack
     }
@@ -133,11 +133,11 @@ enum Seal: String, CaseIterable, Item {
     case BlueSeal = "Blue Seal"
     case GoldSeal = "Gold Seal"
     case PurpleSeal = "Purple Seal"
-
+    
     public var ordinal: Int {
         0
     }
-
+    
     public var y: Int {
         0
     }
@@ -152,7 +152,7 @@ enum Edition: String, CaseIterable, Item {
     case Eternal = "Eternal"
     case Perishable = "Perishable"
     case Rental = "Rental"
-
+    
     public var ordinal: Int {
         switch(self){
         case .Negative : return 0
@@ -165,7 +165,7 @@ enum Edition: String, CaseIterable, Item {
         case .Rental: return 7
         }
     }
-
+    
     public var y: Int {
         -1
     }
@@ -177,11 +177,11 @@ enum ItemType: String, CaseIterable, Item {
     case Planet = "Planet"
     case Spectral = "Spectral"
     case PlayingCard = "Playing Card"
-
+    
     public var ordinal: Int {
         0
     }
-
+    
     public var y: Int {
         0
     }
@@ -196,11 +196,11 @@ enum Stake: String, CaseIterable, Item {
     case Purple_Stake = "Purple Stake"
     case Orange_Stake = "Orange Stake"
     case Gold_Stake = "Gold Stake"
-
+    
     public var ordinal: Int {
         0
     }
-
+    
     public var y: Int {
         0
     }
@@ -209,7 +209,7 @@ enum Stake: String, CaseIterable, Item {
 enum Specials: String, CaseIterable, Item, Stored {
     case BLACKHOLE = "Black Hole"
     case THE_SOUL = "The Soul"
-
+    
     public var ordinal: Int {
         switch self {
         case .BLACKHOLE: return 0
@@ -220,7 +220,7 @@ enum Specials: String, CaseIterable, Item, Stored {
     public var index : Int {
         188 + ordinal
     }
-
+    
     public var y: Int {
         9
     }
@@ -267,7 +267,7 @@ enum Voucher: String, CaseIterable, Item, Identifiable, Stored {
     public var index : Int {
         32 + ordinal
     }
-
+    
     public var ordinal: Int {
         switch self {
         case .Overstock: return 0
@@ -302,10 +302,10 @@ enum Voucher: String, CaseIterable, Item, Identifiable, Stored {
         case .Retcon: return 29
         case .Paint_Brush: return 30
         case .Palett: return 31
-
+            
         }
     }
-
+    
     public var y: Int {
         7
     }
@@ -338,6 +338,7 @@ enum UnCommonJoker: String, CaseIterable, Item, Joker, Stored {
     case Card_Sharp = "Card Sharp"
     case Madness = "Madness"
     case Seance = "Seance"
+    case Vampire = "Vampire"
     case Shortcut = "Shortcut"
     case Hologram = "Hologram"
     case Cloud_9 = "Cloud 9"
@@ -377,12 +378,11 @@ enum UnCommonJoker: String, CaseIterable, Item, Joker, Stored {
     case The_Idol = "The Idol"
     case Seeing_Double = "Seeing Double"
     case Matador = "Matador"
-    case Stuntman = "Stuntman"
     case Satellite = "Satellite"
     case Cartomancer = "Cartomancer"
     case Astronomer = "Astronomer"
     case Bootstraps = "Bootstraps"
-
+    
     public var ordinal: Int {
         switch self {
         case .Joker_Stencil: return 0
@@ -405,57 +405,57 @@ enum UnCommonJoker: String, CaseIterable, Item, Joker, Stored {
         case .Card_Sharp: return 17
         case .Madness: return 18
         case .Seance: return 19
-        case .Shortcut: return 20
-        case .Hologram: return 21
-        case .Cloud_9: return 22
-        case .Rocket: return 23
-        case .Midas_Mask: return 24
-        case .Luchador: return 25
-        case .Gift_Card: return 26
-        case .Turtle_Bean: return 27
-        case .Erosion: return 28
-        case .To_the_Moon: return 29
-        case .Stone_Joker: return 30
-        case .Lucky_Cat: return 31
-        case .Bull: return 32
-        case .Diet_Cola: return 33
-        case .Trading_Card: return 34
-        case .Flash_Card: return 35
-        case .Spare_Trousers: return 36
-        case .Ramen: return 37
-        case .Seltzer: return 38
-        case .Castle: return 39
-        case .Mr_Bones: return 40
-        case .Acrobat: return 41
-        case .Sock_and_Buskin: return 42
-        case .Troubadour: return 43
-        case .Certificate: return 44
-        case .Smeared_Joker: return 45
-        case .Throwback: return 46
-        case .Rough_Gem: return 47
-        case .Bloodstone: return 48
-        case .Arrowhead: return 49
-        case .Onyx_Agate: return 50
-        case .Glass_Joker: return 51
-        case .Showman: return 52
-        case .Flower_Pot: return 53
-        case .Merry_Andy: return 54
-        case .Oops_All_6s: return 55
-        case .The_Idol: return 56
-        case .Seeing_Double: return 57
-        case .Matador: return 58
-        case .Stuntman: return 59
+        case .Vampire: return 20
+        case .Shortcut: return 21
+        case .Hologram: return 22
+        case .Cloud_9: return 23
+        case .Rocket: return 24
+        case .Midas_Mask: return 25
+        case .Luchador: return 26
+        case .Gift_Card: return 27
+        case .Turtle_Bean: return 28
+        case .Erosion: return 29
+        case .To_the_Moon: return 30
+        case .Stone_Joker: return 31
+        case .Lucky_Cat: return 32
+        case .Bull: return 33
+        case .Diet_Cola: return 34
+        case .Trading_Card: return 35
+        case .Flash_Card: return 36
+        case .Spare_Trousers: return 37
+        case .Ramen: return 38
+        case .Seltzer: return 39
+        case .Castle: return 40
+        case .Mr_Bones: return 41
+        case .Acrobat: return 42
+        case .Sock_and_Buskin: return 43
+        case .Troubadour: return 44
+        case .Certificate: return 45
+        case .Smeared_Joker: return 46
+        case .Throwback: return 47
+        case .Rough_Gem: return 48
+        case .Bloodstone: return 49
+        case .Arrowhead: return 50
+        case .Onyx_Agate: return 51
+        case .Glass_Joker: return 52
+        case .Showman: return 53
+        case .Flower_Pot: return 54
+        case .Merry_Andy: return 55
+        case .Oops_All_6s: return 56
+        case .The_Idol: return 57
+        case .Seeing_Double: return 58
+        case .Matador: return 59
         case .Satellite: return 60
         case .Cartomancer: return 61
         case .Astronomer: return 62
         case .Bootstraps: return 63
         }
     }
-
+    
     public var y: Int {
         1
     }
-
+    
     var type: JokerType {
         return .UNCOMMON
     }
@@ -489,7 +489,7 @@ enum Tarot: String, CaseIterable, Item {
     case The_Sun = "The Sun"
     case Judgement = "Judgement"
     case The_World = "The World"
-
+    
     public var ordinal: Int {
         switch self {
         case .The_Fool: return 0
@@ -516,7 +516,7 @@ enum Tarot: String, CaseIterable, Item {
         case .The_World: return 21
         }
     }
-
+    
     public var y: Int {
         4
     }
@@ -547,7 +547,7 @@ public enum Tag: String, CaseIterable, Item, Stored {
     case Speed_Tag = "Speed"
     case Orbital_Tag = "Orbital"
     case Economy_Tag = "Economy"
-
+    
     public var ordinal: Int {
         switch self {
         case .Uncommon_Tag: return 0
@@ -576,7 +576,7 @@ public enum Tag: String, CaseIterable, Item, Stored {
         case .Economy_Tag: return 23
         }
     }
-
+    
     public var y: Int {
         8
     }
@@ -603,8 +603,8 @@ enum Spectral: String, CaseIterable, Item, Stored {
     case Trance = "Trance"
     case Medium = "Medium"
     case Cryptid = "Cryptid"
-
-   public var ordinal: Int {
+    
+    public var ordinal: Int {
         switch self {
         case .Familiar: return 0
         case .Grim: return 1
@@ -624,7 +624,7 @@ enum Spectral: String, CaseIterable, Item, Stored {
         case .Cryptid: return 15
         }
     }
-
+    
     public var y: Int {
         5
     }
@@ -636,7 +636,6 @@ enum Spectral: String, CaseIterable, Item, Stored {
 
 enum RareJoker: String, CaseIterable, Item, Joker, Stored {
     case DNA = "DNA"
-    case Vampire = "Vampire"
     case Vagabond = "Vagabond"
     case Baron = "Baron"
     case Obelisk = "Obelisk"
@@ -651,40 +650,41 @@ enum RareJoker: String, CaseIterable, Item, Joker, Stored {
     case The_Family = "The Family"
     case The_Order = "The Order"
     case The_Tribe = "The Tribe"
+    case Stuntman = "Stuntman"
     case Invisible_Joker = "Invisible Joker"
     case Brainstorm = "Brainstorm"
     case Drivers_License = "Drivers License"
     case Burnt_Joker = "Burnt Joker"
-
+    
     public var ordinal: Int {
         switch self {
         case .DNA: return 0
-        case .Vampire: return 1
-        case .Vagabond: return 2
-        case .Baron: return 3
-        case .Obelisk: return 4
-        case .Baseball_Card: return 5
-        case .Ancient_Joker: return 6
-        case .Campfire: return 7
-        case .Blueprint: return 8
-        case .Wee_Joker: return 9
-        case .Hit_the_Road: return 10
-        case .The_Duo: return 11
-        case .The_Trio: return 12
-        case .The_Family: return 13
-        case .The_Order: return 14
-        case .The_Tribe: return 15
+        case .Vagabond: return 1
+        case .Baron: return 2
+        case .Obelisk: return 3
+        case .Baseball_Card: return 4
+        case .Ancient_Joker: return 5
+        case .Campfire: return 6
+        case .Blueprint: return 7
+        case .Wee_Joker: return 8
+        case .Hit_the_Road: return 9
+        case .The_Duo: return 10
+        case .The_Trio: return 11
+        case .The_Family: return 12
+        case .The_Order: return 13
+        case .The_Tribe: return 14
+        case .Stuntman: return 15
         case .Invisible_Joker: return 16
         case .Brainstorm: return 17
         case .Drivers_License: return 18
         case .Burnt_Joker: return 19
         }
     }
-
+    
     public var y: Int {
         2
     }
-
+    
     public var type: JokerType {
         return .RARE
     }
@@ -709,7 +709,7 @@ enum Planet: String, CaseIterable, Item {
     case Planet_X = "Planet X"
     case Ceres = "Ceres"
     case Eri = "Eris"
-
+    
     public var ordinal: Int {
         switch self {
         case .Mercury: return 0
@@ -726,7 +726,7 @@ enum Planet: String, CaseIterable, Item {
         case .Eri: return 11
         }
     }
-
+    
     public var y: Int {
         3
     }
@@ -738,7 +738,7 @@ enum LegendaryJoker: String, CaseIterable, Item, Joker, Stored {
     case Yorick = "Yorick"
     case Chicot = "Chicot"
     case Perkeo = "Perkeo"
-
+    
     public var ordinal: Int {
         switch self {
         case .Canio: return 0
@@ -748,7 +748,7 @@ enum LegendaryJoker: String, CaseIterable, Item, Joker, Stored {
         case .Perkeo: return 4
         }
     }
-
+    
     public var y: Int {
         10
     }
@@ -756,7 +756,7 @@ enum LegendaryJoker: String, CaseIterable, Item, Joker, Stored {
     public var index : Int {
         190 + ordinal
     }
-
+    
     var type: JokerType {
         return .LEGENDARY
     }
@@ -771,11 +771,11 @@ enum Enhancement: String, CaseIterable, Item {
     case Stone = "Stone"
     case Gold = "Gold"
     case Luck = "Lucky"
-
+    
     public var ordinal: Int {
         0
     }
-
+    
     public var y: Int {
         0
     }
@@ -797,11 +797,11 @@ enum Deck: String, CaseIterable, Item {
     case ANAGLYPH_DECK = "Anaglyph Deck"
     case PLASMA_DECK = "Plasma Deck"
     case ERRATIC_DECK = "Erratic Deck"
-
+    
     public var ordinal: Int {
         0
     }
-
+    
     public var y: Int {
         0
     }
@@ -853,8 +853,9 @@ enum CommonJoker: String, CaseIterable, Item, Joker, Stored {
     case Cavendish = "Cavendish"
     case Red_Card = "Red Card"
     case Square_Joker = "Square Joker"
-    case Riff_raff = "Riff-raff"
+    case Riffraff = "Riff-raff"
     case Photograph = "Photograph"
+    case Reserved_Parking = "Reserved Parking"
     case Mail_In_Rebate = "Mail In Rebate"
     case Hallucination = "Hallucination"
     case Fortune_Teller = "Fortune Teller"
@@ -868,7 +869,7 @@ enum CommonJoker: String, CaseIterable, Item, Joker, Stored {
     case Swashbuckler = "Swashbuckler"
     case Hanging_Chad = "Hanging Chad"
     case Shoot_the_Moon = "Shoot the Moon"
-
+    
     public var index : Int {
         return 128 + ordinal
     }
@@ -920,28 +921,29 @@ enum CommonJoker: String, CaseIterable, Item, Joker, Stored {
         case .Cavendish: return 42
         case .Red_Card: return 43
         case .Square_Joker: return 44
-        case .Riff_raff: return 45
+        case .Riffraff: return 45
         case .Photograph: return 46
-        case .Mail_In_Rebate: return 47
-        case .Hallucination: return 48
-        case .Fortune_Teller: return 49
-        case .Juggler: return 50
-        case .Drunkard: return 51
-        case .Golden_Joker: return 52
-        case .Popcorn: return 53
-        case .Walkie_Talkie: return 54
-        case .Smiley_Face: return 55
-        case .Golden_Ticket: return 56
-        case .Swashbuckler: return 57
-        case .Hanging_Chad: return 58
-        case .Shoot_the_Moon: return 59
+        case .Reserved_Parking: return 47
+        case .Mail_In_Rebate: return 48
+        case .Hallucination: return 49
+        case .Fortune_Teller: return 50
+        case .Juggler: return 51
+        case .Drunkard: return 52
+        case .Golden_Joker: return 53
+        case .Popcorn: return 54
+        case .Walkie_Talkie: return 55
+        case .Smiley_Face: return 56
+        case .Golden_Ticket: return 57
+        case .Swashbuckler: return 58
+        case .Hanging_Chad: return 59
+        case .Shoot_the_Moon: return 60
         }
     }
-
+    
     public var y: Int {
         return 0
     }
-
+    
     var type: JokerType {
         return .COMMO
     }
@@ -964,7 +966,7 @@ enum Packs: String, CaseIterable, Item {
     case Spectral_Pack = "Spectral Pack"
     case Jumbo_Spectral_Pack = "Jumbo Spectral Pack"
     case Mega_Spectral_Pack = "Mega Spectral Pack"
-
+    
     public var value: Double {
         switch self {
         case .Arcana_Pack: return 4
@@ -984,7 +986,7 @@ enum Packs: String, CaseIterable, Item {
         case .Mega_Spectral_Pack: return 0.07
         }
     }
-
+    
     public var ordinal: Int {
         switch self {
         case .Arcana_Pack: return 1
@@ -1004,11 +1006,11 @@ enum Packs: String, CaseIterable, Item {
         case .Mega_Spectral_Pack: return 15
         }
     }
-
+    
     public var y: Int {
         return -1
     }
-
+    
 }
 
 enum Cards: String, CaseIterable, Item {
@@ -1064,11 +1066,11 @@ enum Cards: String, CaseIterable, Item {
     case S_K = "S_K"
     case S_Q = "S_Q"
     case S_T = "S_T"
-
+    
     public var ordinal: Int {
         return 0
     }
-
+    
     public  var y: Int {
         return 0
     }
@@ -1103,11 +1105,11 @@ enum Boss: String, CaseIterable, Item {
     case The_Water = "The Water"
     case The_Wheel = "The Wheel"
     case The_Windo = "The Window"
-
+    
     public var y: Int {
         6
     }
-
+    
     var startsWithT: Bool {
         switch self {
         case .The_Arm: return true
@@ -1134,10 +1136,10 @@ enum Boss: String, CaseIterable, Item {
         case .The_Wheel: return true
         case .The_Windo: return true
         default: return false
-
+            
         }
     }
-
+    
     public var ordinal: Int {
         switch self {
         case .The_Arm:
@@ -1205,7 +1207,7 @@ enum Suit: String, CaseIterable, Item {
     case Clubs = "Clubs"
     case Diamonds = "Diamonds"
     case Spades = "Spades"
-
+    
     func index() -> Int {
         switch self {
         case .Hearts: return 0
@@ -1214,7 +1216,7 @@ enum Suit: String, CaseIterable, Item {
         case .Spades: return 3
         }
     }
-
+    
     public var ordinal: Int {
         switch self {
         case .Hearts:
@@ -1227,7 +1229,7 @@ enum Suit: String, CaseIterable, Item {
             return 3
         }
     }
-
+    
     public var y: Int {
         return -1
     }
@@ -1247,7 +1249,7 @@ enum Rank: String, CaseIterable, Item {
     case Queen = "Q"
     case King = "K"
     case Ace = "A"
-
+    
     func index() -> Int {
         switch self {
         case .r_2: return 0
@@ -1265,11 +1267,11 @@ enum Rank: String, CaseIterable, Item {
         case .Ace: return 12
         }
     }
-
+    
     var ordinal: Int {
         0
     }
-
+    
     var y: Int {
         0
     }

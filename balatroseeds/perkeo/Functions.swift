@@ -18,10 +18,7 @@ class Functions: Lock {
     static let TAGS: [Tag] = Tag.allCases
     static let PACKS: [PackType] = PackType.allCases
     static let RARE_JOKERS: [RareJoker] = RareJoker.allCases
-    
-    
     static let COMMON_JOKERS: [CommonJoker] = CommonJoker.allCases
-    
     static let BOSSES: [Boss] = Boss.allCases
     
     var params: InstanceParams
@@ -51,6 +48,21 @@ class Functions: Lock {
         LuaRandom.random(seed: getNode(id))
     }
     
+    /*
+     private double getNode(Coordinate id) {
+            var c = cache.get(id);
+
+            if (c == 0.0) {
+                c = id.pseudohash(seed);
+                cache.put(id, c);
+            }
+
+            var value = round13((c * 1.72431234 + 2.134453429141) % 1);
+
+            cache.put(id, value);
+
+            return (value + hashedSeed) / 2;
+        }*/
     func getNode(_ ID: String) -> Double {
         var c = cache.nodes[ID]
         
@@ -83,14 +95,14 @@ class Functions: Lock {
         return items[idx - 1]
     }
     
-
+    
     func randchoice<T: Item>(_ ID: String, _ items: [T], showmanCapable : Bool = true) -> T {
         var item = items[randint(ID, 0, items.count - 1)]
-
+        
         if params.showman && showmanCapable {
             return item
         }
-    
+        
         if isLocked(item)  {
             var resample = 2
             while true {
@@ -164,31 +176,31 @@ class Functions: Lock {
     }
     
     func nextWheelOfFortune() -> Edition {
-            //1 / 4
-            if (random("wheel_of_fortune") > 0.25) {
-                return pollEdition("wheel_of_fortune", nil, true, true);
-            }
-
-            return Edition.NoEdition;
+        //1 / 4
+        if (random("wheel_of_fortune") > 0.25) {
+            return pollEdition("wheel_of_fortune", nil, true, true);
         }
+        
+        return Edition.NoEdition;
+    }
     
     func edition(_ ante: Int, editionArr: [String]) -> Edition {
         // Get edition
         let editionRate = getEditionRate()
-
+        
         var edition: Edition = .NoEdition
         let editionPoll = random(editionArr[ante])
         
+        print(editionPoll)
+        
         if editionPoll > 0.997 {
             edition = .Negative
-        } else if editionPoll > 1 - 0.006 * editionRate {
+        } else if editionPoll > (1 - 0.006 * editionRate) {
             edition = .Polychrome
-        } else if editionPoll > 1 - 0.02 * editionRate {
+        } else if editionPoll > (1 - 0.02 * editionRate) {
             edition = .Holographic
-        } else if editionPoll > 1 - 0.04 * editionRate {
+        } else if editionPoll > (1 - 0.04 * editionRate) {
             edition = .Foil
-        } else {
-            edition = .NoEdition
         }
         
         return edition
@@ -196,50 +208,50 @@ class Functions: Lock {
     
     func  getEditionRate() -> Double {
         var editionRate = 1.0
-
-            if (isVoucherActive(Voucher.Glow_Up)) {
-                editionRate = 4.0
-            } else if (isVoucherActive(Voucher.Hone)) {
-                editionRate = 2.0
-            }
-
-            return editionRate
+        
+        if (isVoucherActive(Voucher.Glow_Up)) {
+            editionRate = 4.0
+        } else if (isVoucherActive(Voucher.Hone)) {
+            editionRate = 2.0
         }
+        
+        return editionRate
+    }
     
     func pollEdition(_ coordinate : String, _ modifier : Double?, _ noNegative : Bool, _ guaranteed : Bool) -> Edition {
-           let editionPoll = random(coordinate)
-           let editionRate = getEditionRate()
-
-           if (guaranteed) {
-               if (editionPoll > 1 - 0.003 * 25 && !noNegative) {
-                   return Edition.Polychrome
-               } else if (editionPoll > 1 - 0.006 * 25) {
-                   return Edition.Polychrome
-               } else if (editionPoll > 1 - 0.02 * 25) {
-                   return Edition.Holographic
-               } else if (editionPoll > 1 - 0.04 * 25) {
-                   return Edition.Foil
-               }
-           } else {
-               if (editionPoll > 1 - multi(0.003, modifier) && !noNegative) {
-                   return Edition.Negative
-               } else if (editionPoll > 1 - 0.006 * multi(editionRate, modifier)) {
-                   return Edition.Polychrome
-               } else if (editionPoll > 1 - 0.02 * multi(editionRate, modifier)) {
-                   return Edition.Holographic
-               } else if (editionPoll > 1 - 0.04 * multi(editionRate, modifier)) {
-                   return Edition.Foil
-               }
-           }
-
+        let editionPoll = random(coordinate)
+        let editionRate = getEditionRate()
+        
+        if (guaranteed) {
+            if (editionPoll > 1 - 0.003 * 25 && !noNegative) {
+                return Edition.Polychrome
+            } else if (editionPoll > 1 - 0.006 * 25) {
+                return Edition.Polychrome
+            } else if (editionPoll > 1 - 0.02 * 25) {
+                return Edition.Holographic
+            } else if (editionPoll > 1 - 0.04 * 25) {
+                return Edition.Foil
+            }
+        } else {
+            if (editionPoll > 1 - multi(0.003, modifier) && !noNegative) {
+                return Edition.Negative
+            } else if (editionPoll > 1 - 0.006 * multi(editionRate, modifier)) {
+                return Edition.Polychrome
+            } else if (editionPoll > 1 - 0.02 * multi(editionRate, modifier)) {
+                return Edition.Holographic
+            } else if (editionPoll > 1 - 0.04 * multi(editionRate, modifier)) {
+                return Edition.Foil
+            }
+        }
+        
         return Edition.NoEdition
-       }
-
+    }
+    
     private func multi(_ editionRate : Double,  _ mod : Double?) -> Double {
         if (mod == nil) { return editionRate }
-
-           return editionRate * mod!;
-       }
+        
+        return editionRate * mod!;
+    }
     
     
     static let setA = Set.of(
@@ -281,83 +293,56 @@ class Functions: Lock {
         
         switch rarity {
         case "4":
-            if params.version > 10099 {
-                joker = randchoice("Joker4", Functions.LEGENDARY_JOKERS)
-            } else {
-                joker = randchoice(joker4Arr[ante], Functions.LEGENDARY_JOKERS)
-            }
-            
+            joker = randchoice("Joker4", Functions.LEGENDARY_JOKERS)
         case "3":
-                joker = randchoice(joker3Arr[ante], Functions.RARE_JOKERS)
+            joker = randchoice(joker3Arr[ante], Functions.RARE_JOKERS)
         case "2":
-                joker = randchoice(joker2Arr[ante], Functions.UNCOMMON_JOKERS)
+            joker = randchoice(joker2Arr[ante], Functions.UNCOMMON_JOKERS)
         default:
-                joker = randchoice(joker1Arr[ante], Functions.COMMON_JOKERS)
+            joker = randchoice(joker1Arr[ante], Functions.COMMON_JOKERS)
         }
         
         // Get next joker stickers
         let stickers = JokerStickers()
         if hasStickers {
-            if params.version > 10103 {
-                let searchForSticker =
-                (params.stake == Stake.Black_Stake || params.stake == Stake.Blue_Stake
-                 || params.stake == Stake.Purple_Stake || params.stake == Stake.Orange_Stake
-                 || params.stake == Stake.Gold_Stake)
-                
-                var stickerPoll = 0.0
-                
-                if searchForSticker {
-                    if source == "buf" {
-                        stickerPoll = random(Functions.packetperArr[ante])
-                    } else {
-                        stickerPoll = random(Functions.etperpollArr[ante])
-                    }
+            let searchForSticker =
+            (params.stake == Stake.Black_Stake || params.stake == Stake.Blue_Stake
+             || params.stake == Stake.Purple_Stake || params.stake == Stake.Orange_Stake
+             || params.stake == Stake.Gold_Stake)
+            
+            var stickerPoll = 0.0
+            
+            if searchForSticker {
+                if source == "buf" {
+                    stickerPoll = random(Functions.packetperArr[ante])
+                } else {
+                    stickerPoll = random(Functions.etperpollArr[ante])
                 }
-                
-                if stickerPoll > 0.7 {
-                    if !Functions.setA.contains(joker.rawValue) {
-                        stickers.eternal = true
-                    }
+            }
+            
+            if stickerPoll > 0.7 {
+                if !Functions.setA.contains(joker.rawValue) {
+                    stickers.eternal = true
                 }
-                
-                if (stickerPoll > 0.4 && stickerPoll <= 0.7)
-                    && (params.stake == Stake.Orange_Stake || params.stake == Stake.Gold_Stake)
-                {
-                    if !Functions.setB.contains(joker.rawValue) {
-                        stickers.perishable = true
-                    }
+            }
+            
+            if (stickerPoll > 0.4 && stickerPoll <= 0.7)
+                && (params.stake == Stake.Orange_Stake || params.stake == Stake.Gold_Stake)
+            {
+                if !Functions.setB.contains(joker.rawValue) {
+                    stickers.perishable = true
                 }
-                
-                if params.stake == Stake.Gold_Stake {
-                    if source == "buf" {
-                        stickers.rental = random(Functions.packssjrArr[ante]) > 0.7
-                    } else {
-                        stickers.rental = random(Functions.ssjrArr[ante]) > 0.7
-                    }
-                }
-                
-            } else {
-                if params.stake == Stake.Black_Stake || params.stake == Stake.Blue_Stake
-                    || params.stake == Stake.Purple_Stake || params.stake == Stake.Orange_Stake
-                    || params.stake == Stake.Gold_Stake
-                {
-                    if !Functions.setA.contains(joker.rawValue) {
-                        stickers.eternal = random(Functions.stake_shop_joker_eternalArr[ante]) > 0.7
-                    }
-                }
-                if params.version > 10099 {
-                    if (params.stake == Stake.Orange_Stake || params.stake == Stake.Gold_Stake)
-                        && !stickers.eternal
-                    {
-                        stickers.perishable = random(Functions.ssjpArr[ante]) > 0.49
-                    }
-                    if params.stake == Stake.Gold_Stake {
-                        stickers.rental = random(Functions.ssjrArr[ante]) > 0.7
-                    }
+            }
+            
+            if params.stake == Stake.Gold_Stake {
+                if source == "buf" {
+                    stickers.rental = random(Functions.packssjrArr[ante]) > 0.7
+                } else {
+                    stickers.rental = random(Functions.ssjrArr[ante]) > 0.7
                 }
             }
         }
-        
+            
         return JokerData(joker, rarity, edition, stickers)
     }
     
@@ -424,7 +409,8 @@ class Functions: Lock {
                 joker2Arr: Functions.joker2ShoArr,
                 joker3Arr: Functions.joker3ShoArr,
                 joker4Arr: Functions.joker4ShoArr,
-                rarityArr: Functions.rarityShoArr, editionArr: Functions.editionShoArr, ante, true)
+                rarityArr: Functions.rarityShoArr,
+                editionArr: Functions.editionShoArr, ante, true)
             return ShopItem(type, jkr.joker, jkr)
         case .Tarot:
             return ShopItem(type, nextTarot(Functions.tarotShoArr[ante], ante, false))
@@ -440,7 +426,7 @@ class Functions: Lock {
     
     // Packs and Pack Contents
     func nextPack(_ ante: Int) -> PackType {
-        if ante <= 2 && !cache.generatedFirstPack && params.version > 10099 {
+        if ante <= 2 && !cache.generatedFirstPack {
             cache.generatedFirstPack = true
             return .Buffoon_Pack
         }

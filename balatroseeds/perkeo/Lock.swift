@@ -105,6 +105,7 @@ class Lock {
             lock(RareJoker.The_Trio)
             lock(RareJoker.Wee_Joker)
             lock(RareJoker.Burnt_Joker)
+            lock(RareJoker.Stuntman)
             
             lock(Tag.Foil_Tag)
             lock(Tag.Holographic_Tag)
@@ -133,7 +134,6 @@ class Lock {
             lock(UnCommonJoker.Merry_Andy)
             lock(UnCommonJoker.Satellite)
             lock(UnCommonJoker.Seeing_Double)
-            lock(UnCommonJoker.Stuntman)
             lock(UnCommonJoker.The_Idol)
             lock(UnCommonJoker.Oops_All_6s)
             

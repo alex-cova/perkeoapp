@@ -243,7 +243,6 @@ class InstanceParams {
     var stake : Stake
     var showman : Bool
     var sixesFactor : Int
-    var version : Int
     var vouchers : Set<Voucher>
     
     init(){
@@ -251,16 +250,14 @@ class InstanceParams {
         stake = Stake.White_Stake
         showman = false
         sixesFactor = 1
-        version = Version.v_101c.rawValue
         vouchers = Set<Voucher>()
     }
     
-    init (_ deck: Deck,_ stake: Stake,_ showman: Bool,_ sixesFactor: Int,_ version: Version){
+    init (_ deck: Deck,_ stake: Stake,_ showman: Bool,_ sixesFactor: Int){
         self.deck = deck
         self.stake = stake
         self.showman = showman
         self.sixesFactor = sixesFactor
-        self.version = version.rawValue
         self.vouchers = Set<Voucher>()
     }
 }

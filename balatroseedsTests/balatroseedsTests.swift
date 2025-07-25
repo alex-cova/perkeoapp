@@ -25,44 +25,47 @@ struct balatroseedsTests {
     @Test func testPseudohash() async throws {
         print(Util.pseudohash("hello"))
     }
-    
+
     @Test func testRound13() async throws {
         print(Util.round13(0.04098230016037929))
     }
-    
+
     @Test func analyze() async throws {
-        
+
         let start = DispatchTime.now().uptimeNanoseconds / 1_000_000
         let result = Balatro()
             .performAnalysis(seed: "IGSPUNF")
-        
+
         let end = DispatchTime.now().uptimeNanoseconds / 1_000_000
-        
+
         print("\(end - start) ms")
-            
+
         print(result.toJson())
     }
-    
+
     @Test func finder() async throws {
         for i in 0..<4000 {
             let _ = Balatro()
                 .configureForSpeed(selections: [LegendaryJoker.Perkeo])
                 .performAnalysis(seed: "IGSPUNF\(i)")
         }
-        
-        
     }
-    
+
+    @Test func test5Souls(){
+        Balatro()
+            .performAnalysis(seed: "FHSRBAMA")
+    }
+
     @Test func analyze2() async throws {
-        
+
         let start = DispatchTime.now().uptimeNanoseconds / 1_000_000
         let result = Balatro()
             .performAnalysis(seed: "1234")
-        
+
         let end = DispatchTime.now().uptimeNanoseconds / 1_000_000
-        
+
         print("\(end - start) ms")
-            
+
         print(result.toJson())
     }
 

@@ -65,7 +65,6 @@ public class Balatro {
     var analyzeBuffon = true
     var maxDepth = 8
     var startingAnte = 1
-    var version : Version = .v_101f
     var deck = Deck.RED_DECK
     var stake = Stake.White_Stake
     var showman = false
@@ -74,17 +73,17 @@ public class Balatro {
     func performAnalysis(seed: String) -> Run {
         var cards: [Int] = Array(repeating: 50, count: maxDepth)
         cards[0] = 15
-        return performAnalysis(maxDepth, cards, deck, stake, version, seed)
+        return performAnalysis(maxDepth, cards, deck, stake, seed)
     }
 
 
     func performAnalysis(
-        _ maxDepth: Int, _ cardsPerAnte: [Int], _ deck: Deck, _ stake: Stake, _ version: Version,
+        _ maxDepth: Int, _ cardsPerAnte: [Int], _ deck: Deck, _ stake: Stake,
         _ seed: String
     ) -> Run {
         let inst = Functions(seed, maxDepth)
 
-        inst.setParams(InstanceParams(deck, stake, showman, 1, version))
+        inst.setParams(InstanceParams(deck, stake, showman, 1))
         inst.initLocks(1, false, true)
         inst.firstLock()
 
