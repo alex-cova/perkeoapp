@@ -31,6 +31,27 @@ class JokerData {
         
     }
     
+    func computeEdition() -> Edition{
+        if edition != .NoEdition {
+            return edition
+        }
+        
+        if(stickers.rental) {
+            return .Rental
+        }
+        
+        if(stickers.eternal) {
+            return .Eternal
+        }
+        
+        if(stickers.perishable) {
+            return .Perishable
+        }
+        
+        return edition
+    }
+    
+    
     func asEditionItem() -> EditionItem {
         EditionItem(edition: edition, joker)
             .atSource(source ?? "")
@@ -115,8 +136,9 @@ class EditionItem: Encodable, Identifiable, Item {
     let edition: Edition
     let item: Item
     let source : String?
+    var seal : Seal?
 
-    init(edition: Edition, _ item: Item, _ source : String? = nil) {
+    init(edition: Edition, _ item: Item, _ source : String? = nil, _ seal : Seal? = nil) {
         if item is EditionItem {
             fatalError("Cannot create EditionItem from EditionItem")
         }
@@ -124,10 +146,15 @@ class EditionItem: Encodable, Identifiable, Item {
         self.edition = edition
         self.item = item
         self.source = source
+        self.seal = seal
     }
     
     convenience init(_ item: Item) {
         self.init(edition: .NoEdition, item, nil)
+    }
+    
+    convenience init(card: Card){
+        self.init(edition: card.edition, card, nil, card.seal)
     }
 
     enum CodingKeys: CodingKey {
@@ -218,7 +245,7 @@ class ShopInstance {
 class ShopItem {
     var type : ItemType = .Tarot
     var item : Item = Tarot.The_Fool
-    var jokerData : JokerData = JokerData()
+    var jokerData : JokerData?
     
     init(){
         
@@ -235,6 +262,17 @@ class ShopItem {
         self.item = item
         self.jokerData = jokerData
     }
+    
+    var edition : Edition {
+        get {
+            if let jd = jokerData {
+                return jd.computeEdition()
+            }
+            
+            return .NoEdition
+        }
+    }
+    
 }
 
 

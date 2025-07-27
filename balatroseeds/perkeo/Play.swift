@@ -213,9 +213,9 @@ class Ante : Encodable, Identifiable {
         })
     }
     
-    func addToQueue(value : ShopItem, sticker : Edition?){
+    func addToQueue(value : ShopItem){
         shop.insert(value.item.rawValue)
-        shopQueue.append(SearchableItem(item: value.item, sticker))
+        shopQueue.append(SearchableItem(item: value))
     }
     
     func addPack(pack : Pack, options: [EditionItem]){
@@ -329,6 +329,11 @@ class SearchableItem : Encodable, Identifiable {
     init(item: Item, _ edition: Edition?) {
         self.item = item
         self.edition = edition
+    }
+    
+    init(item : ShopItem) {
+        self.item = item.item
+        self.edition = item.edition
     }
     
     enum CodingKeys: String, CodingKey {

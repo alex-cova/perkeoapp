@@ -187,11 +187,9 @@ class Functions: Lock {
     func edition(_ ante: Int, editionArr: [String]) -> Edition {
         // Get edition
         let editionRate = getEditionRate()
-        
-        var edition: Edition = .NoEdition
         let editionPoll = random(editionArr[ante])
         
-        print(editionPoll)
+        var edition: Edition = .NoEdition
         
         if editionPoll > 0.997 {
             edition = .Negative
@@ -202,6 +200,8 @@ class Functions: Lock {
         } else if editionPoll > (1 - 0.04 * editionRate) {
             edition = .Foil
         }
+        
+        //print("\(editionPoll) : \(editionArr[ante]) -> \(edition)")
         
         return edition
     }
@@ -587,7 +587,8 @@ class Functions: Lock {
                     joker2Arr: Functions.joker2BufArr,
                     joker3Arr: Functions.joker3BufArr,
                     joker4Arr: Functions.joker4BufArr,
-                    rarityArr: Functions.rarityBufArr, editionArr: Functions.editionShoArr, ante,
+                    rarityArr: Functions.rarityBufArr,
+                    editionArr: Functions.editionBufArr, ante,
                     true))
             if !params.showman {
                 lock(pack[i].joker)

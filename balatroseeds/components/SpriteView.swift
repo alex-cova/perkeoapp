@@ -179,16 +179,32 @@ struct SpriteImageView: View {
                     }
                 }
             }
-            Text("**\(item.rawValue)** \(editionText())")
-                .font(.customCaption)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: 71, minHeight: 35)
+            getDescription()
         }.foregroundStyle(foregroundColor)
             .animation(
                 Animation.easeInOut(duration: animationDuration)
                     .repeatForever(autoreverses: true),
                 value: isAnimating
             )
+    }
+    
+    @ViewBuilder
+    private func getDescription() -> some View {
+        VStack {
+            Text(item.rawValue)
+                .font(.customCaption)
+                .bold()
+                .multilineTextAlignment(.center)
+            
+            if let edition = edition {
+                if edition != .NoEdition {
+                    Text(edition.rawValue)
+                        .foregroundStyle(.red)
+                        .font(.customCaption)
+                        .multilineTextAlignment(.center)
+                }
+            }
+        }.frame(maxWidth: 71, minHeight: 35)
     }
     
     
@@ -258,6 +274,10 @@ struct SpriteImageView: View {
                 Image(decorative: cgImage, scale: spriteSheet.scale, orientation: .up)
                     .resizable()
                     .frame(width: frame.width, height: frame.height)
+            }
+            
+            if c.edition != .NoEdition {
+                editionView()
             }
             
             if c.seal != .NoSeal {

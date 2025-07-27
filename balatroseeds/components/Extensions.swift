@@ -55,7 +55,7 @@ extension Item {
     func sprite(edition: Edition? = nil, color: Color = .white) -> SpriteImageView {
         
         if let card = self as? Card {
-            return SpriteImageView(self, Images.cards, card.rank.index(), card.suit.index(), 71, 95, card, color)
+            return SpriteImageView(self, Images.cards, card.rank.index(), card.suit.index(), 71, 95, card, edition: edition, color)
         }
         
         if(self.rawValue == Specials.BLACKHOLE.rawValue){

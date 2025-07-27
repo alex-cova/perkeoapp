@@ -52,8 +52,59 @@ struct balatroseedsTests {
     }
 
     @Test func test5Souls(){
-        Balatro()
-            .performAnalysis(seed: "FHSRBAMA")
+        let functions = Balatro()
+            .functions(seed: "FHSRBAMA")
+        
+        let editionRate = 1.0
+        
+        func getEdition(_ editionPoll : Double) -> Edition {
+            var edition: Edition = .NoEdition
+            if editionPoll > 0.997 {
+                edition = .Negative
+            } else if editionPoll > (1 - 0.006 * editionRate) {
+                edition = .Polychrome
+            } else if editionPoll > (1 - 0.02 * editionRate) {
+                edition = .Holographic
+            } else if editionPoll > (1 - 0.04 * editionRate) {
+                edition = .Foil
+            }
+            
+            return edition;
+        }
+        
+        let arr : [Double] = [
+            0.4005101425641775
+            ,0.9616695513478333
+            ,0.35197137316851257
+            ,0.4892931628983397
+            ,0.07698332800910612
+            ,0.13696781567490057
+            ,0.3410048032224575
+            ,0.2549455538105436
+            ,0.31637046752928866
+            ,0.7897410648660232
+            ,0.8098151078846378
+            ,0.42822104501708536
+            ,0.2578892029760034
+            ,0.6854283252536773
+            ,0.19037753666731416
+            ,0.22781576997338826
+            ,0.6081648633841479
+            ,0.2535131814666858
+            ,0.6565805743259698
+        ]
+        
+        for i in 1..<20 {
+            let v = functions.random(Functions.editionBufArr[1])
+            
+            if v != arr[i-1] {
+                print("\(v) != \(arr[i-1]) <---- ERROR")
+            }else {
+                print("\(v) == \(arr[i-1]) \(Functions.editionBufArr[1]) \(getEdition(v))")
+            }
+            
+        }
+            
     }
 
     @Test func analyze2() async throws {

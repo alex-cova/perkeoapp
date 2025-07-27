@@ -71,16 +71,13 @@ public class Balatro {
     var autoBuyVoucher = false
     
     func performAnalysis(seed: String) -> Run {
-        var cards: [Int] = Array(repeating: 50, count: maxDepth)
+        var cards: [Int] = Array(repeating: 52, count: maxDepth)
         cards[0] = 15
         return performAnalysis(maxDepth, cards, deck, stake, seed)
     }
 
-
-    func performAnalysis(
-        _ maxDepth: Int, _ cardsPerAnte: [Int], _ deck: Deck, _ stake: Stake,
-        _ seed: String
-    ) -> Run {
+    
+    func functions(seed: String) -> Functions {
         let inst = Functions(seed, maxDepth)
 
         inst.setParams(InstanceParams(deck, stake, showman, 1))
@@ -92,6 +89,15 @@ public class Balatro {
         }
 
         inst.setDeck(deck)
+        
+        return inst
+    }
+
+    func performAnalysis(
+        _ maxDepth: Int, _ cardsPerAnte: [Int], _ deck: Deck, _ stake: Stake,
+        _ seed: String
+    ) -> Run {
+        let inst = functions(seed: seed)
         var antes: [Ante] = []
 
         for a in startingAnte...maxDepth {
@@ -128,32 +134,9 @@ public class Balatro {
             }
 
             if analyzeShop {
-                for _ in stride(from: 1, to: cardsPerAnte[a - 1], by: 1) {
-                    
+                for _ in 0..<cardsPerAnte[a - 1] {
                     let item = inst.nextShopItem(a)
-                    var sticker: Edition?
-
-                    if item.type == .Joker {
-                        if item.jokerData.stickers.eternal {
-                            sticker = .Eternal
-                        }
-                        if item.jokerData.stickers.perishable {
-                            sticker = .Perishable
-                        }
-                        if item.jokerData.stickers.rental {
-                            sticker = .Rental
-                        }
-                        if item.jokerData.edition != .NoEdition {
-                            sticker = item.jokerData.edition
-                        }
-                    } else {
-                        if item.item is EditionItem {
-                            let ei =  item.item as? EditionItem
-                            sticker = ei?.edition
-                        }
-                    }
-
-                    play.addToQueue(value: item, sticker: sticker)
+                    play.addToQueue(value: item)
                 }
             }
 
@@ -225,7 +208,7 @@ public class Balatro {
                     let cards = inst.nextStandardPack(packInfo.size, a)
                     for c in 0..<packInfo.size {
                         let card = cards[c]
-                        options.append(EditionItem(card))
+                        options.append(EditionItem(card: card))
                     }
                 }
 
