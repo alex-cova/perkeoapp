@@ -25,6 +25,10 @@ class Run : Encodable{
         return list
     }
     
+    var score : Double {
+        return 0.0
+    }
+    
     func toJson() -> String {
         do {
             return try String(data: JSONEncoder().encode(self),encoding: .utf8)!

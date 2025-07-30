@@ -72,7 +72,8 @@ struct SpriteImageView: View {
                     Image(decorative: cgImage2, scale: Images.jokers.scale, orientation: .up)
                         .resizable()
                         .frame(width: frame.width, height: frame.height)
-                        .scaleEffect( isAnimating ? 1.0 : 1.08)
+                        .scaleEffect( isAnimating ? 0.95 : 1.06)
+                        .rotationEffect( isAnimating ? .degrees(4) : .degrees(-6))
                 }
             }
         }else{
@@ -153,8 +154,7 @@ struct SpriteImageView: View {
                             }
                         }
                     }
-                }.rotationEffect( isAnimating ? .degrees(2) : .degrees(-2))
-                    .onAppear {
+                }.onAppear {
                         // Start the animation when the view appears
                         isAnimating = true
                     }
@@ -270,10 +270,12 @@ struct SpriteImageView: View {
         return ZStack {
             backgroundCard(c)
             
-            if let cgImage = spriteSheet.cgImage?.cropping(to: frame) {
-                Image(decorative: cgImage, scale: spriteSheet.scale, orientation: .up)
-                    .resizable()
-                    .frame(width: frame.width, height: frame.height)
+            if c.enhancement != .Stone {
+                if let cgImage = spriteSheet.cgImage?.cropping(to: frame) {
+                    Image(decorative: cgImage, scale: spriteSheet.scale, orientation: .up)
+                        .resizable()
+                        .frame(width: frame.width, height: frame.height)
+                }
             }
             
             if c.edition != .NoEdition {

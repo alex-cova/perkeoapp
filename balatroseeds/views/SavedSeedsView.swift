@@ -10,7 +10,6 @@ import SwiftData
 
 struct SavedSeedsView : View {
     @Query private var seeds: [SeedModel]
-    @Environment(\.modelContext) private var modelContext
     @EnvironmentObject var model : AnalyzerViewModel
     
     let dateFormatter = DateFormatter()
@@ -56,8 +55,10 @@ struct SavedSeedsView : View {
                         }.navigationTitle(item.seed)) {
                             seedRow(item)
                         }.listRowBackground(Color.customRowBackground)
+                        
                     
-                }.onDelete(perform: deleteItems)
+                }
+                .onDelete(perform: deleteItems)
             }.background(Color.customBackground)
                 .scrollContentBackground(.hidden)
                 .navigationTitle("Saved Seeds")
@@ -72,7 +73,7 @@ struct SavedSeedsView : View {
         VStack {
             AnimatedTitle(text: "Saved Seeds")
             Spacer()
-            RareJoker.Blueprint.sprite()
+            UnCommonJoker.Joker_Stencil.sprite()
             Text("There are no saved seeds yet.")
                 .font(.customBody)
                 .foregroundStyle(.white)
@@ -106,8 +107,8 @@ struct SavedSeedsView : View {
                 
                 if missing {
                     withAnimation {
-                        modelContext.insert(SeedModel(timestamp: Date(), seed: clipboardText
-                            .normalizeSeed()))
+                        model.seed = clipboardText
+                        model.showSaveView.toggle()
                     }
                 }else {
                     model.toast = .init(style: .warning, message: "Seed already saved")
@@ -124,16 +125,32 @@ struct SavedSeedsView : View {
             Text(item.seed)
                 .font(.customTitle)
                 .foregroundStyle(.white)
-            Text("\(dateFormatter.string(from: item.timestamp))")
-                .font(.customCaption)
-                .foregroundStyle(.white)
+            if let title = item.title {
+                Text(title)
+                    .font(.customCaption)
+                    .foregroundStyle(.white)
+            }
+            
+            HStack {
+                Text("\(dateFormatter.string(from: item.timestamp))")
+                    .font(.customCaption)
+                    .foregroundStyle(.white)
+                
+                if let level = item.level {
+                    Text(level.rawValue)
+                        .font(.customCaption)
+                        .foregroundStyle(.white)
+                }
+            }
+            
+            
         }
     }
     
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             for index in offsets {
-                modelContext.delete(seeds[index])
+                model.modelContext.mainContext.delete(seeds[index])
             }
         }
     }
@@ -143,6 +160,6 @@ struct SavedSeedsView : View {
 #Preview {
     TabView {
         SavedSeedsView()
-            .modelContainer(for: SeedModel.self, inMemory: true)
+            .environmentObject(AnalyzerViewModel())
     }
 }

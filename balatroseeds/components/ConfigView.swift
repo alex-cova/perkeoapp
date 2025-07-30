@@ -31,10 +31,7 @@ struct ConfigView: View {
                 }.font(.customBody)
 
                 Button(action: {
-                    model.modelContext.mainContext.insert(
-                        SeedModel(timestamp: Date(), seed: model.seed))
-                    model.configSheet.toggle()
-                    model.toast = .init(style: .info, message: "Seed saved")
+                    model.store()
                 }) {
                     label("Save Seed", systemImage: "square.and.arrow.down")
                 }.font(.customBody)
@@ -85,6 +82,7 @@ struct ConfigView: View {
                     Text("Showman")
                         .font(.customBody)
                 }.foregroundStyle(.white)
+                    .tint(.red)
 
                 List {
                     Picker("Deck", selection: $model.deck) {
@@ -98,6 +96,7 @@ struct ConfigView: View {
                         }
                     }.foregroundStyle(.white)
                         .font(.customBody)
+                        .tint(.red)
                 }
 
                 List {
@@ -109,11 +108,13 @@ struct ConfigView: View {
                                     .foregroundStyle(.white)
                                     .font(.customBody)
 
-                            }.tag(stake)
+                            }.font(.customBody)
+                            .tag(stake)
                         }.foregroundStyle(.white)
                             .font(.customBody)
                     }.font(.customBody)
                         .foregroundStyle(.white)
+                        .tint(.red)
                 }
                 .listRowBackground(Color(hex: "#2d2d2d"))
             }.listRowBackground(Color(hex: "#2d2d2d"))
@@ -125,7 +126,7 @@ struct ConfigView: View {
                         Text("Auto buy vouchers")
                             .font(.customBody)
                             .foregroundStyle(.white)
-                    })
+                    }).tint(.red)
 
                 if !model.autoBuyVoucher {
                     HStack {

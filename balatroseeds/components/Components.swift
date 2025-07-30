@@ -268,3 +268,22 @@ struct AnimatedTitle : View {
             )
     }
 }
+
+struct CustomTextField: View {
+    @Binding var text: String
+
+    var body: some View {
+        ZStack(alignment: .leading) {
+            if text.isEmpty {
+                Text("Enter your name")
+                    .foregroundColor(.gray) // <- Placeholder color
+            }
+
+            TextField("", text: $text)
+                .foregroundColor(.primary) // <- Input text color
+        }
+        .padding()
+        .background(Color(UIColor.secondarySystemBackground))
+        .cornerRadius(8)
+    }
+}

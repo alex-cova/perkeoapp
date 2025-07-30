@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftData
 
 enum PackKind {
     case Arcana, Celestial, Standard, Buffoon, Spectral
@@ -25,12 +26,12 @@ public protocol Stored {
     var index : Int { get }
 }
 
-public enum JokerType {
-    case LEGENDARY
-    case RARE
-    case UNCOMMON
-    case COMMO
-    
+
+public enum JokerType : String, CaseIterable, Codable {
+    case LEGENDARY = "Legendary"
+    case RARE = "Rare"
+    case UNCOMMON = "UnCommon"
+    case COMMON = "Common"
 }
 
 public enum PackType: String, CaseIterable, Item {
@@ -945,7 +946,7 @@ enum CommonJoker: String, CaseIterable, Item, Joker, Stored {
     }
     
     var type: JokerType {
-        return .COMMO
+        return .COMMON
     }
 }
 

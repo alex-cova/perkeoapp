@@ -69,6 +69,9 @@ class Card: Item {
     var seal: Seal = .NoSeal
 
     var rawValue: String {
+        if enhancement == .Stone {
+            return "Stone"
+        }
         return "\(rank.rawValue) \(suit.rawValue)"
     }
 

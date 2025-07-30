@@ -168,6 +168,10 @@ struct ContentView: View {
                     }
             }.sheet(isPresented: $model.showSummary) {
                 ResumeView(run: model.run!)
+            }.sheet(isPresented: $model.showSaveView) {
+                SaveSeedView(model: model)
+                    .presentationDetents([.medium])
+                    .presentationBackground(Color.customBackground)
             }
     }
 }

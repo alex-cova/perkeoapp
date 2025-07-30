@@ -29,6 +29,7 @@ public class AnalyzerViewModel : ObservableObject, Observable {
     @Published var autoBuyVoucher = true
     @Published var showInput = false
     @Published var showSummary = false
+    @Published var showSaveView = false
 
     
     var title : String {
@@ -56,6 +57,21 @@ public class AnalyzerViewModel : ObservableObject, Observable {
         }()
         
         initListeners()
+    }
+    
+    func store(){
+        if configSheet {
+            configSheet = false
+        }
+        showSaveView.toggle()
+    }
+    
+    @MainActor
+    func store(level : JokerType, title : String){
+        modelContext.mainContext.insert(
+            SeedModel(timestamp: Date(), seed: seed, title: title, level: level, score: run?.score ?? 0))
+        toast = .init(style: .info, message: "Seed saved")
+        showSaveView = false
     }
     
     func isSelected(_ joker : Item) -> Bool {
@@ -175,6 +191,10 @@ public class AnalyzerViewModel : ObservableObject, Observable {
         
     public func analyze() {
         if(isLoading){
+            return
+        }
+        
+        if(self.seed.isEmpty) {
             return
         }
         

@@ -12,9 +12,15 @@ import SwiftData
 final class SeedModel {
     var timestamp: Date
     var seed : String
+    var title : String?
+    var level : JokerType?
+    var score : Double?
     
-    init(timestamp: Date, seed : String) {
+    init(timestamp: Date, seed : String, title : String? = nil, level : JokerType? = nil, score : Double? = nil) {
         self.timestamp = timestamp
         self.seed = seed
+        self.title = title
+        self.level = level
+        self.score = score
     }
 }
