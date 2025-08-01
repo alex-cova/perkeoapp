@@ -19,10 +19,8 @@ struct CommunityView: View {
     
     var body: some View {
         ZStack {
-            Color.customBackground.ignoresSafeArea()
             VStack {
                 AnimatedTitle(text: "Community Seeds")
-                    
                 ScrollView {
                     LazyVGrid(columns: columns) {
                         ForEach(seeds, id: \.self) { seed in
@@ -55,7 +53,7 @@ struct CommunityView: View {
                                 }
                         }
                     }.scenePadding()
-                        .background(Color(hex: "1e1e1e"))
+                        .background(Color.customBackground)
                     Text("Thanks to LocalThunk for the amazing game, to the people at Balatro discord server, to math, tacodiva, saul and other friends of the community for their help and support! ")
                         .font(.customCaption)
                         .foregroundStyle(.white)
@@ -102,5 +100,6 @@ struct CommunitySeedView : View {
 #Preview {
     TabView {
         CommunityView()
+            .environmentObject(AnalyzerViewModel())
     }
 }
