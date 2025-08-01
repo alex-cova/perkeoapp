@@ -141,6 +141,12 @@ struct SavedSeedsView : View {
                         .font(.customCaption)
                         .foregroundStyle(.white)
                 }
+                
+                if let score = item.score {
+                    Text("Score: \(score)")
+                        .font(.customCaption)
+                        .foregroundStyle(.white)
+                }
             }
             
             

@@ -33,34 +33,28 @@ struct ContentView: View {
     }
     
     var body: some View {
+        buildTabView()
+            .navigationTitle(model.showOptions ? model.title: "")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                if model.showOptions {
+                    toolbar()
+                }
+            }
+            .sheet(isPresented: $model.showInput) {
+                SeedInput()
+                    .presentationDetents([.medium])
+                    .presentationBackground(Color.customBackground)
+                
+            }
+    }
+    
+    @ViewBuilder
+    func buildTabView() -> some View {
         if #available(iOS 18, *) {
             tabView()
-                .navigationTitle(model.activeTab == .analyzer ? model.title: "")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    if model.showOptions {
-                        toolbar()
-                    }
-                }
-                .sheet(isPresented: $model.showInput) {
-                    SeedInput()
-                        .presentationDetents([.medium])
-                        .presentationBackground(Color.customBackground)
-                    
-                }
-        }else {
+        } else {
             tabView17()
-                .navigationTitle(model.activeTab == .analyzer ? model.title : "")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    if model.showOptions {
-                        toolbar()
-                    }
-                }.sheet(isPresented: $model.showInput) {
-                    SeedInput()
-                        .presentationDetents([.medium])
-                        .presentationBackground(Color.customBackground)
-                }
         }
     }
     
@@ -157,7 +151,7 @@ struct ContentView: View {
                 }
             }.tint(.red)
                 .font(.customBody)
-                .padding(.bottom, model.activeTab == .analyzer ? 0  : 60)
+                .padding(.bottom, model.showOptions ? 0  : 60)
             InteractiveTabBar(activeTab: $model.activeTab)
         }.toastView(toast: $model.toast)
             .sheet(isPresented: $model.configSheet) {

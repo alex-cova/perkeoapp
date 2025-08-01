@@ -38,6 +38,11 @@ struct PlayView : View {
     private func mainView() -> some View {
         if let run = model.run {
             ScrollView {
+                if run.antes.count >= 8 {
+                    Text("Seed score: \(run.score)")
+                        .foregroundStyle(.white)
+                        .font(.customCaption)
+                }
                 ForEach(run.antes) { a in
                     anteView(ante: a, run: run)
                         .padding(.bottom)
@@ -88,10 +93,9 @@ struct PlayView : View {
             
                 HStack {
                     ante.boss.sprite()
-                    ForEach(astList(set: ante.tags), id: \.self.rawValue) { tag in
-                        VStack {
-                            tag.sprite()
-                        }
+                    if !ante.tags.isEmpty {
+                        ante.tags[0].sprite()
+                        ante.tags[1].sprite()
                     }
                 }
             

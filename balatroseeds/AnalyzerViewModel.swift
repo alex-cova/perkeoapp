@@ -70,7 +70,7 @@ public class AnalyzerViewModel : ObservableObject, Observable {
     func store(level : JokerType, title : String){
         modelContext.mainContext.insert(
             SeedModel(timestamp: Date(), seed: seed, title: title, level: level, score: run?.score ?? 0))
-        toast = .init(style: .info, message: "Seed saved")
+        toast = .init(style: .info, message: "Seed \(seed) saved")
         showSaveView = false
     }
     
@@ -108,7 +108,7 @@ public class AnalyzerViewModel : ObservableObject, Observable {
     }
     
     private func initListeners(){
-        $seed.debounce(for: 1.5, scheduler: RunLoop.main)
+        $seed.debounce(for: 0.5, scheduler: RunLoop.main)
             .dropFirst()
             .sink { [weak self] s in
                 guard let self = self else { return }
@@ -123,17 +123,15 @@ public class AnalyzerViewModel : ObservableObject, Observable {
     }
     
     public func copy(){
-        UIPasteboard.general.string = seed
-        
-        if configSheet {
-            configSheet = false
-        }
-        
-        toast = .init(style: .success, message: "Seed \(seed) copied to clipboard")
+        copy(seed: self.seed)
     }
     
     public func copy(seed: String){
-        UIPasteboard.general.string = seed
+        if(seed.isEmpty){
+            return
+        }
+        
+        UIPasteboard.general.string = seed.uppercased()
         
         if configSheet {
             configSheet = false
@@ -162,15 +160,16 @@ public class AnalyzerViewModel : ObservableObject, Observable {
     }
     
     private func normalizeSeed(newValue : String){
-        var s = newValue.uppercased()
-        // Apply character limit (max 8)
-        if newValue.count > 8 {
-            s = String(newValue.prefix(8))
-        }
+        let s = newValue.uppercased()
         
         // Filter to only allow alphanumeric characters
-        let filtered = s.filter { char in
+        var filtered = s.filter { char in
             return char.isLetter || char.isNumber
+        }
+        
+        // Apply character limit (max 8)
+        if filtered.count > 8 {
+            filtered = String(newValue.prefix(8))
         }
         
         if filtered != seed {
@@ -216,7 +215,7 @@ public class AnalyzerViewModel : ObservableObject, Observable {
             balatro.startingAnte =  self.startingAnte
 
             let run = balatro
-                .performAnalysis(seed:  self.seed)
+                .performAnalysis(seed:  self.seed.uppercased())
                         
             DispatchQueue.main.async {
                 self.run = run

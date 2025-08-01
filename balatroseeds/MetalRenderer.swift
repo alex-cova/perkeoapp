@@ -292,7 +292,7 @@ struct MetalShaderView: UIViewRepresentable {
             encoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
             
             // Set uniform data
-            var resolution = SIMD2<Float>(Float(view.drawableSize.width), Float(view.drawableSize.height))
+            let resolution = SIMD2<Float>(Float(view.drawableSize.width), Float(view.drawableSize.height))
             
             var params = ShaderParameters(
                 time: time,

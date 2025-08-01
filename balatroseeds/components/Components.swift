@@ -194,14 +194,19 @@ extension View {
     }
 }
 
-struct PerkeoView : View {
+struct LegendaryView : View {
     
     @State private var isAnimating = false
     private var animationDuration: Double = 1.5
     private var bounceHeight: CGFloat = 20.0
+    public let joker : LegendaryJoker
     
+    public init(joker: LegendaryJoker){
+        self.joker = joker
+    }
+        
     var body: some View {
-        legendaryJokerImage(x: 7, y: 8)
+        legendaryJokerImage(x: 3 + joker.ordinal, y: 8)
             .padding()
             .rotationEffect( isAnimating ? .degrees(2) : .degrees(-2))
             .onAppear {

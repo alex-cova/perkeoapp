@@ -8,7 +8,7 @@ import SwiftUI
 
 struct FinderView : View {
     
-    @State private var value = 100000
+    @State private var value = 1000000
     @State private var maxAnte : Int = 1
     @State private var startingAnte : Int = 1
     
@@ -341,7 +341,7 @@ struct FinderView : View {
                         }.tint(.red)
                     }
                     .environmentObject(model)) {
-                    if cached {
+                    if cached || instant {
                         VStack(alignment: .leading) {
                             Text(seed)
                                 .font(.customBody)
@@ -382,17 +382,21 @@ struct FinderView : View {
     
     private func cacheBasedSearch() {
         print("Using cached search!")
-        found.removeAll()
         //found.append(contentsOf: jokerFile.search(selections))
         
         let f = jokerFile.search(selections)
         
-        for i in f {
-            found[i.key] = i.value
-        }
-        
         print("seeds found: \(found.count)")
-        searching = false
+        
+        DispatchQueue.main.async {
+            found.removeAll()
+            
+            for i in f {
+                found[i.key] = i.value
+            }
+            
+            searching = false
+        }
     }
     
     private func doSearch(){
@@ -400,8 +404,12 @@ struct FinderView : View {
             return
         }
         
+        let concurrentQueue = DispatchQueue(label: "com.perkeo.concurrentqueue", attributes: .concurrent)
+        
         if !jokerFile.isEmpty && (cached || instant) {
-            cacheBasedSearch()
+            concurrentQueue.async {
+                cacheBasedSearch()
+            }
             return
         }
         
@@ -411,8 +419,6 @@ struct FinderView : View {
         
         let jobs = 3
         let split = value / jobs
-        
-        let concurrentQueue = DispatchQueue(label: "com.perkeo.concurrentqueue", attributes: .concurrent)
         
         print("Split: \(split) max ante: \(maxAnte)")
         
@@ -501,7 +507,7 @@ struct FinderView : View {
                     .font(.customTitle)
             }
             
-            if !cached {
+            if !cached && !instant {
                 ProgressView(value: Double(processed) / Double(value))
                     .padding(.horizontal)
                 Text("\(processed) / \(value)")

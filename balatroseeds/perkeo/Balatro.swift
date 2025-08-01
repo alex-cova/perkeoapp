@@ -129,8 +129,8 @@ public class Balatro {
             }
 
             if analyzeTags {
-                play.tags.insert(inst.nextTag(a))
-                play.tags.insert(inst.nextTag(a))
+                play.tags.append(inst.nextTag(a))
+                play.tags.append(inst.nextTag(a))
             }
 
             if analyzeShop {

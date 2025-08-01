@@ -289,7 +289,7 @@ class Functions: Lock {
         let edition = edition(ante, editionArr: editionArr)
         
         // Get next joker
-        var joker: Item = CommonJoker.Joker
+        var joker: Item & Joker = CommonJoker.Joker
         
         switch rarity {
         case "4":
@@ -343,7 +343,7 @@ class Functions: Lock {
             }
         }
             
-        return JokerData(joker, rarity, edition, stickers)
+        return JokerData(joker, joker.type, edition, stickers)
     }
     
     // Shop Logic

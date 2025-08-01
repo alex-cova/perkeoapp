@@ -13,7 +13,10 @@ struct SeedInput : View {
     
     var body: some View {
         VStack(spacing: 20) {
-            PerkeoView()
+            LegendaryView(joker: .Canio)
+            Text("Enter Seed")
+                .font(.customTitle)
+                .foregroundStyle(.white)
             TextField("Seed", text: $model.seed, onCommit: {
                 model.analyze()
             })

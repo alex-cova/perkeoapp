@@ -13,15 +13,15 @@ class JokerStickers {
 
 class JokerData {
     var joker : Item = CommonJoker.Joker
-    var rarity : String = "Common"
+    var type : JokerType = .COMMON
     var edition : Edition  = .NoEdition
     var stickers : JokerStickers = JokerStickers()
     var source : String?
     
-    init(_ joker: Item,_ rarity: String,_ edition: Edition,_ stickers: JokerStickers,
+    init(_ joker: Item,_ type: JokerType,_ edition: Edition,_ stickers: JokerStickers,
          _ source : String? = nil) {
         self.joker = joker
-        self.rarity = rarity
+        self.type = type
         self.edition = edition
         self.stickers = stickers
         self.source = source
@@ -213,7 +213,7 @@ class Pack : Encodable, Identifiable {
     var kind : PackKind {
         type.kind
     }
-    
+        
     func containsOption(_ name : String) -> Bool {
         for option in options {
             if option.item.rawValue == name {

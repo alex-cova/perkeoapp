@@ -159,7 +159,7 @@ class JokerFile : ObservableObject {
         
         if !compressed.isEmpty {
             for compress in compressed {
-                if result.count > 100 {
+                if result.count > 199 {
                     break
                 }
                 
@@ -173,7 +173,9 @@ class JokerFile : ObservableObject {
                 }
                 
                 if add {
-                    result[compress.seed] = 0
+                    result[compress.seed] = Int(Balatro()
+                        .performAnalysis(seed: compress.seed)
+                        .score)
                 }
             }
             
@@ -181,7 +183,7 @@ class JokerFile : ObservableObject {
         }
         
         for joker in jokerData {
-            if result.count > 100 {
+            if result.count > 199 {
                 break
             }
             

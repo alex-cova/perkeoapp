@@ -25,9 +25,6 @@ class Run : Encodable{
         return list
     }
     
-    var score : Double {
-        return 0.0
-    }
     
     func toJson() -> String {
         do {
@@ -133,7 +130,47 @@ class Run : Encodable{
         
         return Array(spectrals)
     }
+    
+    func hasLegendary(_ item : LegendaryJoker) -> Bool {
+        for ante in antes {
+            if ante.hasLegendary(item) {
+                return true
+            }
+        }
+        
+        return false
+    }
+    
+    func hasVoucher(_ item : Voucher) -> Bool {
+        for ante in antes {
+            if ante.hasVoucher(item) {
+                return true
+            }
+        }
+        
+        return false
+    }
 
+    func hasJoker(_ item : Item) -> Bool {
+        for ante in antes {
+            if ante.hasJoker(item) {
+                return true
+            }
+        }
+        
+        return false
+    }
+    
+    func hasJoker(_ item : Item, _ maxShopIndex: Int) -> Bool {
+        for ante in antes {
+            if ante.hasInPack(item) || ante.hasInShop(item, index: maxShopIndex) {
+                return true
+            }
+        }
+        
+        return false
+    }
+    
 }
 
 struct JokerCount : Identifiable {
@@ -153,7 +190,7 @@ class Ante : Encodable, Identifiable {
     let functions : Functions
     var shopQueue : [SearchableItem] = []
     var shop : Set<String> = []
-    var tags : Set<Tag> = []
+    var tags : [Tag] = []
     var boss : Boss = .Amber_Acorn
     var packs : [Pack] = []
     var voucher : Voucher = .Nacho_Tong
@@ -171,6 +208,34 @@ class Ante : Encodable, Identifiable {
         case boss
         case packs
         case voucher
+    }
+    
+    func hasInShop(_ item : Item, index : Int) -> Bool {
+        if(index > shopQueue.count) {
+            return false
+        }
+        
+        for i in 0..<index {
+            if shopQueue[i].equals(item) {
+                return true
+            }
+        }
+        
+        return false
+    }
+    
+    func hasVoucher(_ voucher : Voucher) -> Bool {
+        return voucher == self.voucher
+    }
+    
+    func hasJoker(_ joker : Item) -> Bool {
+        for pack in packs {
+            if pack.containsOption(joker.rawValue) {
+                return true
+            }
+        }
+        
+        return false
     }
     
     func wheels() -> [EditionItem] {
@@ -242,7 +307,7 @@ class Ante : Encodable, Identifiable {
                 
                 for option in pack.options {
                     if option.item is LegendaryJoker {
-                        legendaries!.append(JokerData(option.item, "Legendary",
+                        legendaries!.append(JokerData(option.item, JokerType.LEGENDARY,
                                                       option.edition, JokerStickers(),
                                                       "\(pack.kind)"))
                     }
@@ -338,6 +403,10 @@ class SearchableItem : Encodable, Identifiable {
     init(item : ShopItem) {
         self.item = item.item
         self.edition = item.edition
+    }
+    
+    func equals(_ item : Item) -> Bool {
+        return item.equals(self.item)
     }
     
     enum CodingKeys: String, CodingKey {

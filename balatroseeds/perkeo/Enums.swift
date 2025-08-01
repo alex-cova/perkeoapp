@@ -18,6 +18,13 @@ public protocol Item: Encodable {
     var y: Int { get }
 }
 
+public extension Item {
+    
+    func equals(_ anotherItem : Item) -> Bool {
+        return self.rawValue == anotherItem.rawValue
+    }
+}
+
 public protocol Joker {
     var type: JokerType { get }
 }
@@ -32,6 +39,15 @@ public enum JokerType : String, CaseIterable, Codable {
     case RARE = "Rare"
     case UNCOMMON = "UnCommon"
     case COMMON = "Common"
+    
+    var rarity: Int {
+        switch self {
+        case .LEGENDARY: return 4
+        case .RARE:      return 3
+        case .UNCOMMON:  return 2
+        case .COMMON:    return 1
+        }
+    }
 }
 
 public enum PackType: String, CaseIterable, Item {
@@ -164,6 +180,16 @@ enum Edition: String, CaseIterable, Item {
         case .Eternal : return 5
         case .Perishable : return 6
         case .Rental: return 7
+        }
+    }
+    
+    public var multiplier: Float {
+        switch self {
+        case .Negative:     return 2.0
+        case .Polychrome:   return 1.5
+        case .Holographic:  return 1.2
+        case .Foil:         return 1.1
+        default:        return 0.0
         }
     }
     

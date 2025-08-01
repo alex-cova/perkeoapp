@@ -30,7 +30,7 @@ struct AnalyzerView : View {
             } else {
                 Spacer()
                     .frame(maxWidth: .infinity)
-                PerkeoView()
+                LegendaryView(joker: .Perkeo)
                 
                 VStack(alignment: .leading, spacing: 10.0) {
                     Text("On the top right corner you will find the following options:")
