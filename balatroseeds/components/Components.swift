@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum TabItem: String, CaseIterable {
+public enum TabItem: String, CaseIterable {
     case analyzer = "Analyzer"
     case saved = "Saved"
     case finder = "Finder"
@@ -88,7 +88,7 @@ struct InteractiveTabBar: View {
             tabButtonLocations[tab.index] = newValue
         })
         .onTapGesture {
-            withAnimation(.snappy) {
+            withAnimation(.smooth) {
                 activeTab = tab
             }
         }
@@ -204,14 +204,16 @@ struct LegendaryView : View {
     public init(joker: LegendaryJoker){
         self.joker = joker
     }
-        
+    
     var body: some View {
         legendaryJokerImage(x: 3 + joker.ordinal, y: 8)
             .padding()
             .rotationEffect( isAnimating ? .degrees(2) : .degrees(-2))
             .onAppear {
                 // Start the animation when the view appears
-                isAnimating = true
+                if #available(iOS 18, *) {
+                    isAnimating = true
+                }
             }
             .animation(
                 Animation.easeInOut(duration: animationDuration)
@@ -255,8 +257,7 @@ struct AnimatedTitle : View {
         self.text = text
     }
     
-    
-    var body: some View {
+    func animated() -> some View {
         Text(text)
             .font(.customTitle)
             .foregroundStyle(.white)
@@ -272,18 +273,28 @@ struct AnimatedTitle : View {
                 value: isAnimating
             )
     }
+    
+    var body: some View {
+        if #available(iOS 18, *) {
+            animated()
+        }else {
+            Text(text)
+                .font(.customTitle)
+                .foregroundStyle(.white)
+        }
+    }
 }
 
 struct CustomTextField: View {
     @Binding var text: String
-
+    
     var body: some View {
         ZStack(alignment: .leading) {
             if text.isEmpty {
                 Text("Enter your name")
                     .foregroundColor(.gray) // <- Placeholder color
             }
-
+            
             TextField("", text: $text)
                 .foregroundColor(.primary) // <- Input text color
         }

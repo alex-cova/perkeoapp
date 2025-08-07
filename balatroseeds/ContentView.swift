@@ -34,13 +34,6 @@ struct ContentView: View {
     
     var body: some View {
         buildTabView()
-            .navigationTitle(model.showOptions ? model.title: "")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                if model.showOptions {
-                    toolbar()
-                }
-            }
             .sheet(isPresented: $model.showInput) {
                 SeedInput()
                     .presentationDetents([.medium])
@@ -61,26 +54,39 @@ struct ContentView: View {
     @ViewBuilder
     func tabView17() -> some View {
         TabView(selection: $model.activeTab) {
-            AnalyzerView()
-                .tag(TabItem.analyzer)
+            NavigationView {
+                AnalyzerView()
+                    .navigationTitle(model.title)
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        toolbar()
+                    }
+            }.tag(TabItem.analyzer)
                 .tabItem {
                     Label(TabItem.analyzer.rawValue, systemImage: TabItem.analyzer.symbolImage)
                 }
-            SavedSeedsView()
-                .tag(TabItem.saved)
-                .tabItem {
-                    Label(TabItem.saved.rawValue, systemImage: TabItem.saved.symbolImage)
-                }
-            FinderView()
-                .tag(TabItem.finder)
-                .tabItem {
-                    Label(TabItem.finder.rawValue, systemImage: TabItem.finder.symbolImage)
-                }
-            CommunityView()
-                .tag(TabItem.community)
-                .tabItem {
-                    Label(TabItem.community.rawValue, systemImage: TabItem.community.symbolImage)
-                }
+            NavigationView {
+                SavedSeedsView()
+            }
+            .tag(TabItem.saved)
+            .tabItem {
+                Label(TabItem.saved.rawValue, systemImage: TabItem.saved.symbolImage)
+            }
+            NavigationView {
+                FinderView()
+                
+            }
+            .tag(TabItem.finder)
+            .tabItem {
+                Label(TabItem.finder.rawValue, systemImage: TabItem.finder.symbolImage)
+            }
+            NavigationView {
+                CommunityView()
+            }
+            .tag(TabItem.community)
+            .tabItem {
+                Label(TabItem.community.rawValue, systemImage: TabItem.community.symbolImage)
+            }
         }.toastView(toast: $model.toast)
             .sheet(isPresented: $model.configSheet) {
                 ConfigView()
@@ -134,20 +140,30 @@ struct ContentView: View {
         ZStack(alignment: .bottom) {
             TabView(selection: $model.activeTab) {
                 Tab.init(value: .analyzer) {
-                    AnalyzerView()
-                        .toolbarVisibility(.hidden, for: .tabBar)
+                    NavigationView {
+                        AnalyzerView()
+                            .navigationTitle(model.title)
+                            .navigationBarTitleDisplayMode(.inline)
+                            .toolbar {
+                                toolbar()
+                            }
+                    }.toolbarVisibility(.hidden, for: .tabBar)
                 }
                 Tab.init(value: .saved) {
-                    SavedSeedsView()
-                        .toolbarVisibility(.hidden, for: .tabBar)
+                    NavigationView {
+                        SavedSeedsView()
+                    }.toolbarVisibility(.hidden, for: .tabBar)
                 }.badge(seeds.count)
                 Tab.init(value: .finder) {
-                    FinderView()
-                        .toolbarVisibility(.hidden, for: .tabBar)
+                    NavigationView {
+                        FinderView()
+                    }.toolbarVisibility(.hidden, for: .tabBar)
                 }
                 Tab.init(value: .community){
-                    CommunityView()
-                        .toolbarVisibility(.hidden, for: .tabBar)
+                    NavigationView {
+                        CommunityView()
+                    }
+                    .toolbarVisibility(.hidden, for: .tabBar)
                 }
             }.tint(.red)
                 .font(.customBody)

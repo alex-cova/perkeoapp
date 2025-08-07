@@ -15,9 +15,7 @@ struct balatroseedsApp: App {
     
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                ContentView()
-            }
+            ContentView()
         }.modelContainer(model.modelContext)
             .environmentObject(JokerFile())
             .environmentObject(model)

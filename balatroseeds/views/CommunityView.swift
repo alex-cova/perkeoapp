@@ -27,7 +27,6 @@ struct CommunityView: View {
                             NavigationLink(destination: PlayView()
                                 .clipped()
                                 .background(Color.customBackground.ignoresSafeArea())
-                                .toastView(toast: $model.toast)
                                 .toolbar {
                                     Button(action: {
                                         model.showSummary.toggle()

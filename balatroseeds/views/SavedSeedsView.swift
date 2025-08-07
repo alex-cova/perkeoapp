@@ -31,7 +31,6 @@ struct SavedSeedsView : View {
                 }
                 ForEach(seeds) { item in
                     NavigationLink(destination: seedNavigation(item.seed)
-                        .toastView(toast: $model.toast)
                         .toolbar {
                             Button(action: {
                                 model.showSummary.toggle()
@@ -61,7 +60,6 @@ struct SavedSeedsView : View {
                 .onDelete(perform: deleteItems)
             }.background(Color.customBackground)
                 .scrollContentBackground(.hidden)
-                .navigationTitle("Saved Seeds")
                 .navigationBarTitleDisplayMode(.inline)
             Spacer()
         }.clipped()
@@ -86,7 +84,6 @@ struct SavedSeedsView : View {
             Spacer()
         }.frame(maxWidth: .infinity)
             .background(Color.customBackground)
-            .navigationTitle("Saved Seeds")
             .navigationBarTitleDisplayMode(.inline)
     }
     
