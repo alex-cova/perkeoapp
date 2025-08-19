@@ -59,7 +59,7 @@ struct JokerSelectorView : View {
                         render(UnCommonJoker.allCases, name: "Uncommon")
                         render(CommonJoker.allCases, name: "Common")
                         render(Spectral.allCases.filter {
-                            !$0.rawValue.starts(with: "RETRY")
+                            !$0.isRetry()
                         }, name: "Spectrals")
                         
                     }

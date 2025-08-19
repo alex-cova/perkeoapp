@@ -103,12 +103,12 @@ class Functions: Lock {
             return item
         }
         
-        if isLocked(item)  {
+        if isLocked(item) || item.isRetry()  {
             var resample = 2
             while true {
                 item = items[randint("\(ID)_resample\(resample)", 0, items.count - 1)]
                 resample += 1
-                if !isLocked(item) || resample > 1000 {
+                if (!item.isRetry() && !isLocked(item)) || resample > 1000 {
                     return item
                 }
             }

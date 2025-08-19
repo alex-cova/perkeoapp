@@ -19,9 +19,12 @@ public protocol Item: Encodable {
 }
 
 public extension Item {
-    
     func equals(_ anotherItem : Item) -> Bool {
         return self.rawValue == anotherItem.rawValue
+    }
+    
+    func isRetry() -> Bool {
+        return self.rawValue == "RETRY" || self.rawValue == "RETRY2"
     }
 }
 
@@ -630,6 +633,8 @@ enum Spectral: String, CaseIterable, Item, Stored {
     case Trance = "Trance"
     case Medium = "Medium"
     case Cryptid = "Cryptid"
+    case RETRY = "RETRY" //The Soul
+    case RETRY2 = "RETRY2" //Black Hole
     
     public var ordinal: Int {
         switch self {
@@ -649,6 +654,8 @@ enum Spectral: String, CaseIterable, Item, Stored {
         case .Trance: return 13
         case .Medium: return 14
         case .Cryptid: return 15
+        case .RETRY: return 16
+        case .RETRY2: return 17
         }
     }
     
