@@ -53,7 +53,7 @@ struct CommunityView: View {
                         }
                     }.scenePadding()
                         .background(Color.customBackground)
-                    Text("Thanks to LocalThunk for the amazing game, to the people at Balatro discord server, to math, tacodiva, saul and other friends of the community for their help and support! ")
+                    Text("Thanks to LocalThunk for the amazing game, to the people at Balatro discord server, to math, tacodiva, pifreak, saul and other friends of the community for their help and support! ")
                         .font(.customCaption)
                         .foregroundStyle(.white)
                         .padding()

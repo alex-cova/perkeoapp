@@ -65,7 +65,7 @@ struct ConfigView: View {
                                 .foregroundStyle(.white)
                                 .font(.customBody)
                         }
-                        Text("The deepest, the slow to analyze")
+                        Text("Deeper ante search is slower!")
                             .foregroundStyle(.white)
                             .font(.customCaption)
                     }
