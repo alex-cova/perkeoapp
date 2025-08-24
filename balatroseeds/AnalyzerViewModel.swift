@@ -156,6 +156,8 @@ public class AnalyzerViewModel : ObservableObject, Observable {
         
         if configSheet {
             configSheet.toggle()
+        } else {
+          analyze()
         }
     }
     

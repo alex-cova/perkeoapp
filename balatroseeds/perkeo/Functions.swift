@@ -50,19 +50,19 @@ class Functions: Lock {
     
     /*
      private double getNode(Coordinate id) {
-            var c = cache.get(id);
-
-            if (c == 0.0) {
-                c = id.pseudohash(seed);
-                cache.put(id, c);
-            }
-
-            var value = round13((c * 1.72431234 + 2.134453429141) % 1);
-
-            cache.put(id, value);
-
-            return (value + hashedSeed) / 2;
-        }*/
+     var c = cache.get(id);
+     
+     if (c == 0.0) {
+     c = id.pseudohash(seed);
+     cache.put(id, c);
+     }
+     
+     var value = round13((c * 1.72431234 + 2.134453429141) % 1);
+     
+     cache.put(id, value);
+     
+     return (value + hashedSeed) / 2;
+     }*/
     func getNode(_ ID: String) -> Double {
         var c = cache.nodes[ID]
         
@@ -97,23 +97,29 @@ class Functions: Lock {
     
     
     func randchoice<T: Item>(_ ID: String, _ items: [T], showmanCapable : Bool = true) -> T {
-        var item = items[randint(ID, 0, items.count - 1)]
+        let item = items[randint(ID, 0, items.count - 1)]
         
-        if params.showman && showmanCapable {
-            return item
+        if item.isRetry() {
+            return resample(ID, items: items)
         }
         
-        if isLocked(item) || item.isRetry()  {
-            var resample = 2
-            while true {
-                item = items[randint("\(ID)_resample\(resample)", 0, items.count - 1)]
-                resample += 1
-                if (!item.isRetry() && !isLocked(item)) || resample > 1000 {
-                    return item
-                }
+        if !params.showman && isLocked(item) {
+            return resample(ID, items: items)
+        }
+        
+        return item
+    }
+    
+    func resample<T: Item>(_ ID: String, items : [T]) -> T {
+        var item: T!
+        var resample = 2
+        while true {
+            item = items[randint("\(ID)_resample\(resample)", 0, items.count - 1)]
+            resample += 1
+            if (!item.isRetry() && !isLocked(item)) || resample > 1000 {
+                return item
             }
         }
-        return item
     }
     
     // Card Generators

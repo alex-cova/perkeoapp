@@ -22,9 +22,11 @@ struct ConfigView: View {
     var body: some View {
         Form {
             Section {
-                Button(action: model.paste) {
-                    label("Paste Seed", systemImage: "document.on.clipboard")
-                }.font(.customBody)
+                if model.activeTab == .analyzer {
+                    Button(action: model.paste) {
+                        label("Paste Seed", systemImage: "document.on.clipboard")
+                    }.font(.customBody)
+                }
 
                 Button(action: model.copy) {
                     label("Copy Seed", systemImage: "document.on.document")
