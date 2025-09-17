@@ -251,7 +251,6 @@ struct AnimatedTitle : View {
     private let text : String
     @State private var isAnimating = false
     private var animationDuration: Double = 1.5
-    private var bounceHeight: CGFloat = 20.0
     
     public init(text: String){
         self.text = text
@@ -259,19 +258,21 @@ struct AnimatedTitle : View {
     
     func animated() -> some View {
         Text(text)
+            .frame(maxHeight: 40)
             .font(.customTitle)
             .foregroundStyle(.white)
-            .scaleEffect(.random(in:  1.2...1.4 ))
+            .scaleEffect(isAnimating ? 1.2 : 1.0)
             .rotationEffect( isAnimating ? .degrees(2) : .degrees(-2))
             .onAppear {
-                // Start the animation when the view appears
-                isAnimating = true
-            }
-            .animation(
-                Animation.easeInOut(duration: animationDuration)
-                    .repeatForever(autoreverses: true),
-                value: isAnimating
-            )
+                            // Trigger the animation when the view appears
+                withAnimation(
+                    Animation.easeInOut(duration: animationDuration)
+                        .repeatForever(autoreverses: true)
+                    ) {
+                        isAnimating.toggle() // Toggle to start the animation
+                            }
+                        }
+            .alignmentGuide(.top) { _ in 0 }
     }
     
     var body: some View {
