@@ -145,6 +145,11 @@ public class AnalyzerViewModel : ObservableObject, Observable {
     }
     
     
+    public func seedOfTheDay(){
+        seed = Date.now.generateDailyCode()
+        analyze()
+    }
+    
     public func paste(){
         if let clipboardText = UIPasteboard.general.string {
             if clipboardText.isValidSeed(){

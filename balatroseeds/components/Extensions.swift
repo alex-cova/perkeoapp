@@ -5,6 +5,8 @@
 //  Created by Alex on 26/01/25.
 //
 import SwiftUI
+import Foundation
+import CryptoKit
 
 extension Font {
     static func customFont(size: CGFloat, weight: Font.Weight = .regular) -> Font {
@@ -18,6 +20,22 @@ extension Font {
     static let customBody = customFont(size: 18)
     static let customCaption = customFont(size: 12)
 }
+
+extension Date {
+    func generateDailyCode() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyyMMdd"
+        let dateString = formatter.string(from: self)
+
+        let hash = SHA256.hash(data: Data(dateString.utf8))
+        let charset = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+
+        return hash.prefix(8).map {
+            charset[Int($0) % charset.count]
+        }.map(String.init).joined()
+    }
+}
+
 
 extension Color {
     // Create a custom initializer for Color using a hex value

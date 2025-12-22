@@ -6,7 +6,20 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		FA35CACF2EF90E0200B9D663 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA35CACE2EF90E0200B9D663 /* WidgetKit.framework */; };
+		FA35CAD12EF90E0200B9D663 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA35CAD02EF90E0200B9D663 /* SwiftUI.framework */; };
+		FA35CAE22EF90E0300B9D663 /* PerkeoWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = FA35CACC2EF90E0200B9D663 /* PerkeoWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
+		FA35CAE02EF90E0300B9D663 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FAD030A82D287FDC00F83E2B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FA35CACB2EF90E0200B9D663;
+			remoteInfo = PerkeoWidgetExtension;
+		};
 		FAD030C12D287FDD00F83E2B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FAD030A82D287FDC00F83E2B /* Project object */;
@@ -23,7 +36,24 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		FA35CAE32EF90E0300B9D663 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				FA35CAE22EF90E0300B9D663 /* PerkeoWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		FA35CACC2EF90E0200B9D663 /* PerkeoWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PerkeoWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA35CACE2EF90E0200B9D663 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		FA35CAD02EF90E0200B9D663 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		FAD030B02D287FDC00F83E2B /* balatroseeds.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = balatroseeds.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAD030C02D287FDD00F83E2B /* balatroseedsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = balatroseedsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAD030CA2D287FDE00F83E2B /* balatroseedsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = balatroseedsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -37,13 +67,36 @@
 			);
 			target = FAD030AF2D287FDC00F83E2B /* balatroseeds */;
 		};
+		FA35CAE72EF90E0300B9D663 /* Exceptions for "PerkeoWidget" folder in "PerkeoWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = FA35CACB2EF90E0200B9D663 /* PerkeoWidgetExtension */;
+		};
+		FA35CAE92EF92BB100B9D663 /* Exceptions for "balatroseeds" folder in "PerkeoWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				m6x11plus.ttf,
+			);
+			target = FA35CACB2EF90E0200B9D663 /* PerkeoWidgetExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		FA35CAD22EF90E0200B9D663 /* PerkeoWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				FA35CAE72EF90E0300B9D663 /* Exceptions for "PerkeoWidget" folder in "PerkeoWidgetExtension" target */,
+			);
+			path = PerkeoWidget;
+			sourceTree = "<group>";
+		};
 		FAD030B22D287FDC00F83E2B /* balatroseeds */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				FA0DF2C52D867F2D0074EBA6 /* Exceptions for "balatroseeds" folder in "balatroseeds" target */,
+				FA35CAE92EF92BB100B9D663 /* Exceptions for "balatroseeds" folder in "PerkeoWidgetExtension" target */,
 			);
 			path = balatroseeds;
 			sourceTree = "<group>";
@@ -61,6 +114,15 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		FA35CAC92EF90E0200B9D663 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FA35CAD12EF90E0200B9D663 /* SwiftUI.framework in Frameworks */,
+				FA35CACF2EF90E0200B9D663 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FAD030AD2D287FDC00F83E2B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -85,12 +147,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FA35CACD2EF90E0200B9D663 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FA35CACE2EF90E0200B9D663 /* WidgetKit.framework */,
+				FA35CAD02EF90E0200B9D663 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		FAD030A72D287FDC00F83E2B = {
 			isa = PBXGroup;
 			children = (
 				FAD030B22D287FDC00F83E2B /* balatroseeds */,
 				FAD030C32D287FDD00F83E2B /* balatroseedsTests */,
 				FAD030CD2D287FDE00F83E2B /* balatroseedsUITests */,
+				FA35CAD22EF90E0200B9D663 /* PerkeoWidget */,
+				FA35CACD2EF90E0200B9D663 /* Frameworks */,
 				FAD030B12D287FDC00F83E2B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -101,6 +174,7 @@
 				FAD030B02D287FDC00F83E2B /* balatroseeds.app */,
 				FAD030C02D287FDD00F83E2B /* balatroseedsTests.xctest */,
 				FAD030CA2D287FDE00F83E2B /* balatroseedsUITests.xctest */,
+				FA35CACC2EF90E0200B9D663 /* PerkeoWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -108,6 +182,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		FA35CACB2EF90E0200B9D663 /* PerkeoWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FA35CAE62EF90E0300B9D663 /* Build configuration list for PBXNativeTarget "PerkeoWidgetExtension" */;
+			buildPhases = (
+				FA35CAC82EF90E0200B9D663 /* Sources */,
+				FA35CAC92EF90E0200B9D663 /* Frameworks */,
+				FA35CACA2EF90E0200B9D663 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				FA35CAD22EF90E0200B9D663 /* PerkeoWidget */,
+			);
+			name = PerkeoWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = PerkeoWidgetExtension;
+			productReference = FA35CACC2EF90E0200B9D663 /* PerkeoWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		FAD030AF2D287FDC00F83E2B /* balatroseeds */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = FAD030D42D287FDE00F83E2B /* Build configuration list for PBXNativeTarget "balatroseeds" */;
@@ -115,10 +211,12 @@
 				FAD030AC2D287FDC00F83E2B /* Sources */,
 				FAD030AD2D287FDC00F83E2B /* Frameworks */,
 				FAD030AE2D287FDC00F83E2B /* Resources */,
+				FA35CAE32EF90E0300B9D663 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				FA35CAE12EF90E0300B9D663 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				FAD030B22D287FDC00F83E2B /* balatroseeds */,
@@ -183,9 +281,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1620;
+				LastSwiftUpdateCheck = 2620;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
+					FA35CACB2EF90E0200B9D663 = {
+						CreatedOnToolsVersion = 26.2;
+					};
 					FAD030AF2D287FDC00F83E2B = {
 						CreatedOnToolsVersion = 16.2;
 					};
@@ -216,11 +317,19 @@
 				FAD030AF2D287FDC00F83E2B /* balatroseeds */,
 				FAD030BF2D287FDD00F83E2B /* balatroseedsTests */,
 				FAD030C92D287FDE00F83E2B /* balatroseedsUITests */,
+				FA35CACB2EF90E0200B9D663 /* PerkeoWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		FA35CACA2EF90E0200B9D663 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FAD030AE2D287FDC00F83E2B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -245,6 +354,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		FA35CAC82EF90E0200B9D663 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FAD030AC2D287FDC00F83E2B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -269,6 +385,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		FA35CAE12EF90E0300B9D663 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FA35CACB2EF90E0200B9D663 /* PerkeoWidgetExtension */;
+			targetProxy = FA35CAE02EF90E0300B9D663 /* PBXContainerItemProxy */;
+		};
 		FAD030C22D287FDD00F83E2B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = FAD030AF2D287FDC00F83E2B /* balatroseeds */;
@@ -282,6 +403,68 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		FA35CAE42EF90E0300B9D663 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3X4AKCRX5F;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PerkeoWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PerkeoWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.4;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.alex-cova.balatroseeds.PerkeoWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		FA35CAE52EF90E0300B9D663 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3X4AKCRX5F;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PerkeoWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PerkeoWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.4;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.alex-cova.balatroseeds.PerkeoWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		FAD030D22D287FDE00F83E2B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -556,6 +739,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		FA35CAE62EF90E0300B9D663 /* Build configuration list for PBXNativeTarget "PerkeoWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FA35CAE42EF90E0300B9D663 /* Debug */,
+				FA35CAE52EF90E0300B9D663 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		FAD030AB2D287FDC00F83E2B /* Build configuration list for PBXProject "balatroseeds" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

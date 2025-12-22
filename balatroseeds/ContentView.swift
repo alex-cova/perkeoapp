@@ -114,6 +114,9 @@ struct ContentView: View {
             Button(action: model.enterSeed) {
                 Label("Enter a seed", systemImage: "square.and.pencil")
             }
+            Button(action: model.seedOfTheDay){
+                Label("Seed of the day", systemImage: "calendar")
+            }
         }, label : {
             Image(systemName: "option")
                 .tint(.red)

@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>PerkeoWidgetExtension.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 		<key>balatroseeds.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -12,20 +17,25 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>FA35CACB2EF90E0200B9D663</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>FAD030AF2D287FDC00F83E2B</key>
 		<dict>
 			<key>primary</key>
-			<true />
+			<true/>
 		</dict>
 		<key>FAD030BF2D287FDD00F83E2B</key>
 		<dict>
 			<key>primary</key>
-			<true />
+			<true/>
 		</dict>
 		<key>FAD030C92D287FDE00F83E2B</key>
 		<dict>
 			<key>primary</key>
-			<true />
+			<true/>
 		</dict>
 	</dict>
 </dict>
