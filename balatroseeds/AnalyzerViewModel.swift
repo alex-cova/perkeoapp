@@ -161,9 +161,8 @@ public class AnalyzerViewModel : ObservableObject, Observable {
         
         if configSheet {
             configSheet.toggle()
-        } else {
-          analyze()
         }
+        analyze()
     }
     
     private func normalizeSeed(newValue : String){
