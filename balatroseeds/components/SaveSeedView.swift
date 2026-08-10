@@ -33,7 +33,7 @@ struct SaveSeedView : View {
                     .multilineTextAlignment(.center)
                     .padding(5)
                     .background(.gray)
-                    .cornerRadius(8)
+                    .clipShape(.rect(cornerRadius: 8))
                     .keyboardType(.alphabet)
                 List {
                     Picker("Level", selection: $level) {

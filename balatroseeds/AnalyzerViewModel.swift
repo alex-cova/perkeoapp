@@ -9,7 +9,8 @@ import SwiftUI
 import Combine
 import SwiftData
 
-public class AnalyzerViewModel : ObservableObject, Observable {
+@MainActor
+public class AnalyzerViewModel : ObservableObject {
     @Published var seed : String = ""
     @Published var maxAnte : Int = 8
     @Published var startingAnte : Int = 1
@@ -30,6 +31,7 @@ public class AnalyzerViewModel : ObservableObject, Observable {
     @Published var showInput = false
     @Published var showSummary = false
     @Published var showSaveView = false
+    private var pendingAnalyze = false
 
     
     var title : String {
@@ -66,7 +68,6 @@ public class AnalyzerViewModel : ObservableObject, Observable {
         showSaveView.toggle()
     }
     
-    @MainActor
     func store(level : JokerType, title : String){
         modelContext.mainContext.insert(
             SeedModel(timestamp: Date(), seed: seed, title: title, level: level, score: run?.score ?? 0))
@@ -154,15 +155,13 @@ public class AnalyzerViewModel : ObservableObject, Observable {
         if let clipboardText = UIPasteboard.general.string {
             if clipboardText.isValidSeed(){
                 seed = clipboardText.normalizeSeed()
+                if configSheet {
+                    configSheet = false
+                }
+                analyze()
             }else {
                 toast = .init(style: .error, message: "Not a valid seed in the clipboard")
             }
-        }
-        
-        if configSheet {
-            configSheet.toggle()
-        } else {
-          analyze()
         }
     }
     
@@ -196,40 +195,52 @@ public class AnalyzerViewModel : ObservableObject, Observable {
     }
         
     public func analyze() {
-        if(isLoading){
+        if isLoading {
+            pendingAnalyze = true
             return
         }
         
-        if(self.seed.isEmpty) {
+        if self.seed.isEmpty {
             return
         }
         
         print("Loading: \(self.seed)")
         isLoading = true
         showInput = false
-        
-        DispatchQueue.global(qos: .utility).async {
-            let balatro = Balatro()
-            
-            for option in self.disabledItems {
-                balatro.options.append(option)
-            }
-            
-            balatro.deck = self.deck
-            balatro.stake =  self.stake
-            balatro.maxDepth =  self.maxAnte
-            balatro.showman =  self.showman
-            balatro.startingAnte =  self.startingAnte
 
-            let run = balatro
-                .performAnalysis(seed:  self.seed.uppercased())
-                        
-            DispatchQueue.main.async {
-                self.run = run
-                self.isLoading = false
-                print("Rendered: \( self.seed)")
+        let disabledItems = self.disabledItems
+        let deck = self.deck
+        let stake = self.stake
+        let maxAnte = self.maxAnte
+        let showman = self.showman
+        let startingAnte = self.startingAnte
+        let seed = self.seed.uppercased()
+
+        Task {
+            let run = await Task.detached(priority: .utility) {
+                let balatro = Balatro()
+
+                for option in disabledItems {
+                    balatro.options.append(option)
+                }
+
+                balatro.deck = deck
+                balatro.stake = stake
+                balatro.maxDepth = maxAnte
+                balatro.showman = showman
+                balatro.startingAnte = startingAnte
+
+                return balatro.performAnalysis(seed: seed)
+            }.value
+
+            self.run = run
+            self.isLoading = false
+            print("Rendered: \(seed)")
+
+            if pendingAnalyze {
+                pendingAnalyze = false
+                analyze()
             }
-            
         }
     }
 }

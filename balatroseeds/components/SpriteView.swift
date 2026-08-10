@@ -14,14 +14,16 @@ struct SpriteImageView: View {
     let edition: Edition?
     let item : Item
     let foregroundColor : Color
+    let animated: Bool
     
-    init(_ item : Item, _ sprite : UIImage, _ x : Int,_ y : Int,_ w : Int, _ h : Int, _ card : Card? = nil, edition : Edition? = nil,_ foregroundColor : Color = .white){
+    init(_ item : Item, _ sprite : UIImage, _ x : Int,_ y : Int,_ w : Int, _ h : Int, _ card : Card? = nil, edition : Edition? = nil,_ foregroundColor : Color = .white, animated: Bool = true){
         self.item = SpriteImageView.unwrap(item)
         self.spriteSheet = sprite
         self.frame = CGRect(x: x * w, y: y * h, width: w, height: h)
         self.card = card
         self.edition = edition
         self.foregroundColor = foregroundColor
+        self.animated = animated
     }
     
     private static func unwrap(_ item : Item) -> Item {
@@ -41,10 +43,11 @@ struct SpriteImageView: View {
                 .frame(width: frame.width, height: frame.height)
                 .opacity(isAnimating ? 0.3 : 1.0)
         }else{
-            Text("fuck")
+            Color.clear
+                .frame(width: frame.width, height: frame.height)
         }
     }
-        
+
     @ViewBuilder
     private func editionView() -> some View {
         if(edition == .Foil) {
@@ -77,10 +80,11 @@ struct SpriteImageView: View {
                 }
             }
         }else{
-            Text("fuck")
+            Color.clear
+                .frame(width: frame.width, height: frame.height)
         }
     }
-    
+
     @ViewBuilder
     private func getHologram() -> some View {
         let frame2 = CGRect(x: 2 * 71, y: 9 * 95, width: 71, height: 95)
@@ -98,10 +102,11 @@ struct SpriteImageView: View {
                 }
             }
         }else{
-            Text("fuck")
+            Color.clear
+                .frame(width: frame.width, height: frame.height)
         }
     }
-    
+
     @ViewBuilder
     private func legendaryView() -> some View {
         if let legendary = item as? LegendaryJoker {
@@ -138,8 +143,8 @@ struct SpriteImageView: View {
                         getHologram()
                         editionView()
                     }
-                }.onAppear {
-                    isAnimating = true
+                }.task(id: animated) {
+                    isAnimating = animated
                 }
             } else if item is LegendaryJoker {
                 ZStack {
@@ -154,10 +159,9 @@ struct SpriteImageView: View {
                             }
                         }
                     }
-                }.onAppear {
-                        // Start the animation when the view appears
-                        isAnimating = true
-                    }
+                }.task(id: animated) {
+                    isAnimating = animated
+                }
             } else if item is Card {
                 renderCard()
             } else {
@@ -182,8 +186,9 @@ struct SpriteImageView: View {
             getDescription()
         }.foregroundStyle(foregroundColor)
             .animation(
-                Animation.easeInOut(duration: animationDuration)
-                    .repeatForever(autoreverses: true),
+                animated
+                    ? Animation.easeInOut(duration: animationDuration).repeatForever(autoreverses: true)
+                    : nil,
                 value: isAnimating
             )
     }
@@ -208,62 +213,36 @@ struct SpriteImageView: View {
     }
     
     
-    private func backgroundCard(_ c : Card) -> AnyView {
-        /*
-         {
-         'Bonus': { x: 1, y: 1 },
-         'Mult': { x: 2, y: 1 },
-         'Wild': { x: 3, y: 1 },
-         'Glass': { x: 5, y: 1 },
-         'Steel': { x: 6, y: 1 },
-         'Stone': { x: 5, y: 0 },
-         'Gold': { x: 6, y: 0 },
-         'Lucky': { x: 4, y: 1 }
-         };
-         */
-        var x = 1
-        var y = 0
-        
-        if let en =  c.enhancement  {
-            if en == .Luck {
-                x = 4
-                y = 1
-            } else if en == .Bonus {
-                x = 1
-                y = 1
-            } else if en == .Wild {
-                x = 3
-                y = 1
-            } else if en == .Gold {
-                x = 6
-                y = 0
-            } else if en == .Stone {
-                x = 5
-                y = 0
-            } else if en == .Steel {
-                x = 6
-                y = 1
-            } else if en == .Glass {
-                x = 5
-                y = 1
-            } else if en == .Mult {
-                x = 2
-                y = 1
-            }
-        }
-        
-        let frame = CGRect(x: x * 71, y: y * 95, width: 71, height: 95)
-        
-        if let cgImage = Images.enhancers.cgImage?.cropping(to: frame) {
-            return AnyView(Image(decorative: cgImage, scale: Images.enhancers.scale, orientation: .up)
-                .resizable()
-                .frame(width: frame.width, height: frame.height)
-            )
-        }else{
-            return AnyView(Text("fuck"))
+    /// Enhancer sprite-sheet coordinates: { Bonus: (1,1), Mult: (2,1), Wild: (3,1), Glass: (5,1), Steel: (6,1), Stone: (5,0), Gold: (6,0), Lucky: (4,1) }
+    private func enhancementPosition(_ enhancement: Enhancement?) -> (x: Int, y: Int) {
+        switch enhancement {
+        case .Luck: (4, 1)
+        case .Bonus: (1, 1)
+        case .Wild: (3, 1)
+        case .Gold: (6, 0)
+        case .Stone: (5, 0)
+        case .Steel: (6, 1)
+        case .Glass: (5, 1)
+        case .Mult: (2, 1)
+        case nil: (1, 0)
         }
     }
-    
+
+    @ViewBuilder
+    private func backgroundCard(_ c : Card) -> some View {
+        let (x, y) = enhancementPosition(c.enhancement)
+        let frame = CGRect(x: x * 71, y: y * 95, width: 71, height: 95)
+
+        if let cgImage = Images.enhancers.cgImage?.cropping(to: frame) {
+            Image(decorative: cgImage, scale: Images.enhancers.scale, orientation: .up)
+                .resizable()
+                .frame(width: frame.width, height: frame.height)
+        } else {
+            Color.clear
+                .frame(width: frame.width, height: frame.height)
+        }
+    }
+
     private func renderCard() -> some View{
         let c = card!
         
@@ -289,37 +268,31 @@ struct SpriteImageView: View {
     }
     
     
-    private func renderSeal(_ c : Card) -> AnyView {
-        
-        var x = 0
-        var y = 0
-        
-        if c.seal == .RedSeal {
-            x = 5
-            y = 4
-        } else if c.seal == .GoldSeal {
-            x = 2
-            y = 0
-        } else if c.seal == .PurpleSeal {
-            x = 4
-            y = 4
-        } else if c.seal == .BlueSeal {
-            x = 6
-            y = 4
-        }
-        
-        let frame = CGRect(x: x * 71, y: y * 95, width: 71, height: 95)
-        
-        if let cgImage = Images.enhancers.cgImage?.cropping(to: frame) {
-            return AnyView(Image(decorative: cgImage, scale: Images.enhancers.scale, orientation: .up)
-                .resizable()
-                .frame(width: frame.width, height: frame.height)
-            )
-        }else{
-            return AnyView(Text("fuck"))
+    private func sealPosition(_ seal: Seal) -> (x: Int, y: Int) {
+        switch seal {
+        case .RedSeal: (5, 4)
+        case .GoldSeal: (2, 0)
+        case .PurpleSeal: (4, 4)
+        case .BlueSeal: (6, 4)
+        case .NoSeal: (0, 0)
         }
     }
-    
+
+    @ViewBuilder
+    private func renderSeal(_ c : Card) -> some View {
+        let (x, y) = sealPosition(c.seal)
+        let frame = CGRect(x: x * 71, y: y * 95, width: 71, height: 95)
+
+        if let cgImage = Images.enhancers.cgImage?.cropping(to: frame) {
+            Image(decorative: cgImage, scale: Images.enhancers.scale, orientation: .up)
+                .resizable()
+                .frame(width: frame.width, height: frame.height)
+        } else {
+            Color.clear
+                .frame(width: frame.width, height: frame.height)
+        }
+    }
+
     private func editionText() -> String {
         guard let e = edition else {
             return ""

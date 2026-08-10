@@ -118,7 +118,7 @@ struct PerkeoWidgetEntryView : View {
            VStack(spacing: 8) {
                Text("Today seed is")
                    .font(.customCaption)
-                   .foregroundColor(.secondary)
+                   .foregroundStyle(.secondary)
 
                Text(entry.code)
                    .font(.customTitle)

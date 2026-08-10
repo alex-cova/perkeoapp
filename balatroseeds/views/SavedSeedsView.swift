@@ -11,14 +11,7 @@ import SwiftData
 struct SavedSeedsView : View {
     @Query private var seeds: [SeedModel]
     @EnvironmentObject var model : AnalyzerViewModel
-    
-    let dateFormatter = DateFormatter()
-    
-    init(){
-        dateFormatter.dateStyle = .short
-        dateFormatter.timeStyle = .short
-    }
-    
+
     @ViewBuilder
     private func renderSeeds() -> some View {
         VStack {
@@ -30,32 +23,9 @@ struct SavedSeedsView : View {
                         .font(.customBody)
                 }
                 ForEach(seeds) { item in
-                    NavigationLink(destination: seedNavigation(item.seed)
-                        .toolbar {
-                            Button(action: {
-                                model.showSummary.toggle()
-                            }) {
-                                Image(systemName:"checklist")
-                            }.tint(.red)
-                            Button(action: {
-                                model.copy()
-                            }) {
-                                Image(systemName:"document.on.clipboard")
-                            }.tint(.red)
-                            Button(action: {
-                                model.configSheet.toggle()
-                            }) {
-                                Image(systemName:"gear")
-                            }.tint(.red)
-                        }
-                        .environmentObject(model)
-                        .onAppear {
-                            model.changeSeed(item.seed)
-                        }.navigationTitle(item.seed)) {
-                            seedRow(item)
-                        }.listRowBackground(Color.customRowBackground)
-                        
-                    
+                    NavigationLink(value: item) {
+                        seedRow(item)
+                    }.listRowBackground(Color.customRowBackground)
                 }
                 .onDelete(perform: deleteItems)
             }.background(Color.customBackground)
@@ -64,6 +34,29 @@ struct SavedSeedsView : View {
             Spacer()
         }.clipped()
             .background(Color.customBackground)
+            .navigationDestination(for: SeedModel.self) { item in
+                seedNavigation(item.seed)
+                    .toolbar {
+                        Button(action: {
+                            model.showSummary.toggle()
+                        }) {
+                            Image(systemName:"checklist")
+                        }.tint(.red)
+                        Button(action: {
+                            model.copy()
+                        }) {
+                            Image(systemName:"document.on.clipboard")
+                        }.tint(.red)
+                        Button(action: {
+                            model.configSheet.toggle()
+                        }) {
+                            Image(systemName:"gear")
+                        }.tint(.red)
+                    }
+                    .onAppear {
+                        model.changeSeed(item.seed)
+                    }
+            }
     }
     
     @ViewBuilder
@@ -129,7 +122,7 @@ struct SavedSeedsView : View {
             }
             
             HStack {
-                Text("\(dateFormatter.string(from: item.timestamp))")
+                Text(item.timestamp, format: .dateTime.day().month().year().hour().minute())
                     .font(.customCaption)
                     .foregroundStyle(.white)
                 
@@ -161,8 +154,8 @@ struct SavedSeedsView : View {
 
 
 #Preview {
-    TabView {
+    NavigationStack {
         SavedSeedsView()
-            .environmentObject(AnalyzerViewModel())
     }
+    .environmentObject(AnalyzerViewModel(memoryOnly: true))
 }

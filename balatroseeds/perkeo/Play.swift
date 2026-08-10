@@ -339,29 +339,33 @@ class Ante : Encodable, Identifiable {
 //    }
     
     func contains(_ item : Item) -> Bool {
-        if hasLegendary(item) {
+        // Selections coming from the UI are wrapped in `ItemEdition` (see Perkeo.swift); unwrap
+        // before the `as?` checks below, otherwise a selected Voucher/Tag can never match here.
+        let target = (item as? ItemEdition)?.item ?? item
+
+        if hasLegendary(target) {
             return true
         }
-        
-        if shop.contains(item.rawValue) {
+
+        if shop.contains(target.rawValue) {
             return true
         }
-        
-        if hasInPack(item) {
+
+        if hasInPack(target) {
             return true
         }
-        
-        
-        if let voucher = item as? Voucher {
+
+
+        if let voucher = target as? Voucher {
             if voucher == self.voucher {
                 return true
             }
         }
-        
-        if let tag = item as? Tag {
+
+        if let tag = target as? Tag {
             return tags.contains(where: { $0 == tag })
         }
-        
+
         return false
     }
     

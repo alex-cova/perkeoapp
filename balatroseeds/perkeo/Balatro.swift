@@ -257,45 +257,50 @@ public class Balatro {
     }
     
     private func enable(_ selection : Item) {
-        if selection is LegendaryJoker {
+        // Selections coming from the UI are wrapped in `ItemEdition` (see Perkeo.swift); unwrap
+        // before the `is`/`as?` checks below, otherwise every one of them is false and only
+        // `analyzeShop` ever gets enabled.
+        let item = (selection as? ItemEdition)?.item ?? selection
+
+        if item is LegendaryJoker {
             analyzeArcana = true
             analyzeSpectralss = true
             return
         }
-        
-        if selection is Tag {
+
+        if item is Tag {
             analyzeTags = true
             return
         }
 
-        if selection is Tarot {
+        if item is Tarot {
             analyzeArcana = true
         }
 
-        if selection is Planet {
+        if item is Planet {
             analyzeCelestial = true
         }
 
-        if selection is Boss {
+        if item is Boss {
             analyzeBoss = true
         }
 
-        if selection is Joker {
+        if item is Joker {
             analyzeBuffon = true
         }
 
-        if selection is Voucher {
+        if item is Voucher {
             analyzeVoucher = true
         }
 
-        if selection is Cards {
+        if item is Cards {
             analyzeStandard = true
         }
 
-        if selection is Spectral {
+        if item is Spectral {
             analyzeCelestial = true
         }
-        
+
         analyzeShop = true
     }
 }

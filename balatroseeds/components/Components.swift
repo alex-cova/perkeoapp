@@ -135,10 +135,11 @@ extension View {
                 }
             }
         }else{
-            Text("fuck")
+            Color.clear
+                .frame(width: frame.width, height: frame.height)
         }
     }
-    
+
     @ViewBuilder
     public func seedNavigation(_ seed: String) -> some View {
         ZStack {
@@ -160,35 +161,50 @@ extension View {
     }
     
     @ViewBuilder
-    public func renderItems(_ jokers: [Item], columns : [GridItem], model : AnalyzerViewModel) -> some View {
-        LazyVGrid(columns: columns){
+    public func renderItems(
+        _ jokers: [Item],
+        columns: [GridItem],
+        selectedKeys: Set<String>,
+        showman: Bool,
+        toggle: @escaping (Item) -> Void
+    ) -> some View {
+        LazyVGrid(columns: columns) {
             ForEach(jokers, id: \.rawValue) { joker in
-                joker.sprite(color: .white)
-                    .opacity(model.isSelected(joker) ? 0.3 : 1.0)
-                    .onTapGesture {
-                        if model.isSelected(joker) {
-                            model.disabledItems.removeAll(where: {$0.rawValue == joker.rawValue})
-                        } else {
-                            model.disabledItems.append(joker)
-                        }
-                    }
+                let selected = (showman && joker.rawValue == UnCommonJoker.Showman.rawValue)
+                    || selectedKeys.contains(joker.rawValue)
+                Button {
+                    toggle(joker)
+                } label: {
+                    joker.sprite(color: .white, animated: false)
+                        .opacity(selected ? 0.3 : 1.0)
+                }
+                .buttonStyle(.plain)
+                .disabled(showman && joker.rawValue == UnCommonJoker.Showman.rawValue)
+                .accessibilityLabel(joker.rawValue)
+                .accessibilityValue(selected ? "Selected" : "Not selected")
             }
         }
     }
+
     @ViewBuilder
-    public func renderVoucher(_ jokers: [Item], columns : [GridItem], model : AnalyzerViewModel) -> some View{
-        LazyVGrid(columns: columns){
-            ForEach(jokers, id: \.rawValue) { joker in
-                joker.sprite(color: .white)
-                    .opacity(model.disabledItems.contains(where: {$0.rawValue == joker.rawValue}) ? 1.0 : 0.3)
-                    .onTapGesture {
-                        
-                        if model.disabledItems.contains(where: {$0.rawValue == joker.rawValue}){
-                            model.disabledItems.removeAll(where: {$0.rawValue == joker.rawValue})
-                        } else {
-                            model.disabledItems.append(joker)
-                        }
-                    }
+    public func renderVoucher(
+        _ vouchers: [Item],
+        columns: [GridItem],
+        selectedKeys: Set<String>,
+        toggle: @escaping (Item) -> Void
+    ) -> some View {
+        LazyVGrid(columns: columns) {
+            ForEach(vouchers, id: \.rawValue) { voucher in
+                let selected = selectedKeys.contains(voucher.rawValue)
+                Button {
+                    toggle(voucher)
+                } label: {
+                    voucher.sprite(color: .white, animated: false)
+                        .opacity(selected ? 1.0 : 0.3)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(voucher.rawValue)
+                .accessibilityValue(selected ? "Selected" : "Not selected")
             }
         }
     }
@@ -293,14 +309,14 @@ struct CustomTextField: View {
         ZStack(alignment: .leading) {
             if text.isEmpty {
                 Text("Enter your name")
-                    .foregroundColor(.gray) // <- Placeholder color
+                    .foregroundStyle(.gray) // <- Placeholder color
             }
-            
+
             TextField("", text: $text)
-                .foregroundColor(.primary) // <- Input text color
+                .foregroundStyle(.primary) // <- Input text color
         }
         .padding()
         .background(Color(UIColor.secondarySystemBackground))
-        .cornerRadius(8)
+        .clipShape(.rect(cornerRadius: 8))
     }
 }

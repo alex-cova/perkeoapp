@@ -139,6 +139,7 @@ struct DataItem {
     }
 }
 
+@MainActor
 class JokerFile : ObservableObject {
     
     var jokerData : [DataItem] = []
@@ -204,53 +205,57 @@ class JokerFile : ObservableObject {
         return result
     }
     
-    func readInstant() -> [CompressedSeed] {
+    func readInstant() async -> [CompressedSeed] {
         jokerData = []
-        
+
         if !compressed.isEmpty {
             return compressed
         }
-        
+
         guard let url = Bundle.main.url(forResource: "canio", withExtension: "jkr") else {
             print("canio not found")
             return []
         }
-        
+
         do {
-            let data = try Data(contentsOf: url)
-            compressed = try readCompressed(from: InputStream(data: data))
+            compressed = try await Task.detached(priority: .utility) {
+                let data = try Data(contentsOf: url)
+                return try Self.readCompressed(from: InputStream(data: data))
+            }.value
             return compressed
-        }catch {
+        } catch {
             print(error)
         }
-        
+
         return []
     }
-    
-    func read() -> [DataItem] {
+
+    func read() async -> [DataItem] {
         compressed = []
-        
+
         if !jokerData.isEmpty {
             return jokerData
         }
-        
+
         guard let url = Bundle.main.url(forResource: "perkeo", withExtension: "jkr") else {
             print("perkeo not found")
             return []
         }
-        
+
         do {
-            let data = try Data(contentsOf: url)
-            jokerData = try read(from: InputStream(data: data))
+            jokerData = try await Task.detached(priority: .utility) {
+                let data = try Data(contentsOf: url)
+                return try Self.read(from: InputStream(data: data))
+            }.value
             return jokerData
-        }catch {
+        } catch {
             print(error)
         }
-        
+
         return []
     }
-    
-    func readCompressed(from inputStream: InputStream) throws -> [CompressedSeed] {
+
+    private nonisolated static func readCompressed(from inputStream: InputStream) throws -> [CompressedSeed] {
         var compressedList: [CompressedSeed] = []
         var buffer = [UInt8](repeating: 0, count: 8)
 
@@ -284,7 +289,7 @@ class JokerFile : ObservableObject {
         return compressedList
     }
     
-    private func read(from inputStream: InputStream) throws -> [DataItem] {
+    private nonisolated static func read(from inputStream: InputStream) throws -> [DataItem] {
         var dataList: [DataItem] = []
         let seedLength = 8
         var seedBuffer = [UInt8](repeating: 0, count: seedLength)
@@ -328,7 +333,7 @@ class JokerFile : ObservableObject {
         return dataList
     }
     
-    private  func read(from inputStream: InputStream, into buffer: inout [UInt8]) throws {
+    private nonisolated static func read(from inputStream: InputStream, into buffer: inout [UInt8]) throws {
         let bytesToRead = buffer.count
         let bytesRead = inputStream.read(&buffer, maxLength: bytesToRead)
         

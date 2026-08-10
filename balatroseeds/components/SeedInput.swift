@@ -17,16 +17,17 @@ struct SeedInput : View {
             Text("Enter Seed")
                 .font(.customTitle)
                 .foregroundStyle(.white)
-            TextField("Seed", text: $model.seed, onCommit: {
-                model.analyze()
-            })
-            .frame(width: 200)
-            .font(.customTitle)
-            .multilineTextAlignment(.center)
-            .padding(5)
-            .background(.gray)
-            .cornerRadius(8)
-            .keyboardType(.alphabet)
+            TextField("Seed", text: $model.seed)
+                .frame(width: 200)
+                .font(.customTitle)
+                .multilineTextAlignment(.center)
+                .padding(5)
+                .background(.gray)
+                .clipShape(.rect(cornerRadius: 8))
+                .keyboardType(.alphabet)
+                .onSubmit {
+                    model.analyze()
+                }
             Button(action: {
                 model.analyze()
             }) {

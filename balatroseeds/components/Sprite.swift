@@ -24,6 +24,12 @@ class SpriteSheet {
     var tags : [Sprite] = []
     var vouchers : [Sprite] = []
     var bosses : [Sprite] = []
+
+    private var jokerByName: [String: Sprite] = [:]
+    private var tarotByName: [String: Sprite] = [:]
+    private var voucherByName: [String: Sprite] = [:]
+    private var tagByName: [String: Sprite] = [:]
+    private var bossByName: [String: Sprite] = [:]
         
     public func readBosses() -> [Sprite] {
         if(!bosses.isEmpty){
@@ -31,7 +37,13 @@ class SpriteSheet {
         }
         
         bosses = loadJSONFromAssets(filename: "bosses", type: [Sprite].self) ?? []
+        bossByName = Dictionary(uniqueKeysWithValues: bosses.map { ($0.name, $0) })
         return bosses
+    }
+
+    public func boss(named name: String) -> Sprite? {
+        _ = readBosses()
+        return bossByName[name]
     }
     
     public func readVouchers() -> [Sprite] {
@@ -40,7 +52,13 @@ class SpriteSheet {
         }
         
         vouchers = loadJSONFromAssets(filename: "vouchers", type: [Sprite].self) ?? []
+        voucherByName = Dictionary(uniqueKeysWithValues: vouchers.map { ($0.name, $0) })
         return vouchers
+    }
+
+    public func voucher(named name: String) -> Sprite? {
+        _ = readVouchers()
+        return voucherByName[name]
     }
     
     public func readTarots() -> [Sprite] {
@@ -48,7 +66,13 @@ class SpriteSheet {
             return tarots
         }
         tarots = loadJSONFromAssets(filename: "tarots", type: [Sprite].self) ?? []
+        tarotByName = Dictionary(uniqueKeysWithValues: tarots.map { ($0.name, $0) })
         return tarots
+    }
+
+    public func tarot(named name: String) -> Sprite? {
+        _ = readTarots()
+        return tarotByName[name]
     }
     
     public func readTags() -> [Sprite] {
@@ -56,7 +80,13 @@ class SpriteSheet {
             return tags
         }
         tags = loadJSONFromAssets(filename: "tags", type: [Sprite].self) ?? []
+        tagByName = Dictionary(uniqueKeysWithValues: tags.map { ($0.name, $0) })
         return tags
+    }
+
+    public func tag(named name: String) -> Sprite? {
+        _ = readTags()
+        return tagByName[name]
     }
     
     public func readJokers() -> [Sprite] {
@@ -64,7 +94,13 @@ class SpriteSheet {
             return jokers
         }
         jokers = loadJSONFromAssets(filename: "jokers", type: [Sprite].self) ?? []
+        jokerByName = Dictionary(uniqueKeysWithValues: jokers.map { ($0.name, $0) })
         return jokers
+    }
+
+    public func joker(named name: String) -> Sprite? {
+        _ = readJokers()
+        return jokerByName[name]
     }
     
     func loadJSONFromAssets<T: Codable>(filename: String, type: T.Type) -> T? {

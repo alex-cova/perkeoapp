@@ -33,8 +33,7 @@ class LookAndFeel {
 }
 
 #Preview {
-    NavigationStack {
-        ContentView()
-            .environment(AnalyzerViewModel())
-    }
+    ContentView()
+        .environmentObject(AnalyzerViewModel(memoryOnly: true))
+        .environmentObject(JokerFile())
 }

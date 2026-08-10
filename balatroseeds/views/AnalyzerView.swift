@@ -59,9 +59,8 @@ struct AnalyzerView : View {
 }
 
 #Preview {
-    NavigationView {
-        ContentView()
-            .environment(AnalyzerViewModel())
-    }
+    ContentView()
+        .environmentObject(AnalyzerViewModel(memoryOnly: true))
+        .environmentObject(JokerFile())
 }
 

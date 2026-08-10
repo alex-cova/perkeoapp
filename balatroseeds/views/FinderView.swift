@@ -19,10 +19,9 @@ struct FinderView : View {
     @State private var instant = false
     @State private var searching = false
     @State private var isLoading = false
+    @State private var searchTask : Task<Void, Never>? = nil
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var jokerFile : JokerFile
-    static var running = false
-    static var finished = 0
     @EnvironmentObject var model : AnalyzerViewModel
     var cachedDescription : String  {
         get {
@@ -51,14 +50,6 @@ struct FinderView : View {
         LoadingView(isShowing: $isLoading) {
             mainView()
         }
-    }
-    
-    func changeEdition(){
-        var x : [ItemEdition] = []
-        x.append(contentsOf: selections)
-        //selections.clear()
-        selections.removeAll()
-        selections.append(contentsOf: x)
     }
     
     var heavySearch : Bool {
@@ -159,17 +150,9 @@ struct FinderView : View {
                 _cached.wrappedValue = false
                 Task {
                     self.isLoading = true
-                    
-                    DispatchQueue.global(qos: .utility).async {
-                        _ = self.jokerFile.readInstant()
-                        
-                        DispatchQueue.main.async {
-                            print("Read data: \(self.jokerFile.compressed.count)")
-                            self.isLoading = false
-                        }
-                    }
-                    
-                    
+                    _ = await self.jokerFile.readInstant()
+                    print("Read data: \(self.jokerFile.compressed.count)")
+                    self.isLoading = false
                 }
             }
         }
@@ -201,18 +184,9 @@ struct FinderView : View {
                 _instant.wrappedValue = false
                 Task {
                     self.isLoading = true
-                    
-                    DispatchQueue.global(qos: .utility).async {
-                        _ = self.jokerFile.read()
-                        
-                        DispatchQueue.main.async {
-                            print("Read data: \(self.jokerFile.jokerData.count)")
-                            self.isLoading = false
-                          
-                        }
-                    }
-                    
-                    
+                    _ = await self.jokerFile.read()
+                    print("Read data: \(self.jokerFile.jokerData.count)")
+                    self.isLoading = false
                 }
             }
         }
@@ -249,22 +223,6 @@ struct FinderView : View {
                         }
                     })
                     
-                    if !selections.isEmpty {
-                        ScrollView(.horizontal) {
-                            HStack {
-                                ForEach(selections, id: \.self.rawValue) { joker in
-                                    joker.sprite()
-                                        .onTapGesture {
-                                            if cached {
-                                                joker.nextEdition()
-                                                changeEdition()
-                                            }
-                                        }
-                                }
-                            }
-                        }
-                    }
-                    
                     if !found.isEmpty || !selections.isEmpty {
                         Button(action: {
                             selections.removeAll()
@@ -293,6 +251,8 @@ struct FinderView : View {
                 .navigationBarTitleDisplayMode(.inline)
                 .sheet(isPresented: $showSheet){
                     JokerSelectorView(selections: $selections)
+                        .presentationDetents([.large])
+                        .presentationDragIndicator(.visible)
                 }.sheet(isPresented: $searching){
                     searchView()
                         .presentationDetents([.medium])
@@ -300,7 +260,30 @@ struct FinderView : View {
                         .onAppear {
                             doSearch()
                         }.onDisappear {
-                            FinderView.running = false
+                            searchTask?.cancel()
+                        }
+                }
+                .navigationDestination(for: String.self) { seed in
+                    seedNavigation(seed)
+                        .onAppear {
+                            model.changeSeed(seed)
+                        }
+                        .toolbar {
+                            Button(action: {
+                                model.showSummary.toggle()
+                            }) {
+                                Image(systemName:"checklist")
+                            }.tint(.red)
+                            Button(action: {
+                                model.copy()
+                            }) {
+                                Image(systemName:"document.on.clipboard")
+                            }.tint(.red)
+                            Button(action: {
+                                model.configSheet.toggle()
+                            }) {
+                                Image(systemName:"gear")
+                            }.tint(.red)
                         }
                 }
         }.background(Color.customBackground)
@@ -318,29 +301,7 @@ struct FinderView : View {
     private func renderSeeds() -> some View{
         DisclosureGroup("Found Seeds (\(found.count))") {
             ForEach(keys(), id: \.self) { seed in
-                NavigationLink(destination: seedNavigation(seed)
-                    .onAppear {
-                        model.changeSeed(seed)
-                    }
-                    .navigationTitle(seed)
-                    .toolbar {
-                        Button(action: {
-                            model.showSummary.toggle()
-                        }) {
-                            Image(systemName:"checklist")
-                        }.tint(.red)
-                        Button(action: {
-                            model.copy()
-                        }) {
-                            Image(systemName:"document.on.clipboard")
-                        }.tint(.red)
-                        Button(action: {
-                            model.configSheet.toggle()
-                        }) {
-                            Image(systemName:"gear")
-                        }.tint(.red)
-                    }
-                    .environmentObject(model)) {
+                NavigationLink(value: seed) {
                     if cached || instant {
                         VStack(alignment: .leading) {
                             Text(seed)
@@ -354,7 +315,7 @@ struct FinderView : View {
                         Text(seed)
                             .foregroundStyle(.white)
                     }
-                    
+
                 }.swipeActions {
                     Button("Save") {
                         modelContext.insert(SeedModel(timestamp: Date(), seed: seed))
@@ -368,124 +329,110 @@ struct FinderView : View {
             .listRowBackground(Color.customRowBackground)
     }
     
-    @ViewBuilder
-    private func label(_ text : String, systemImage image : String) -> some View {
-        HStack {
-            Image(systemName: image)
-                .foregroundStyle(.red)
-            Text(text)
-                .font(.customBody)
-                .foregroundStyle(.white)
-        }
-    }
-    
-    
     private func cacheBasedSearch() {
         print("Using cached search!")
-        //found.append(contentsOf: jokerFile.search(selections))
-        
+
         let f = jokerFile.search(selections)
-        
-        print("seeds found: \(found.count)")
-        
-        DispatchQueue.main.async {
-            found.removeAll()
-            
-            for i in f {
-                found[i.key] = i.value
-            }
-            
-            searching = false
+
+        print("seeds found: \(f.count)")
+
+        found.removeAll()
+
+        for i in f {
+            found[i.key] = i.value
         }
+
+        searching = false
     }
-    
+
+    @MainActor
+    private func report(processedDelta: Int, foundDelta: Int) {
+        processed += processedDelta
+        seedsFound += foundDelta
+    }
+
     private func doSearch(){
-        if FinderView.running {
+        if searchTask != nil {
             return
         }
-        
-        let concurrentQueue = DispatchQueue(label: "com.perkeo.concurrentqueue", attributes: .concurrent)
-        
+
         if !jokerFile.isEmpty && (cached || instant) {
-            concurrentQueue.async {
-                cacheBasedSearch()
-            }
+            cacheBasedSearch()
             return
         }
-        
+
         processed = 0
         seedsFound = 0
         found.removeAll()
-        
+
         let jobs = 3
         let split = value / jobs
-        
+        let selections = self.selections
+        let maxAnte = self.maxAnte
+        let startingAnte = self.startingAnte
+
         print("Split: \(split) max ante: \(maxAnte)")
-        
-        func job() {
-            FinderView.running = true
-            
-            var foundSeeds : Set<String> = []
-            var last = 0
-            
-            for i in 0..<split{
-                let seed = Balatro.generateRandomString()
-                
-                if !FinderView.running {
-                    DispatchQueue.main.async {
-                        for i in foundSeeds {
-                            found[i] = 0
+
+        searchTask = Task {
+            let allFound = await withTaskGroup(of: Set<String>.self) { group in
+                for _ in 0..<jobs {
+                    group.addTask {
+                        var foundSeeds : Set<String> = []
+                        var lastIndex = 0
+                        var lastFoundCount = 0
+                        var lastReportedAt = Date()
+
+                        for i in 0..<split {
+                            if Task.isCancelled {
+                                break
+                            }
+
+                            if foundSeeds.count > 25 {
+                                break
+                            }
+
+                            let seed = Balatro.generateRandomString()
+
+                            let balatro = Balatro()
+                            balatro.maxDepth = maxAnte
+                            balatro.startingAnte = startingAnte
+
+                            let play = balatro
+                                .configureForSpeed(selections: selections)
+                                .performAnalysis(seed: seed)
+
+                            if selections.allSatisfy({ play.contains($0) }) {
+                                foundSeeds.insert(seed)
+                            }
+
+                            let now = Date()
+                            if now.timeIntervalSince(lastReportedAt) >= 1 {
+                                let processedDelta = i - lastIndex
+                                let foundDelta = foundSeeds.count - lastFoundCount
+                                lastIndex = i
+                                lastFoundCount = foundSeeds.count
+                                lastReportedAt = now
+                                await report(processedDelta: processedDelta, foundDelta: foundDelta)
+                            }
                         }
-                    }
-                    break
-                }
-                
-                if foundSeeds.count > 25 {
-                    FinderView.finished += 1
-                    break
-                }
-                
-                let balatro = Balatro()
-                balatro.maxDepth = maxAnte
-                balatro.startingAnte = startingAnte
-                
-                let play = balatro
-                    .configureForSpeed(selections: selections)
-                    .performAnalysis(seed: seed)
-                
-                if selections.allSatisfy({ play.contains($0) }) {
-                    foundSeeds.insert(seed)
-                }
-                
-                let currentMillis = Int(Date().timeIntervalSince1970 * 1000)
-                
-                if currentMillis % 1000 == 0 {
-                    DispatchQueue.main.async {
-                        processed += (i - last)
-                        last = i
-                        seedsFound += foundSeeds.count
+
+                        return foundSeeds
                     }
                 }
-            }
-            
-            FinderView.finished += 1
-            
-            if FinderView.finished >= jobs {
-                FinderView.running = false
-                DispatchQueue.main.async {
-                    searching = false
-                    
-                    for i in foundSeeds {
-                        found[i] = 0
-                    }
+
+                var merged : Set<String> = []
+                for await seeds in group {
+                    merged.formUnion(seeds)
                 }
+                return merged
             }
-        }
-        
-        for _ in 0..<jobs {
-            concurrentQueue.async {
-                job()
+
+            for seed in allFound {
+                found[seed] = 0
             }
+            seedsFound = allFound.count
+            searching = false
+            searchTask = nil
         }
     }
     
@@ -520,7 +467,7 @@ struct FinderView : View {
                 .padding()
                 
             Button(action: {
-                FinderView.running = false
+                searchTask?.cancel()
                 searching.toggle()
             }, label: {
                 Label("Stop", systemImage: "xmark")
@@ -532,8 +479,10 @@ struct FinderView : View {
 
 
 #Preview {
-    TabView {
+    NavigationStack {
         FinderView()
-            .modelContainer(for: SeedModel.self, inMemory: true)
     }
+    .modelContainer(for: SeedModel.self, inMemory: true)
+    .environmentObject(AnalyzerViewModel(memoryOnly: true))
+    .environmentObject(JokerFile())
 }

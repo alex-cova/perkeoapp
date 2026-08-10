@@ -8,97 +8,101 @@
 import SwiftUI
 
 struct CommunityView: View {
-    
-    @EnvironmentObject var model : AnalyzerViewModel
-    let columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
-    
-    @State private var isAnimating = false
-    private var animationDuration: Double = 1.5
-    private var bounceHeight: CGFloat = 20.0
-    @State var seeds : [String] = generateSeeds()
-    
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    @State private var seeds: [CommunitySeed] = CommunitySeed.generateBatch()
+    @State private var appeared = false
+    @State private var refreshTick = 0
+
+    private let columns = [
+        GridItem(.adaptive(minimum: CommunityDesign.gridMinimum), spacing: CommunityDesign.gridSpacing)
+    ]
+
     var body: some View {
-        ZStack {
-            VStack {
-                AnimatedTitle(text: "Community Seeds")
-                ScrollView {
-                    LazyVGrid(columns: columns) {
-                        ForEach(seeds, id: \.self) { seed in
-                            NavigationLink(destination: PlayView()
-                                .clipped()
-                                .background(Color.customBackground.ignoresSafeArea())
-                                .toolbar {
-                                    Button(action: {
-                                        model.showSummary.toggle()
-                                    }) {
-                                        Image(systemName:"checklist")
-                                    }.tint(.red)
-                                    Button(action: {
-                                        model.copy()
-                                    }) {
-                                        Image(systemName:"document.on.clipboard")
-                                    }.tint(.red)
-                                    Button(action: {
-                                        model.configSheet.toggle()
-                                    }) {
-                                        Image(systemName:"gear")
-                                    }.tint(.red)
-                                }
-                                .navigationTitle(seed)
-                                .onAppear {
-                                    model.changeSeed(seed)
-                                }) {
-                                    CommunitySeedView(seed: seed)
-                                }
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 20) {
+                CommunitySeedsHeader()
+
+                LazyVGrid(columns: columns, spacing: CommunityDesign.gridSpacing) {
+                    ForEach(Array(seeds.enumerated()), id: \.element.id) { index, seed in
+                        NavigationLink(value: seed.value) {
+                            CommunitySeedView(seed: seed.value)
                         }
-                    }.scenePadding()
-                        .background(Color.customBackground)
-                    Text("Thanks to LocalThunk for the amazing game, to the people at Balatro discord server, to math, tacodiva, pifreak, saul and other friends of the community for their help and support! ")
-                        .font(.customCaption)
-                        .foregroundStyle(.white)
-                        .padding()
-                }.background(Color.customBackground)
-                .clipped()
-                    .refreshable {
-                        seeds = CommunityView.generateSeeds()
+                        .buttonStyle(.plain)
+                        .opacity(tileOpacity)
+                        .offset(y: tileOffset)
+                        .animation(tileAnimation(for: index), value: appeared)
+                        .scrollTransition { content, phase in
+                            content
+                                .opacity(scrollOpacity(phase))
+                                .scaleEffect(scrollScale(phase))
+                        }
                     }
+                }
+
+                CommunityCreditsFooter()
             }
-        }.background(Color.customBackground)
-    }
-    
-    private static func generateSeeds() -> [String] {
-        var seeds = [String]()
-        
-        for _ in 0..<80 {
-            seeds.append(Balatro.generateRandomString())
+            .padding(.horizontal, 16)
+            .padding(.bottom, 24)
         }
-        
-        return seeds
+        .background(Color.customBackground)
+        .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            refreshSeeds()
+        }
+        .sensoryFeedback(.impact(flexibility: .soft), trigger: refreshTick)
+        .task {
+            appeared = true
+        }
+        .navigationDestination(for: String.self) { seed in
+            CommunitySeedDestination(seed: seed)
+        }
     }
-}
 
-
-
-struct CommunitySeedView : View {
-    let seed : String
-        
-    var body : some View {
-        VStack(spacing: 5.0) {
-            Text(seed)
-                .font(.customBody)
-                .foregroundStyle(.white)
-        }.frame(width: 120, height: 100)
-            .border(Color.black, width: 5)
-            .cornerRadius(8.0)
+    private var tileOpacity: Double {
+        if reduceMotion { return 1 }
+        return appeared ? 1 : 0
     }
-    
-    
 
+    private var tileOffset: Double {
+        if reduceMotion { return 0 }
+        return appeared ? 0 : 16
+    }
+
+    private func refreshSeeds() {
+        seeds = CommunitySeed.generateBatch()
+        appeared = false
+        refreshTick += 1
+
+        if reduceMotion {
+            appeared = true
+        } else {
+            withAnimation(.spring(duration: 0.5, bounce: 0.25)) {
+                appeared = true
+            }
+        }
+    }
+
+    private func tileAnimation(for index: Int) -> Animation? {
+        if reduceMotion { return nil }
+        return .spring(duration: 0.55, bounce: 0.28)
+            .delay(Double(min(index, 11)) * 0.03)
+    }
+
+    private func scrollOpacity(_ phase: ScrollTransitionPhase) -> Double {
+        if reduceMotion || phase.isIdentity { return 1 }
+        return 0.45
+    }
+
+    private func scrollScale(_ phase: ScrollTransitionPhase) -> Double {
+        if reduceMotion || phase.isIdentity { return 1 }
+        return 0.94
+    }
 }
 
 #Preview {
-    TabView {
+    NavigationStack {
         CommunityView()
-            .environmentObject(AnalyzerViewModel())
+            .environmentObject(AnalyzerViewModel(memoryOnly: true))
     }
 }

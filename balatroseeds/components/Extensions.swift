@@ -70,93 +70,73 @@ extension String {
 
 extension Item {
     
-    func sprite(edition: Edition? = nil, color: Color = .white) -> SpriteImageView {
+    func sprite(edition: Edition? = nil, color: Color = .white, animated: Bool = true) -> SpriteImageView {
         
         if let card = self as? Card {
-            return SpriteImageView(self, Images.cards, card.rank.index(), card.suit.index(), 71, 95, card, edition: edition, color)
+            return SpriteImageView(self, Images.cards, card.rank.index(), card.suit.index(), 71, 95, card, edition: edition, color, animated: animated)
         }
         
         if(self.rawValue == Specials.BLACKHOLE.rawValue){
-            return SpriteImageView(self, Images.tarots, 9, 3, 71, 95, nil, color)
+            return SpriteImageView(self, Images.tarots, 9, 3, 71, 95, nil, color, animated: animated)
         }
-        
-        let jokers = Images.sprite.readJokers()
-        
-        for joker in jokers {
-            if(joker.name == self.rawValue){
-                return SpriteImageView(self, Images.jokers, joker.pos.x, joker.pos.y, 71, 95, edition: edition, color)
-            }
+
+        if let joker = Images.sprite.joker(named: rawValue) {
+            return SpriteImageView(self, Images.jokers, joker.pos.x, joker.pos.y, 71, 95, edition: edition, color, animated: animated)
         }
-        
-        let tarots = Images.sprite.readTarots()
-        
-        for tarot in tarots {
-            if(tarot.name == self.rawValue){
-                return SpriteImageView(self, Images.tarots, tarot.pos.x, tarot.pos.y, 71, 95, edition: edition,  color)
-            }
+
+        if let tarot = Images.sprite.tarot(named: rawValue) {
+            return SpriteImageView(self, Images.tarots, tarot.pos.x, tarot.pos.y, 71, 95, edition: edition, color, animated: animated)
         }
-        
-        let vouchers = Images.sprite.readVouchers()
-        
-        for voucher in vouchers {
-            if(voucher.name == self.rawValue){
-                return SpriteImageView(self, Images.vouchers, voucher.pos.x, voucher.pos.y, 71, 95, nil, color)
-            }
+
+        if let voucher = Images.sprite.voucher(named: rawValue) {
+            return SpriteImageView(self, Images.vouchers, voucher.pos.x, voucher.pos.y, 71, 95, nil, color, animated: animated)
         }
-        
-        let tags = Images.sprite.readTags()
-        
-        for tag in tags {
-            if(tag.name == "\(self.rawValue) Tag"){
-                return SpriteImageView(self, Images.tags, tag.pos.x, tag.pos.y, 34, 34, nil, color)
-            }
+
+        if let tag = Images.sprite.tag(named: "\(rawValue) Tag") {
+            return SpriteImageView(self, Images.tags, tag.pos.x, tag.pos.y, 34, 34, nil, color, animated: animated)
         }
-        
-        let bosses = Images.sprite.readBosses()
-        
-        for boss in bosses {
-            if(boss.name == self.rawValue){
-                return SpriteImageView(self, Images.bosses, boss.pos.x, boss.pos.y, 34, 34, nil, color)
-            }
+
+        if let boss = Images.sprite.boss(named: rawValue) {
+            return SpriteImageView(self, Images.bosses, boss.pos.x, boss.pos.y, 34, 34, nil, color, animated: animated)
         }
         
         if(self.rawValue == Specials.THE_SOUL.rawValue){
-            return SpriteImageView(self, Images.tarots, 2, 2, 71, 95, edition: edition, color)
+            return SpriteImageView(self, Images.tarots, 2, 2, 71, 95, edition: edition, color, animated: animated)
         }
                 
         for deck in Deck.allCases {
             if(self.rawValue == deck.rawValue){
                 switch deck {
                 case .RED_DECK:
-                    return SpriteImageView(self, Images.enhancers, 0, 0, 71, 95)
+                    return SpriteImageView(self, Images.enhancers, 0, 0, 71, 95, animated: animated)
                 case .BLUE_DECK:
-                    return SpriteImageView(self, Images.enhancers, 0, 2, 71, 95)
+                    return SpriteImageView(self, Images.enhancers, 0, 2, 71, 95, animated: animated)
                 case .GREEN_DECK:
-                    return SpriteImageView(self, Images.enhancers, 2, 2, 71, 95)
+                    return SpriteImageView(self, Images.enhancers, 2, 2, 71, 95, animated: animated)
                 case .YELLOW_DECK:
-                    return SpriteImageView(self, Images.enhancers, 1, 2, 71, 95)
+                    return SpriteImageView(self, Images.enhancers, 1, 2, 71, 95, animated: animated)
                 case .BLACK_DECK:
-                    return SpriteImageView(self, Images.enhancers, 3, 2, 71, 95)
+                    return SpriteImageView(self, Images.enhancers, 3, 2, 71, 95, animated: animated)
                 case .MAGIC_DECK:
-                    return SpriteImageView(self, Images.enhancers, 0, 3, 71, 95)
+                    return SpriteImageView(self, Images.enhancers, 0, 3, 71, 95, animated: animated)
                 case .NEBULA_DECK:
-                    return SpriteImageView(self, Images.enhancers, 3, 0, 71, 95)
+                    return SpriteImageView(self, Images.enhancers, 3, 0, 71, 95, animated: animated)
                 case .GHOST_DECK:
-                    return SpriteImageView(self, Images.enhancers, 6, 2, 71, 95)
+                    return SpriteImageView(self, Images.enhancers, 6, 2, 71, 95, animated: animated)
                 case .ABANDONED_DECK:
-                    return SpriteImageView(self, Images.enhancers, 3, 3, 71, 95)
+                    return SpriteImageView(self, Images.enhancers, 3, 3, 71, 95, animated: animated)
                 case.CHECKERED_DECK:
-                    return SpriteImageView(self, Images.enhancers, 1, 3, 71, 95)
+                    return SpriteImageView(self, Images.enhancers, 1, 3, 71, 95, animated: animated)
                 case .ZODIAC_DECK:
-                    return SpriteImageView(self, Images.enhancers, 4, 3, 71, 95)
+                    return SpriteImageView(self, Images.enhancers, 4, 3, 71, 95, animated: animated)
                 case .PAINTED_DECK:
-                    return SpriteImageView(self, Images.enhancers, 3, 4, 71, 95)
+                    return SpriteImageView(self, Images.enhancers, 3, 4, 71, 95, animated: animated)
                 case .ANAGLYPH_DECK:
-                    return SpriteImageView(self, Images.enhancers, 2, 4, 71, 95)
+                    return SpriteImageView(self, Images.enhancers, 2, 4, 71, 95, animated: animated)
                 case .PLASMA_DECK:
-                    return SpriteImageView(self, Images.enhancers, 4, 2, 71, 95)
+                    return SpriteImageView(self, Images.enhancers, 4, 2, 71, 95, animated: animated)
                 case .ERRATIC_DECK:
-                    return SpriteImageView(self, Images.enhancers, 2, 3, 71, 95)
+                    return SpriteImageView(self, Images.enhancers, 2, 3, 71, 95, animated: animated)
                 }
             }
         }
@@ -165,27 +145,27 @@ extension Item {
             if self.rawValue == chip.rawValue {
                 switch chip {
                 case .White_Stake:
-                    return SpriteImageView(self, Images.chips, 0, 0, 29, 29)
+                    return SpriteImageView(self, Images.chips, 0, 0, 29, 29, animated: animated)
                 case .Red_Stake:
-                    return SpriteImageView(self, Images.chips, 1, 0, 29, 29)
+                    return SpriteImageView(self, Images.chips, 1, 0, 29, 29, animated: animated)
                 case .Green_Stake:
-                    return SpriteImageView(self, Images.chips, 2, 0, 29, 29)
+                    return SpriteImageView(self, Images.chips, 2, 0, 29, 29, animated: animated)
                 case .Blue_Stake:
-                    return SpriteImageView(self, Images.chips, 3, 0, 29, 29)
+                    return SpriteImageView(self, Images.chips, 3, 0, 29, 29, animated: animated)
                 case .Black_Stake:
-                    return SpriteImageView(self, Images.chips, 4, 0, 29, 29)
+                    return SpriteImageView(self, Images.chips, 4, 0, 29, 29, animated: animated)
                 case .Purple_Stake:
-                    return SpriteImageView(self, Images.chips, 0, 1, 29, 29)
+                    return SpriteImageView(self, Images.chips, 0, 1, 29, 29, animated: animated)
                 case .Orange_Stake:
-                    return SpriteImageView(self, Images.chips, 1, 1, 29, 29)
+                    return SpriteImageView(self, Images.chips, 1, 1, 29, 29, animated: animated)
                 case .Gold_Stake:
-                    return SpriteImageView(self, Images.chips, 2, 1, 29, 29)
+                    return SpriteImageView(self, Images.chips, 2, 1, 29, 29, animated: animated)
                 }
             }
         }
 
         print("Missing: \(self.rawValue)")
         
-        return SpriteImageView(self,Images.vouchers, 7, 3, 34, 45)
+        return SpriteImageView(self,Images.vouchers, 7, 3, 34, 45, animated: animated)
     }
 }

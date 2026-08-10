@@ -54,7 +54,7 @@ struct ContentView: View {
     @ViewBuilder
     func tabView17() -> some View {
         TabView(selection: $model.activeTab) {
-            NavigationView {
+            NavigationStack {
                 AnalyzerView()
                     .navigationTitle(model.title)
                     .navigationBarTitleDisplayMode(.inline)
@@ -65,22 +65,22 @@ struct ContentView: View {
                 .tabItem {
                     Label(TabItem.analyzer.rawValue, systemImage: TabItem.analyzer.symbolImage)
                 }
-            NavigationView {
+            NavigationStack {
                 SavedSeedsView()
             }
             .tag(TabItem.saved)
             .tabItem {
                 Label(TabItem.saved.rawValue, systemImage: TabItem.saved.symbolImage)
             }
-            NavigationView {
+            NavigationStack {
                 FinderView()
-                
+
             }
             .tag(TabItem.finder)
             .tabItem {
                 Label(TabItem.finder.rawValue, systemImage: TabItem.finder.symbolImage)
             }
-            NavigationView {
+            NavigationStack {
                 CommunityView()
             }
             .tag(TabItem.community)
@@ -90,10 +90,8 @@ struct ContentView: View {
         }.toastView(toast: $model.toast)
             .sheet(isPresented: $model.configSheet) {
                 ConfigView()
-                    .presentationDetents([.medium, .large])
-                    .onDisappear {
-                        model.analyze()
-                    }
+                    .presentationDetents([.large, .medium])
+                    .presentationDragIndicator(.visible)
             }.sheet(isPresented: $model.showSummary) {
                 ResumeView(run: model.run!)
             }
@@ -143,7 +141,7 @@ struct ContentView: View {
         ZStack(alignment: .bottom) {
             TabView(selection: $model.activeTab) {
                 Tab.init(value: .analyzer) {
-                    NavigationView {
+                    NavigationStack {
                         AnalyzerView()
                             .navigationTitle(model.title)
                             .navigationBarTitleDisplayMode(.inline)
@@ -153,17 +151,17 @@ struct ContentView: View {
                     }.toolbarVisibility(.hidden, for: .tabBar)
                 }
                 Tab.init(value: .saved) {
-                    NavigationView {
+                    NavigationStack {
                         SavedSeedsView()
                     }.toolbarVisibility(.hidden, for: .tabBar)
                 }.badge(seeds.count)
                 Tab.init(value: .finder) {
-                    NavigationView {
+                    NavigationStack {
                         FinderView()
                     }.toolbarVisibility(.hidden, for: .tabBar)
                 }
                 Tab.init(value: .community){
-                    NavigationView {
+                    NavigationStack {
                         CommunityView()
                     }
                     .toolbarVisibility(.hidden, for: .tabBar)
@@ -175,10 +173,8 @@ struct ContentView: View {
         }.toastView(toast: $model.toast)
             .sheet(isPresented: $model.configSheet) {
                 ConfigView()
-                    .presentationDetents([.medium, .large])
-                    .onDisappear {
-                        model.analyze()
-                    }
+                    .presentationDetents([.large, .medium])
+                    .presentationDragIndicator(.visible)
             }.sheet(isPresented: $model.showSummary) {
                 ResumeView(run: model.run!)
             }.sheet(isPresented: $model.showSaveView) {
@@ -190,8 +186,7 @@ struct ContentView: View {
 }
 
 #Preview {
-    NavigationStack {
-        ContentView()
-            .environment(AnalyzerViewModel(memoryOnly: true))
-    }
+    ContentView()
+        .environmentObject(AnalyzerViewModel(memoryOnly: true))
+        .environmentObject(JokerFile())
 }

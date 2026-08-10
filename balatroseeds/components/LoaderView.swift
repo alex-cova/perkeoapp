@@ -12,31 +12,29 @@ struct LoadingView<Content>: View where Content: View {
     var content: () -> Content
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                // Your existing content
-                self.content()
-                    .disabled(self.isShowing)
-                    .blur(radius: self.isShowing ? 3 : 0)
-                
-                // Loading overlay
-                if isShowing {
-                    ZStack {
-                        Color.black.opacity(0.4)
-                            .edgesIgnoringSafeArea(.all)
-                        
-                        VStack(spacing: 20) {
-                            CircleLoader()
-                                .frame(width: 80, height: 80)
-                            
-                            Text("Processing...")
-                                .foregroundColor(.white)
-                                .font(.customHeadline)
-                        }
-                        .padding(30)
+        ZStack {
+            // Your existing content
+            self.content()
+                .disabled(self.isShowing)
+                .blur(radius: self.isShowing ? 3 : 0)
+
+            // Loading overlay
+            if isShowing {
+                ZStack {
+                    Color.black.opacity(0.4)
+                        .edgesIgnoringSafeArea(.all)
+
+                    VStack(spacing: 20) {
+                        CircleLoader()
+                            .frame(width: 80, height: 80)
+
+                        Text("Processing...")
+                            .foregroundStyle(.white)
+                            .font(.customHeadline)
                     }
-                    .transition(.opacity)
+                    .padding(30)
                 }
+                .transition(.opacity)
             }
         }
     }

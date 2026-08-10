@@ -120,4 +120,22 @@ struct balatroseedsTests {
         print(result.toJson())
     }
 
+    // `JokerSelectorView` hands `configureForSpeed` an `[ItemEdition]` (a wrapper class), not the
+    // raw `Item`s. Before the fix, `enable(_:)` type-checked the wrapper itself, so `is Voucher`
+    // (and every other `is` check) was always false and brute-force search could never find a
+    // selected voucher, tag, legendary, or spectral.
+    @Test func configureForSpeedUnwrapsItemEdition() async throws {
+        let balatro = Balatro()
+        _ = balatro.configureForSpeed(selections: [ItemEdition(item: Voucher.Overstock)])
+        #expect(balatro.analyzeVoucher)
+    }
+
+    @Test func itemSearchFindsInitialsAndMidWordMatches() async throws {
+        let htr = ItemSearch.sections(query: "htr", categories: [.rare])
+        #expect(htr.first?.items.contains { $0.rawValue == "Hit the Road" } == true)
+
+        let clown = ItemSearch.sections(query: "clown", categories: [.common])
+        #expect(clown.first?.items.contains { $0.rawValue == "Chaos the Clown" } == true)
+    }
+
 }

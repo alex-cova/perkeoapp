@@ -6,220 +6,258 @@
 //
 import SwiftUI
 
-struct JokerSelectorView : View {
-    
-    @Binding var selections : [ItemEdition]
-    @State var showSelected : Bool = false
-    @State var search : String = ""
-    let columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
-    
+/// The Finder's item picker: search, filter by category, and pick up to `selectionLimit` items
+/// (jokers, vouchers, spectrals) to constrain a seed search.
+struct JokerSelectorView: View {
+
+    @Binding var selections: [ItemEdition]
+    @Environment(\.dismiss) private var dismiss
+    @FocusState private var searchFocused: Bool
+
+    @State private var query = ""
+    @State private var debouncedQuery = ""
+    @State private var activeFilter: PickerFilter = .all
+    @State private var sections: [ItemSection] = []
+    @State private var selectionTick = 0
+    @State private var blockedTick = 0
+
+    private let selectionLimit = 20
+    private let columns = [GridItem(.adaptive(minimum: 79), spacing: 8)]
+
+    private enum PickerFilter: Hashable {
+        case all
+        case selected
+        case category(ItemCategory)
+    }
+
+    private var selectedKeys: Set<String> {
+        Set(selections.map(\.rawValue))
+    }
+
+    private var atLimit: Bool {
+        selections.count >= selectionLimit
+    }
+
+    private var categoriesToShow: [ItemCategory] {
+        if case .category(let category) = activeFilter {
+            return [category]
+        }
+        return ItemCategory.allCases
+    }
+
     var body: some View {
-        VStack {
-            HStack {
-                Text("Joker Selection")
-                    .font(.customTitle)
-                    .padding()
-                    .foregroundStyle(.white)
-                
-                Text("\(selections.count) of 10")
-                    .font(.customCaption)
-                    .foregroundStyle(selections.count == 10 ? .red : .white)
-            }
-            
-            HStack {
-                TextField("Search", text: $search)
-                    .font(.customBody)
-                    .keyboardType(.asciiCapable)
-                    .autocorrectionDisabled()
-                    .textFieldStyle(.roundedBorder)
-                
-                Button(action: {
-                    withAnimation(.easeInOut){
-                        showSelected.toggle()
-                    }
-                }, label: {
-                    Image(systemName: showSelected ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
-                }).buttonStyle(.borderedProminent)
-            }.padding(.horizontal)
-            
-            Divider()
-                .padding(.horizontal)
+        NavigationStack {
             ScrollView {
-                if showSelected && selections.isEmpty  {
-                    Text("Nothing selected")
-                        .font(.customBody)
-                        .foregroundStyle(.white)
-                }else {
-                    if showSelected {
-                        render(selections, name: "Selections")
-                    }else {
-                        renderLegendary()
-                        render(Voucher.allCases, name: "Vouchers")
-                        render(RareJoker.allCases, name: "Rare Jokers")
-                        render(UnCommonJoker.allCases, name: "Uncommon")
-                        render(CommonJoker.allCases, name: "Common")
-                        render(Spectral.allCases.filter {
-                            !$0.isRetry()
-                        }, name: "Spectrals")
-                        
-                    }
-                    
-                }
-            }
-        }.background(Color(hex: "#4d4d4d"))
-    }
-    
-    private func filter(_ items : [any Item]) -> [any Item] {
-        if search.isEmpty {
-            return items
-        }
-        
-        let prefx = search.lowercased()
-        
-        return items.filter {
-            $0.rawValue.lowercased().hasPrefix(prefx) || $0.rawValue.lowercased().hasSuffix(prefx) ||
-            levenshtein($0.rawValue.lowercased(), prefx) < 2
-        }
-    }
-    
-    private func levenshtein(_ aStr: String, _ bStr: String) -> Int {
-        let a = Array(aStr.lowercased())
-        let b = Array(bStr.lowercased())
-        
-        let empty = [Int](repeating: 0, count: b.count + 1)
-        var last = [Int](0...b.count)
-
-        for (i, aChar) in a.enumerated() {
-            var current = [i + 1] + empty
-            for (j, bChar) in b.enumerated() {
-                current[j + 1] = aChar == bChar
-                    ? last[j]
-                    : min(last[j], last[j + 1], current[j]) + 1
-            }
-            last = current
-        }
-
-        return last[b.count]
-    }
-    
-    @ViewBuilder
-    private func renderLegendary() -> some View{
-        VStack {
-            Text("Legendary")
-                .foregroundStyle(.white)
-                .font(.customBody)
-            LazyVGrid(columns: columns) {
-                ForEach(filter(LegendaryJoker.allCases), id: \.rawValue) { joker in
-                    legendarySelectableJoker(joker as! LegendaryJoker)
-                        .transition(.push(from: .bottom))
-                }
-            }.padding()
-        }
-    }
-    
-    @ViewBuilder
-    private func render(_ items : [Item], name : String) -> some View{
-        let filteredItems = filter(items)
-        
-        if(filteredItems.isEmpty){
-            EmptyView()
-        } else {
-            VStack {
-                Text(name)
-                    .foregroundStyle(.white)
-                    .font(.customBody)
-                LazyVGrid(columns: columns) {
-                    ForEach(filteredItems, id: \.rawValue) { joker in
-                        if let i = joker as? ItemEdition, let x = i.item as? LegendaryJoker {
-                            legendarySelectableJoker(x)
-                                .transition(.push(from: .bottom))
-                        }else {
-                            selectableJoker(joker)
-                                .transition(.push(from: .bottom))
+                LazyVStack(spacing: 16, pinnedViews: [.sectionHeaders]) {
+                    if activeFilter == .selected {
+                        selectedSection()
+                    } else if sections.isEmpty {
+                        ContentUnavailableView.search(text: debouncedQuery)
+                            .foregroundStyle(.white)
+                            .padding(.top, 40)
+                    } else {
+                        ForEach(sections) { section in
+                            categorySection(section)
                         }
                     }
-                }.padding()
+                }
+                .padding(.bottom, 24)
+            }
+            .scrollDismissesKeyboard(.interactively)
+            .background(Color.customBackground)
+            .safeAreaInset(edge: .top, spacing: 0) {
+                topControls()
+                    .background(Color.customBackground)
+            }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                SelectionTray(selections: $selections, limit: selectionLimit, onRemove: remove)
+            }
+            .navigationTitle("Select Items")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Clear", action: clearAll)
+                        .font(.customBody)
+                        .tint(.red)
+                        .disabled(selections.isEmpty)
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done", action: dismiss.callAsFunction)
+                        .font(.customBody)
+                        .tint(.red)
+                }
+            }
+            .sensoryFeedback(.selection, trigger: selectionTick)
+            .sensoryFeedback(.warning, trigger: blockedTick)
+            .task(id: query) {
+                try? await Task.sleep(for: .milliseconds(150))
+                guard !Task.isCancelled else { return }
+                debouncedQuery = query
+            }
+            .task(id: debouncedQuery) {
+                recomputeSections()
+            }
+            .task(id: activeFilter) {
+                recomputeSections()
             }
         }
     }
-    
-    @ViewBuilder
-    private func selectableJoker(_ joker : Item) -> some View {
-        SelectableJokerView(selections: $selections, joker: joker)
-    }
-    
-    @ViewBuilder
-    private func legendarySelectableJoker(_ joker : LegendaryJoker) -> some View {
-        LegendarySelectableJokerView(selections: $selections, joker: joker)
-    }
-}
 
-struct LegendarySelectableJokerView : View {
-    
-    @Binding var selections : [ItemEdition]
-    let joker : LegendaryJoker
-    
-    var selected : Bool {
-        get {
-            selections.first(where: { $0.item.rawValue == joker.rawValue }) != nil
-        }
+    private func recomputeSections() {
+        sections = ItemSearch.sections(query: debouncedQuery, categories: categoriesToShow)
     }
-    
-    var body: some View {
-        ZStack {
-            joker.sprite(color: selected ? .gray : .white)
-                .opacity(selected ? 0.3 : 1.0)
-            if selected {
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.title)
-                    .foregroundStyle(.white)
-            }
-        }.onTapGesture {
-            if selections.contains(where: { $0.rawValue == joker.rawValue}) {
-                selections.removeAll(where: {
-                    $0.rawValue == joker.rawValue
-                })
-            }else if selections.count < 10 {
-                selections.append(ItemEdition(item: joker))
-            }
-        }
-    }
-}
 
-struct SelectableJokerView : View {
-    
-    @Binding var selections : [ItemEdition]
-    let joker : Item
-    
-    var selected : Bool {
-        get {
-            selections.first(where: { $0.item.rawValue == joker.rawValue }) != nil
+    @ViewBuilder
+    private func topControls() -> some View {
+        VStack(spacing: 10) {
+            HStack {
+                Text("Select Items")
+                    .font(.customTitle)
+                    .foregroundStyle(.white)
+                Spacer(minLength: 8)
+            }
+            .padding(.horizontal)
+            .padding(.top, 8)
+            .accessibilityHidden(true) // redundant with the navigation title, kept for the pixel-art header look
+
+            searchField()
+                .padding(.horizontal)
+
+            filterChips()
+
+            Divider()
         }
     }
-    
-    var body: some View {
-        ZStack {
-            joker.sprite(color: selected ? .gray : .white)
-                .opacity(selected ? 0.3 : 1.0)
-            if selected {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundStyle(.white)
-                    .font(.title)
-                
-            }
-        }.onTapGesture {
-            if selections.contains(where: { $0.rawValue == joker.rawValue}) {
-                selections.removeAll(where: {
-                    $0.rawValue == joker.rawValue
-                })
-            }else if selections.count < 10 {
-                selections.append(ItemEdition(item: joker))
+
+    @ViewBuilder
+    private func searchField() -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(.white)
+            TextField("Search", text: $query)
+                .font(.customBody)
+                .keyboardType(.asciiCapable)
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+                .submitLabel(.search)
+                .focused($searchFocused)
+                .foregroundStyle(.white)
+
+            if !query.isEmpty {
+                Button("Clear search", systemImage: "xmark.circle.fill", action: clearQuery)
+                    .labelStyle(.iconOnly)
+                    .foregroundStyle(.secondary)
             }
         }
+        .padding(8)
+        .background(Color.gray)
+        .clipShape(.rect(cornerRadius: 8))
+    }
+
+    @ViewBuilder
+    private func filterChips() -> some View {
+        ScrollView(.horizontal) {
+            HStack(spacing: 8) {
+                filterChip("All", filter: .all)
+                filterChip("Selected (\(selections.count))", filter: .selected)
+                ForEach(ItemCategory.allCases) { category in
+                    filterChip(category.title, filter: .category(category))
+                }
+            }
+            .padding(.horizontal)
+        }
+        .scrollIndicators(.hidden)
+    }
+
+    @ViewBuilder
+    private func filterChip(_ title: String, filter: PickerFilter) -> some View {
+        let isActive = activeFilter == filter
+        Button(title) {
+            activeFilter = filter
+        }
+        .font(.customCaption)
+        .foregroundStyle(.white)
+        .padding(.horizontal, 12)
+        .frame(minHeight: 44)
+        .background(isActive ? Color.red : Color.customRowBackground)
+        .clipShape(.rect(cornerRadius: 8))
+    }
+
+    @ViewBuilder
+    private func selectedSection() -> some View {
+        if selections.isEmpty {
+            ContentUnavailableView(
+                "Nothing selected",
+                systemImage: "rectangle.stack.badge.minus",
+                description: Text("Pick up to \(selectionLimit) jokers, vouchers, or spectrals.")
+            )
+            .foregroundStyle(.white)
+            .padding(.top, 40)
+        } else {
+            grid(selections.map(\.item))
+        }
+    }
+
+    @ViewBuilder
+    private func categorySection(_ section: ItemSection) -> some View {
+        Section {
+            grid(section.items)
+        } header: {
+            Text(section.category.title)
+                .font(.customBody)
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal)
+                .padding(.vertical, 4)
+                .background(Color.customBackground)
+        }
+    }
+
+    @ViewBuilder
+    private func grid(_ items: [any Item]) -> some View {
+        LazyVGrid(columns: columns, spacing: 12) {
+            ForEach(items, id: \.rawValue) { item in
+                let selected = selectedKeys.contains(item.rawValue)
+                SelectableItemCell(
+                    item: item,
+                    isSelected: selected,
+                    isBlocked: !selected && atLimit,
+                    onTap: { toggle(item) }
+                )
+            }
+        }
+        .padding(.horizontal)
+    }
+
+    private func toggle(_ item: any Item) {
+        if selectedKeys.contains(item.rawValue) {
+            selections.removeAll { $0.rawValue == item.rawValue }
+            selectionTick &+= 1
+        } else if !atLimit {
+            selections.append(ItemEdition(item: item))
+            selectionTick &+= 1
+        } else {
+            blockedTick &+= 1
+        }
+    }
+
+    private func remove(_ item: ItemEdition) {
+        selections.removeAll { $0.rawValue == item.rawValue }
+        selectionTick &+= 1
+    }
+
+    private func clearAll() {
+        selections.removeAll()
+        selectionTick &+= 1
+    }
+
+    private func clearQuery() {
+        query = ""
+        searchFocused = false
     }
 }
 
 #Preview {
-    @Previewable @State var selections : [ItemEdition] = []
+    @Previewable @State var selections: [ItemEdition] = []
     JokerSelectorView(selections: $selections)
 }

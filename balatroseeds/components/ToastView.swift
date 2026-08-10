@@ -50,24 +50,21 @@ struct ToastView: View {
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
             Image(systemName: style.iconFileName)
-                .foregroundColor(style.themeColor)
+                .foregroundStyle(style.themeColor)
             Text(message)
                 .font(.customCaption)
-                .foregroundColor(.white) // Adapts to light/dark mode
+                .foregroundStyle(.white) // Adapts to light/dark mode
 
             Spacer(minLength: 10)
 
-            Button {
-                onCancelTapped()
-            } label: {
-                Image(systemName: "xmark")
-                    .foregroundColor(style.themeColor)
-            }
+            Button("Dismiss", systemImage: "xmark", action: onCancelTapped)
+                .labelStyle(.iconOnly)
+                .foregroundStyle(style.themeColor)
         }
         .padding()
         .frame(minWidth: 0, maxWidth: width)
         .background(Color(hex: "#1e1e1e")) // Adapts to light/dark mode
-        .cornerRadius(8)
+        .clipShape(.rect(cornerRadius: 8))
         .overlay(
             RoundedRectangle(cornerRadius: 8)
                 .stroke(style.themeColor, lineWidth: 1) // Subtle border
@@ -80,7 +77,7 @@ struct ToastView: View {
 // ViewModifier to easily attach toast functionality to any view
 struct ToastModifier: ViewModifier {
     @Binding var toast: Toast?
-    @State private var workItem: DispatchWorkItem?
+    @State private var dismissTask: Task<Void, Never>?
 
     func body(content: Content) -> some View {
         content
@@ -93,6 +90,9 @@ struct ToastModifier: ViewModifier {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom) // Align to bottom
             )
+            .sensoryFeedback(.impact(weight: .light), trigger: toast) { _, newValue in
+                newValue != nil
+            }
             .onChange(of: toast) {
                 showToast()
             }
@@ -118,20 +118,15 @@ struct ToastModifier: ViewModifier {
     private func showToast() {
         guard let toast = toast else { return }
 
-        // Haptic feedback for toast appearance
-        #if os(iOS)
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-        #endif
-
         if toast.duration > 0 {
-            workItem?.cancel() // Cancel previous dismissal task
+            dismissTask?.cancel() // Cancel previous dismissal task
 
-            let task = DispatchWorkItem {
-               dismissToast()
+            dismissTask = Task {
+                try? await Task.sleep(for: .seconds(toast.duration))
+                if !Task.isCancelled {
+                    dismissToast()
+                }
             }
-
-            workItem = task
-            DispatchQueue.main.asyncAfter(deadline: .now() + toast.duration, execute: task)
         }
     }
 
@@ -139,8 +134,8 @@ struct ToastModifier: ViewModifier {
         withAnimation {
             toast = nil
         }
-        workItem?.cancel()
-        workItem = nil
+        dismissTask?.cancel()
+        dismissTask = nil
     }
 }
 

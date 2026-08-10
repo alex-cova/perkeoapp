@@ -183,10 +183,11 @@ struct EditionView: ViewModifier {
                 .resizable()
                 .frame(width: frame.width, height: frame.height)
         }else{
-            Text("fuck")
+            Color.clear
+                .frame(width: frame.width, height: frame.height)
         }
     }
-    
+
     func body(content: Content) -> some View {
         if(edition == .Foil) {
             ZStack {
